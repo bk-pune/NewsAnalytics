@@ -1,4 +1,5 @@
 * Biased news web sites=> https://www.studentnewsdaily.com/types-of-media-bias/
+There is no doubt that journalists and politicians depend on each other in a mutual, close, and sometimes uneasy relationship.
 Bias by omission – leaving one side out of an article, or a series of articles over a period of time;
 Bias by selection of sources – including more sources that support one view over another.
 Bias by story selection – a pattern of highlighting news stories that coincide with the agenda of either the Left or the Right, while ignoring stories that coincide with the opposing view
@@ -15,3 +16,10 @@ You can also compare metrics on Twitter, Facebook, and other social media.
 * How multiple areas impact the economy of the nation
 Non commercial news, such as news from Politics, Science, Health care, Defence, Terrorism surely leave impact on economy of the nation.
 Finding out co-relation among these.
+
+* Sentiment analysis of news reports
+=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
+=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
+=> https://www.researchgate.net/publication/321585830_Good_News_vs_Bad_News_What_are_they_talking_about
+Categorisation is achieved by (often user-defined) Boolean search word expressions or by using lists of search words with varying (positive or negative) weights and a threshold.
+We have seen that there is a need to clearly define, what the source and the target of the sentiment are, subsequently separate the good and bad news content from the good and bad sentiment expressed on the target.
