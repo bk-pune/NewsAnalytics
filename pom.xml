@@ -17,7 +17,6 @@
     </dependencies>
     <modules>
         <module>test</module>
-        <module>../dao</module>
         <module>dao</module>
         <module>model</module>
     </modules>
