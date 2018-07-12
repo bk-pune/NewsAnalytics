@@ -7,6 +7,10 @@ public class DeleteQueryBuilder extends AbstractQueryBuilder {
         super(modelInfo);
     }
 
+    public String getQueryString(PredicateClause predicateClause) {
+        return null;
+    }
+
     public String getQueryString() {
         return null;
     }

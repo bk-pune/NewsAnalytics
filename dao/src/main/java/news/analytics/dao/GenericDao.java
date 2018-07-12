@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenericDao<T extends NewsEntity> {
-    ModelInfo modelInfo;
-    SelectQueryBuilder selectQueryBuilder;
-    UpdateQueryBuilder updateQueryBuilder;
-    DeleteQueryBuilder deleteQueryBuilder;
-    InsertQueryBuilder insertQueryBuilder;
+    private ModelInfo modelInfo;
+    private SelectQueryBuilder selectQueryBuilder;
+    private UpdateQueryBuilder updateQueryBuilder;
+    private DeleteQueryBuilder deleteQueryBuilder;
+    private InsertQueryBuilder insertQueryBuilder;
 
     public GenericDao(Class clazz) {
         modelInfo = ModelInfoProvider.getModelInfo(clazz);
@@ -27,7 +27,7 @@ public class GenericDao<T extends NewsEntity> {
     }
 
     public List<T> insert(List<T> entityList){
-        String queryString = insertQueryBuilder.getQueryString();
+        String queryString = insertQueryBuilder.getQueryString(null);
         // list =  queryExecutor.insert
         return new ArrayList<T>();
     }

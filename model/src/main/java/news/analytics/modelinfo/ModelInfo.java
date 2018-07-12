@@ -6,13 +6,12 @@ import news.analytics.model.annotations.DBTable;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 public class ModelInfo {
 
     private Set<Field> fields = new HashSet<Field>();
-    private List<String> columnNames = new LinkedList<String>();
+    private LinkedList<String> columnNames = new LinkedList<String>();
     private Field primaryKeyField;
     private String mappedTable;
 
@@ -40,7 +39,7 @@ public class ModelInfo {
         }
     }
 
-    public List<String> getColumnNames() {
+    public LinkedList<String> getColumnNames() {
         return columnNames;
     }
 

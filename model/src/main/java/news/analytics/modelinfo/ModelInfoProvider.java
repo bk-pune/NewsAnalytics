@@ -8,14 +8,21 @@ public class ModelInfoProvider {
     private static final HashMap<Class<? extends NewsEntity>, ModelInfo> modelInfoMap = new HashMap<Class<? extends NewsEntity>, ModelInfo>();
 
     public static ModelInfo getModelInfo(Class newsEntityClass){
-        return modelInfoMap.get(newsEntityClass);
+        ModelInfo modelInfo = modelInfoMap.get(newsEntityClass);
+        if (modelInfo == null ){
+            modelInfo = addModelInfo(newsEntityClass);
+        }
+        return modelInfo;
     }
 
-    public static void addModelInfo(Class newsEntityClass){
-        if(modelInfoMap.get(newsEntityClass) == null){
-            modelInfoMap.put(newsEntityClass, new ModelInfo(newsEntityClass));
+    private static ModelInfo addModelInfo(Class newsEntityClass){
+        ModelInfo modelInfo = modelInfoMap.get(newsEntityClass);
+        if(modelInfo == null){
+            modelInfo = new ModelInfo(newsEntityClass);
+            modelInfoMap.put(newsEntityClass, modelInfo);
         } else {
             throw new RuntimeException("Model information for the class: "+newsEntityClass+" is already registered !");
         }
+        return modelInfo;
     }
 }
