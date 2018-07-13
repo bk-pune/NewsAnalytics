@@ -1,4 +1,4 @@
-package news.analytics.dao;
+package news.analytics.dao.core;
 
 import news.analytics.dao.query.DeleteQueryBuilder;
 import news.analytics.dao.query.InsertQueryBuilder;
@@ -27,9 +27,7 @@ public class GenericDao<T extends NewsEntity> {
     }
 
     public List<T> insert(List<T> entityList){
-        String queryString = insertQueryBuilder.getQueryString(null);
-        // list =  queryExecutor.insert
-        return new ArrayList<T>();
+        return null;
     }
 
     public List<T> update(List<T> entityList){

@@ -2,7 +2,7 @@ package news.analytics.dao.query;
 
 import news.analytics.modelinfo.ModelInfo;
 
-import java.util.LinkedList;
+import java.util.*;
 
 import static news.analytics.dao.query.QueryConstants.*;
 
@@ -12,15 +12,24 @@ public class SelectQueryBuilder extends AbstractQueryBuilder {
         super(modelInfo);
     }
 
-    public String getQueryString(PredicateClause predicateClause) {
+    public Map<String, List<Object>> getQueryStringAndParameters(PredicateClause predicateClause) {
+        Map<String, List<Object>> queryAndParameters = new HashMap<String, List<Object>>();
+        List<Object> valueList = new ArrayList<Object>();
         StringBuilder sb = new StringBuilder();
         sb.append(getQueryString());
 
         if (predicateClause != null) {
             sb.append(WHERE).append(SPACE);
-            sb.append(getSQLForPredicateClause(predicateClause));
+            Map<String, List<Object>> queryAndParametersForPredicateClause = getQueryAndParametersForPredicateClause(predicateClause);
+            // map contains only one record
+            for(String predicate : queryAndParametersForPredicateClause.keySet()) {
+                sb.append(predicate);
+                valueList = (queryAndParametersForPredicateClause.get(predicate));
+            }
         }
-        return sb.toString();
+
+        queryAndParameters.put(sb.toString(), valueList);
+        return queryAndParameters;
     }
 
     public String getQueryString() {
