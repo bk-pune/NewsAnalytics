@@ -9,24 +9,37 @@ import java.util.List;
 
 public class QueryExecutor<T> {
 
-    public List<T> select(Connection connection, String sqlQuery, List<Object> queryParameters) throws Exception {
+    public List<T> select(Connection connection, String sqlQuery, List<Object> queryParameters) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
         if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
-            throw new Exception("Query needs parameters which are missing in parameters list !");
+            throw new RuntimeException("Query needs parameters which are missing in parameters list !");
 
         if (queryParameters != null && queryParameters.size() > 0) {
             setParametersOnPreparedStatement(connection, preparedStatement, queryParameters);
         }
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while(resultSet.next()){
-
+        List<T> objectList = null;
+        ResultSet resultSet = null;
+        try {
+            resultSet = preparedStatement.executeQuery();
+            objectList = fromResultSetToObjects(resultSet);
+        } finally {
+            if(resultSet != null){
+                resultSet.close();
+            }
         }
 
-        return new ArrayList<T>();
+        return objectList;
     }
 
-    private void setParametersOnPreparedStatement(Connection connection, PreparedStatement prepareStament, List<Object> vQueryParams) throws RuntimeException {
+    private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException {
+        List<T> fetched = new ArrayList<T>();
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        while(resultSet.next()){
+//            resultSetMetaData.getColumnName(i)
+        }
+        return fetched;
+    }
+    private void setParametersOnPreparedStatement(Connection connection, PreparedStatement preparedStatement, List<Object> vQueryParams) throws RuntimeException {
         Object obj = null;
         try {
             for (int i = 0; i < vQueryParams.size(); i++) {
@@ -34,38 +47,38 @@ public class QueryExecutor<T> {
                 obj = vQueryParams.get(i);
 
                 if (obj == null)
-                    prepareStament.setNull(i + 1, Types.NULL);
+                    preparedStatement.setNull(i + 1, Types.NULL);
                 else if (obj instanceof Timestamp)
-                    prepareStament.setTimestamp(i + 1, (Timestamp) obj);
+                    preparedStatement.setTimestamp(i + 1, (Timestamp) obj);
                 else if (obj instanceof Date)
-                    prepareStament.setDate(i + 1, (Date) obj);
+                    preparedStatement.setDate(i + 1, (Date) obj);
                 else if (obj instanceof java.util.Date) {
                     Date date = new Date(((java.util.Date) obj).getTime());
-                    prepareStament.setDate(i + 1, date);
+                    preparedStatement.setDate(i + 1, date);
                 } else if (obj instanceof File) {
                     FileInputStream fileInputStream = new FileInputStream((File) obj);
-                    prepareStament.setBinaryStream(i + 1, fileInputStream, (int) (((File) obj).length()));
+                    preparedStatement.setBinaryStream(i + 1, fileInputStream, (int) (((File) obj).length()));
                 } else if (obj instanceof Integer)
-                    prepareStament.setInt(i + 1, ((Integer) obj).intValue());
+                    preparedStatement.setInt(i + 1, ((Integer) obj).intValue());
                 else if (obj instanceof Double)
-                    prepareStament.setDouble(i + 1, ((Double) obj).doubleValue());
+                    preparedStatement.setDouble(i + 1, ((Double) obj).doubleValue());
                 else if (obj instanceof Long)
-                    prepareStament.setLong(i + 1, ((Long) obj).longValue());
+                    preparedStatement.setLong(i + 1, ((Long) obj).longValue());
                 else if (obj instanceof BigDecimal)
-                    prepareStament.setBigDecimal(i + 1, ((BigDecimal) obj));
+                    preparedStatement.setBigDecimal(i + 1, ((BigDecimal) obj));
                 else if (obj instanceof byte[])
-                    prepareStament.setBytes(i + 1, (byte[]) obj);
+                    preparedStatement.setBytes(i + 1, (byte[]) obj);
                 else if (obj instanceof Clob) {    //Oracle
-                    prepareStament.setClob(i + 1, (Clob) obj);
+                    preparedStatement.setClob(i + 1, (Clob) obj);
                 } else if (obj instanceof Blob) {    //Oracle
-                    prepareStament.setBlob(i + 1, (Blob) obj);
+                    preparedStatement.setBlob(i + 1, (Blob) obj);
                 } else if (obj instanceof Boolean) {
-                    prepareStament.setInt(i + 1, obj.equals(true) ? 1 : 0);
+                    preparedStatement.setInt(i + 1, obj.equals(true) ? 1 : 0);
                 } else
-                    prepareStament.setString(i + 1, obj.toString());
+                    preparedStatement.setString(i + 1, obj.toString());
             }
-        } catch (Exception fnfe) {
-            throw new RuntimeException(fnfe);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

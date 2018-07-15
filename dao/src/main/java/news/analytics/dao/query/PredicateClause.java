@@ -8,6 +8,9 @@ public class PredicateClause {
     private PredicateOperator operator;
     private Object value;
 
+    private PredicateJoinOperator predicateJoinOperator;
+    private PredicateClause nextPredicateClause;
+
     public PredicateClause(String columnName, PredicateOperator operator, Object value) {
         this.columnName = columnName;
         this.operator = operator;
@@ -36,5 +39,13 @@ public class PredicateClause {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public PredicateJoinOperator getPredicateJoinOperator() {
+        return predicateJoinOperator;
+    }
+
+    public PredicateClause getNextPredicateClause() {
+        return nextPredicateClause;
     }
 }

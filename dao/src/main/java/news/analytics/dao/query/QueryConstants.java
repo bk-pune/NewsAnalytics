@@ -9,4 +9,5 @@ public class QueryConstants {
     public static final String CLOSING_BRACKET = ")";
     public static final String AS = "AS";
     public static final String COMMA = ",";
+    public static final String QUESTION_MARK = "?";
 }

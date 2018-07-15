@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static news.analytics.dao.query.QueryConstants.QUESTION_MARK;
 import static news.analytics.dao.query.QueryConstants.SPACE;
 
 public abstract class AbstractQueryBuilder {
@@ -30,7 +31,7 @@ public abstract class AbstractQueryBuilder {
         List parameters = new ArrayList<Object>();
         sb.append(predicateClause.getColumnName()).append(SPACE);
         sb.append(predicateClause.getOperator().getOperatorString()).append(SPACE);
-        sb.append("?");
+        sb.append(QUESTION_MARK);
 
         Object value = predicateClause.getValue();
         if(value instanceof String){
@@ -39,6 +40,11 @@ public abstract class AbstractQueryBuilder {
             parameters.add(value);
         }
 
+        // TODO recursion for next predicate clause
+        PredicateClause nextPredicateClause = predicateClause.getNextPredicateClause();
+        if(nextPredicateClause != null){
+            sb.append(SPACE).append(predicateClause.getPredicateJoinOperator());
+        }
         queryAndParameters.put(sb.toString(), parameters);
         return queryAndParameters;
     }

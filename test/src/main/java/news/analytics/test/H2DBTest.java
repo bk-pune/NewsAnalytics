@@ -11,7 +11,8 @@ public class H2DBTest {
         String insertQuery = "INSERT INTO RAW_NEWS (ID, URI, NEWS_AGENCY, RAW_CONTENT) VALUES (1, 'http://news.analytics.test.com', 'The Hindu', 'Raw HTML')";
         String selectQuery = "SELECT * FROM RAW_NEWS";
         Class.forName("org.h2.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:h2:D:\\Bhushan\\personal\\NewsAnalytics\\NewAnalyticsDB", "admin", "dkpune");
+        String jdbcUrl = "jdbc:h2:" + a[0];
+        Connection conn = DriverManager.getConnection(jdbcUrl, "admin", "dkpune");
         try{
             PreparedStatement preparedStatement = conn.prepareStatement(insertQuery);
             int i = preparedStatement.executeUpdate();
@@ -29,7 +30,5 @@ public class H2DBTest {
         } finally {
             conn.close();
         }
-        // add application code here
-        conn.close();
     }
 }
