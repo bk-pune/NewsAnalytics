@@ -3,6 +3,7 @@ package news.analytics.dao;
 import news.analytics.dao.connection.H2DataSource;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,8 @@ public class AbstractTest {
 
     protected static H2DataSource dataSource;
 
-    static {
+    @BeforeClass
+    public static void setup(){
         try {
             // create db if doesn't exist, create table
             String jdbcUrl = "jdbc:h2:" + System.getProperty("user.dir");
