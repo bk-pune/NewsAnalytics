@@ -17,6 +17,11 @@ public abstract class AbstractQueryBuilder {
         this.modelInfo = modelInfo;
     }
 
+    /**
+     * Returns map of Query string and the parameter map for place holders in query string
+     * @param predicateClause SQL predicate i.e. condition
+     * @return Query String and the map of parameters for place holders in query string
+     */
     public abstract Map<String, List<Object>> getQueryStringAndParameters(PredicateClause predicateClause);
 
     /**

@@ -12,6 +12,11 @@ public class SelectQueryBuilder extends AbstractQueryBuilder {
         super(modelInfo);
     }
 
+    /**
+     * Returns map of Select Query and the parameter map for predicate clause
+     * @param predicateClause Select predicate
+     * @return Query String and the map of parameters for predicate clause in the query
+     */
     public Map<String, List<Object>> getQueryStringAndParameters(PredicateClause predicateClause) {
         Map<String, List<Object>> queryAndParameters = new HashMap<String, List<Object>>();
         List<Object> valueList = new ArrayList<Object>();
@@ -32,7 +37,7 @@ public class SelectQueryBuilder extends AbstractQueryBuilder {
         return queryAndParameters;
     }
 
-    public String getQueryString() {
+    private String getQueryString() {
         LinkedList<String> columnNames = modelInfo.getColumnNames();
         StringBuilder sb = new StringBuilder();
         sb.append(SELECT).append(SPACE);

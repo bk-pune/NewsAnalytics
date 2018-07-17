@@ -4,42 +4,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class QueryExecutor<T> {
 
-    public List<T> select(Connection connection, String sqlQuery, List<Object> queryParameters) throws SQLException {
+    protected ResultSet executeSelect(Connection connection, String sqlQuery, List<Object> queryParameters) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
         if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
             throw new RuntimeException("Query needs parameters which are missing in parameters list !");
 
         if (queryParameters != null && queryParameters.size() > 0) {
-            setParametersOnPreparedStatement(connection, preparedStatement, queryParameters);
+            setParametersOnPreparedStatement(preparedStatement, queryParameters);
         }
-        List<T> objectList = null;
         ResultSet resultSet = null;
         try {
             resultSet = preparedStatement.executeQuery();
-            objectList = fromResultSetToObjects(resultSet);
-        } finally {
-            if(resultSet != null){
-                resultSet.close();
-            }
+        } catch (SQLException e){
+            throw e;
         }
 
-        return objectList;
+        return resultSet;
     }
 
-    private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException {
-        List<T> fetched = new ArrayList<T>();
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        while(resultSet.next()){
-//            resultSetMetaData.getColumnName(i)
-        }
-        return fetched;
-    }
-    private void setParametersOnPreparedStatement(Connection connection, PreparedStatement preparedStatement, List<Object> vQueryParams) throws RuntimeException {
+    private void setParametersOnPreparedStatement(PreparedStatement preparedStatement, List<Object> vQueryParams) {
         Object obj = null;
         try {
             for (int i = 0; i < vQueryParams.size(); i++) {
@@ -68,9 +55,9 @@ public class QueryExecutor<T> {
                     preparedStatement.setBigDecimal(i + 1, ((BigDecimal) obj));
                 else if (obj instanceof byte[])
                     preparedStatement.setBytes(i + 1, (byte[]) obj);
-                else if (obj instanceof Clob) {    //Oracle
+                else if (obj instanceof Clob) {
                     preparedStatement.setClob(i + 1, (Clob) obj);
-                } else if (obj instanceof Blob) {    //Oracle
+                } else if (obj instanceof Blob) {
                     preparedStatement.setBlob(i + 1, (Blob) obj);
                 } else if (obj instanceof Boolean) {
                     preparedStatement.setInt(i + 1, obj.equals(true) ? 1 : 0);

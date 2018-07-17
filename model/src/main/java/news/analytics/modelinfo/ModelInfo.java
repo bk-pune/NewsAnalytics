@@ -1,21 +1,27 @@
 package news.analytics.modelinfo;
 
+import news.analytics.model.NewsEntity;
 import news.analytics.model.annotations.DBColumn;
 import news.analytics.model.annotations.DBTable;
+import news.analytics.model.constants.DataType;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class ModelInfo {
 
     private Set<Field> fields = new HashSet<Field>();
     private LinkedList<String> columnNames = new LinkedList<String>();
+    private Map<String, Field> fieldMap = new LinkedHashMap<String, Field>();
+    private Map<String, DBColumn> fieldDBTableAnnotationMap = new HashMap<String, DBColumn>();
     private Field primaryKeyField;
     private String mappedTable;
+    private Class newsEntityClass;
 
     public ModelInfo(Class newsEntityClass){
+        this.newsEntityClass = newsEntityClass;
         mappedTable = getMappedTable(newsEntityClass);
         populateFieldSet(newsEntityClass);
     }
@@ -34,7 +40,9 @@ public class ModelInfo {
                 if (annotation.primaryKey()) {
                     primaryKeyField = field;
                 }
+                fieldMap.put(field.getName(), field);
                 columnNames.add(annotation.column());
+                fieldDBTableAnnotationMap.put(field.getName(), annotation);
             }
         }
     }
@@ -49,5 +57,32 @@ public class ModelInfo {
 
     public String getMappedTable() {
         return mappedTable;
+    }
+
+    public Map<String, Field> getFieldMap() {
+        return fieldMap;
+    }
+
+    public DataType getSQLDatatypeForField(String fieldName) {
+        DBColumn dbColumn = fieldDBTableAnnotationMap.get(fieldName);
+        return dbColumn.dataType();
+    }
+
+    public Class getNewsEntityClass() {
+        return newsEntityClass;
+    }
+
+    public <T extends NewsEntity> void setValueToObject(T instance, Object value, Field field) {
+        try {
+            Method method;
+            method = newsEntityClass.getMethod("set" + Character.toUpperCase(field.getName().charAt(0)) + field.getName().substring(1), field.getType());
+            method.invoke(instance, value);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }
