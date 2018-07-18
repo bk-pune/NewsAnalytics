@@ -51,6 +51,8 @@ public class QueryExecutor<T> {
                     preparedStatement.setDouble(i + 1, ((Double) obj).doubleValue());
                 else if (obj instanceof Long)
                     preparedStatement.setLong(i + 1, ((Long) obj).longValue());
+                else if (obj instanceof Short)
+                    preparedStatement.setShort(i + 1, ((Short) obj).shortValue());
                 else if (obj instanceof BigDecimal)
                     preparedStatement.setBigDecimal(i + 1, ((BigDecimal) obj));
                 else if (obj instanceof byte[])

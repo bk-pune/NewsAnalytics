@@ -12,6 +12,7 @@ public enum DataType {
     BOOLEAN("BOOLEAN"),
     DATE("DATE"),
     NONE("NONE"),
+    SHORT("SHORT"),
     TIMESTAMP("TIMESTAMP");
 
     String dataType;

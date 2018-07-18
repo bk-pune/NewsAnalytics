@@ -12,5 +12,7 @@
         <module>test</module>
         <module>dao</module>
         <module>model</module>
+        <module>news.analytics.crawler</module>
+        <module>crawler</module>
     </modules>
 </project>
