@@ -1,0 +1,21 @@
+2018-07-19 10:52:31 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table "RAW_NEWS"; SQL statement:
+DROP TABLE RAW_NEWS [50200-197]
+2018-07-19 10:52:31 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Table "RAW_NEWS" already exists; SQL statement:
+CREATE TABLE RAW_NEWS ("ID" INT PRIMARY KEY, "URI" VARCHAR2(500 CHAR) NOT NULL, "NEWS_AGENCY" VARCHAR2(250 CHAR), "RAW_CONTENT" CLOB) [42101-197]
+2018-07-19 10:52:33 jdbc[8]: exception
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table "RAW_NEWS"; SQL statement:
+DROP TABLE RAW_NEWS [50200-197]
+2018-07-19 11:06:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "RAW_NEWS" already exists; SQL statement:
+CREATE TABLE RAW_NEWS ("ID" INT PRIMARY KEY, "URI" VARCHAR2(500 CHAR) NOT NULL, "NEWS_AGENCY" VARCHAR2(250 CHAR), "RAW_CONTENT" CLOB) [42101-197]
+2018-07-19 11:06:46 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table "RAW_NEWS"; SQL statement:
+DROP TABLE RAW_NEWS [50200-197]
+2018-07-19 11:06:46 jdbc[7]: exception
+org.h2.jdbc.JdbcSQLException: Table "RAW_NEWS" already exists; SQL statement:
+CREATE TABLE RAW_NEWS ("ID" INT PRIMARY KEY, "URI" VARCHAR2(500 CHAR) NOT NULL, "NEWS_AGENCY" VARCHAR2(250 CHAR), "RAW_CONTENT" CLOB) [42101-197]
+2018-07-19 11:06:48 jdbc[10]: exception
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table "RAW_NEWS"; SQL statement:
+DROP TABLE RAW_NEWS [50200-197]
