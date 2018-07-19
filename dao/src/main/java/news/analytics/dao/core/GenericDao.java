@@ -1,5 +1,11 @@
 package news.analytics.dao.core;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import news.analytics.dao.query.*;
 import news.analytics.model.NewsEntity;
 import news.analytics.model.constants.DataType;
@@ -8,6 +14,8 @@ import news.analytics.modelinfo.ModelInfoProvider;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

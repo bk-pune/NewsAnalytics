@@ -1,6 +1,8 @@
 package news.analytics.dao;
 
 import news.analytics.dao.connection.H2DataSource;
+import news.analytics.dao.utils.DAOUtils;
+import news.analytics.model.RawNews;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,6 +23,12 @@ public class AbstractTest {
 
     protected static H2DataSource dataSource;
 
+    protected RawNews getTestObject() throws Exception {
+        String jsonString = "{\"id\":2,\"uri\":\"http://news.analytics.test.com\",\"newsAgency\":\"TOI\",\"rawContent\":\"Raw HTML\"}";
+        RawNews rawNews = (RawNews) new DAOUtils().fromJson(jsonString, RawNews.class);
+        return rawNews;
+    }
+
     @BeforeClass
     public static void setup(){
         try {
@@ -30,23 +38,20 @@ public class AbstractTest {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE_TABLE);
             preparedStatement.executeUpdate();
-            System.out.println("Table created");
-            connection.commit();
             preparedStatement.close();
+            connection.commit();
+
+            System.out.println("Table created");
+
+            preparedStatement = connection.prepareStatement(INSERT_TEST_DATA);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.commit();
+
             connection.close();
         } catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @Before
-    public void init() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TEST_DATA);
-        preparedStatement.executeUpdate();
-        connection.commit();
-        preparedStatement.close();
-        connection.close();
     }
 
     @AfterClass

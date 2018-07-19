@@ -5,6 +5,7 @@ import news.analytics.dao.query.InsertQueryBuilder;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 import news.analytics.dao.query.QueryAndParameters;
+import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
 import news.analytics.modelinfo.ModelInfo;
@@ -18,17 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InsertTest extends AbstractTest {
+
     @Test
-    public void insertQueryTest() {
+    public void insertQueryTest() throws Exception {
         ModelInfo modelInfo = ModelInfoProvider.getModelInfo(RawNews.class);
         InsertQueryBuilder insertQueryBuilder = new InsertQueryBuilder(modelInfo);
-        RawNews rawNews = new RawNews();
-        rawNews.setId(2L);
-        rawNews.setNewsAgency("TOI");
-        rawNews.setUri("http://news.analytics.test.com");
-        rawNews.setRawContent("Raw HTML");
+
         List<NewsEntity> objects = new ArrayList(1);
-        objects.add(rawNews);
+        objects.add(getTestObject());
         QueryAndParameters queryStringAndParameters = insertQueryBuilder.getQueryStringAndParameters(objects);
         Assert.assertTrue(queryStringAndParameters.getQueryString().equals(INSERT_QUERY_EXPECTED));
         List<List<Object>> parameters = (List<List<Object>>) queryStringAndParameters.getParameters();
@@ -36,23 +34,19 @@ public class InsertTest extends AbstractTest {
     }
 
     @Test
-    public void insertTest() throws SQLException, IllegalAccessException, IOException, InstantiationException {
+    public void insertTest() throws Exception {
         ModelInfo modelInfo = ModelInfoProvider.getModelInfo(RawNews.class);
         InsertQueryBuilder insertQueryBuilder = new InsertQueryBuilder(modelInfo);
-        RawNews rawNews = new RawNews();
-        rawNews.setId(2L);
-        rawNews.setNewsAgency("TOI");
-        rawNews.setUri("http://news.analytics.test.com");
-        rawNews.setRawContent("Raw HTML");
+        RawNews testObject = getTestObject();
         List<NewsEntity> objects = new ArrayList(1);
-        objects.add(rawNews);
+        objects.add(testObject);
         GenericDao genericDao = new GenericDao<RawNews>(RawNews.class);
         genericDao.insert(dataSource.getConnection(), objects);
 
         // now fetch the record and check if they are equal
-        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, rawNews.getId());
+        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, testObject.getId());
         List<RawNews> select = genericDao.select(dataSource.getConnection(), predicateClause);
-        Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(rawNews.getId()));
+        Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(testObject.getId()));
 
     }
 }
