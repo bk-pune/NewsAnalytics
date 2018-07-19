@@ -12,6 +12,6 @@
         <module>test</module>
         <module>dao</module>
         <module>model</module>
-
+        <module>crawler</module>
     </modules>
 </project>
