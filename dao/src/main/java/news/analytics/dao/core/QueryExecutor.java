@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class QueryExecutor<T> {
@@ -41,6 +42,22 @@ public class QueryExecutor<T> {
             preparedStatement.close();
         }
     }
+
+    protected void executeDelete(Connection connection, String sqlQuery, List<Object> queryParameters) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
+            throw new RuntimeException("Query needs parameters which are missing in parameters list !");
+
+        for(Object parameter : queryParameters){
+            List<Object> parameterList = new ArrayList<Object>(1);
+            parameterList.add(parameter);
+            setParametersOnPreparedStatement(preparedStatement, parameterList);
+            preparedStatement.addBatch();
+        }
+        preparedStatement.executeBatch();
+        preparedStatement.close();
+    }
+
 
     private void setParametersOnPreparedStatement(PreparedStatement preparedStatement, List<Object> vQueryParams) {
         Object obj = null;

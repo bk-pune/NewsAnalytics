@@ -55,6 +55,11 @@ public class ModelInfo<T> {
         return primaryKeyField;
     }
 
+    public String getPrimaryKeyColumnName(){
+        DBColumn dbColumn = primaryKeyField.getAnnotation(DBColumn.class);
+        return dbColumn.column();
+    }
+
     public String getMappedTable() {
         return mappedTable;
     }

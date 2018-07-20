@@ -48,5 +48,8 @@ public class InsertTest extends AbstractTest {
         List<RawNews> select = genericDao.select(dataSource.getConnection(), predicateClause);
         Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(testObject.getId()));
 
+        // delete
+        predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, testObject.getId());
+        genericDao.delete(dataSource.getConnection(), objects);
     }
 }

@@ -1,19 +1,35 @@
 package news.analytics.dao;
 
 import news.analytics.dao.connection.H2DataSource;
+import news.analytics.dao.core.GenericDao;
+import news.analytics.dao.query.InsertQueryBuilder;
 import news.analytics.dao.utils.DAOUtils;
+import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
+import news.analytics.modelinfo.ModelInfo;
+import news.analytics.modelinfo.ModelInfoProvider;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class AbstractTest {
     protected static final String SIMPLE_SELECT_QUERY_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT FROM RAW_NEWS";
+    protected static final String SIMPLE_DELETE_QUERY_EXPECTED = "DELETE FROM RAW_NEWS";
+
     protected static final String PREDICATE_SELECT_QUERY_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT FROM RAW_NEWS WHERE ID = ?";
+    protected static final String PREDICATE_DELETE_QUERY_EXPECTED = "DELETE FROM RAW_NEWS WHERE ID = ?";
+
+    protected static final String PREDICATE_DELETE_QUERY_WITH_QUOTES_EXPECTED = "DELETE FROM RAW_NEWS WHERE URI = ?";
+
     protected static final String PREDICATE_SELECT_QUERY_WITH_QUOTES_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT FROM RAW_NEWS WHERE URI = ?";
     protected static final String INSERT_TEST_DATA = "INSERT INTO RAW_NEWS (ID, URI, NEWS_AGENCY, RAW_CONTENT) VALUES (1, 'http://news.analytics.test.com', 'The Hindu', 'Raw HTML')";
     protected static final String INSERT_QUERY_EXPECTED= "INSERT INTO RAW_NEWS (ID, URI, NEWS_AGENCY, RAW_CONTENT) VALUES (?, ?, ?, ?)";
@@ -33,35 +49,34 @@ public class AbstractTest {
     public static void setup(){
         try {
             // create db if doesn't exist, create table
-            String jdbcUrl = "jdbc:h2:" + System.getProperty("user.dir");
-            dataSource = H2DataSource.getDataSource("org.h2.Driver", jdbcUrl, "admin", "dkpune");
-            Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE_TABLE);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.commit();
-
-            System.out.println("Table created");
-
-            preparedStatement = connection.prepareStatement(INSERT_TEST_DATA);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.commit();
-
-            connection.close();
+            dataSource = H2DataSource.getDataSource("org.h2.Driver", "jdbc:h2:C:\\NewsAnalytics\\newsDb", "admin", "bkpune");
+//            Connection connection = dataSource.getConnection();
+//            PreparedStatement preparedStatement = connection.prepareStatement(CREATE_TABLE);
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//            connection.commit();
+//
+//            System.out.println("Table created");
+//
+//            preparedStatement = connection.prepareStatement(INSERT_TEST_DATA);
+//            preparedStatement.executeUpdate();
+//            preparedStatement.close();
+//            connection.commit();
+//
+//            connection.close();
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    @AfterClass
-    public static void cleanUp() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(DROP_TABLE);
-        preparedStatement.executeUpdate();
-        connection.commit();
-        System.out.println("Table dropped");
-        preparedStatement.close();
-        connection.close();
-    }
+//    @AfterClass
+//    public static void cleanUp() throws SQLException {
+//        Connection connection = dataSource.getConnection();
+//        PreparedStatement preparedStatement = connection.prepareStatement(DROP_TABLE);
+//        preparedStatement.executeUpdate();
+//        connection.commit();
+//        System.out.println("Table dropped");
+//        preparedStatement.close();
+//        connection.close();
+//    }
 }

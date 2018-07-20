@@ -1,4 +1,4 @@
-package news.analytics.crawler;
+package news.analytics.crawler.utils;
 
 public class CrawlerUtils {
 

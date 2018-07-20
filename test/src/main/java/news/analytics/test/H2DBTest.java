@@ -12,24 +12,26 @@ public class H2DBTest {
         String insertQuery = "INSERT INTO RAW_NEWS (ID, URI, NEWS_AGENCY, RAW_CONTENT) VALUES (1, 'http://news.analytics.test.com', 'The Hindu', 'Raw HTML')";
         String selectQuery = "SELECT * FROM RAW_NEWS";
         Class.forName("org.h2.Driver");
-        String jdbcUrl = "jdbc:h2:" + System.getProperty("user.dir");
-        Connection conn = DriverManager.getConnection(jdbcUrl, "admin", "dkpune");
+        String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDb";
+        Connection connection = DriverManager.getConnection(jdbcUrl, "admin", "bkpune");
         try{
-            PreparedStatement preparedStatement = conn.prepareStatement(insertQuery);
-            int i = preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
+            preparedStatement.executeUpdate();
             preparedStatement.close();
+            connection.commit();
 
-            preparedStatement = conn.prepareStatement(selectQuery);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-                System.out.println(resultSet.getInt(1) + "\t" + resultSet.getString(2)+ "\t" + resultSet.getString(3)+ "\t" + resultSet.getString(4));
-            }
-            resultSet.close();
+            System.out.println("Table created");
+
+            preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.executeUpdate();
             preparedStatement.close();
+            connection.commit();
+
+            connection.close();
         } catch (Exception e){
             System.out.println(e);
         } finally {
-            conn.close();
+            connection.close();
         }
     }
 }

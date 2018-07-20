@@ -47,12 +47,22 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
         return objects;
     }
 
-    public List<T> update(Connection connection, List<T> entityList) {
+    public List<T> update(Connection connection, List<T> objects) {
         return new ArrayList<T>();
     }
 
-    public List<T> delete(Connection connection, List<T> entityList) {
-        return new ArrayList<T>();
+    public List<T> delete(Connection connection, List<T> objects) throws SQLException {
+        try {
+            QueryAndParameters queryStringAndParameters = deleteQueryBuilder.getQueryStringAndParameters(objects);
+            String sqlQuery = "";
+            sqlQuery = queryStringAndParameters.getQueryString();
+            List<Object> parameters = (List<Object>) queryStringAndParameters.getParameters();
+            executeDelete(connection, sqlQuery, parameters);
+            connection.commit();
+            return objects;
+        } finally {
+            connection.close();
+        }
     }
 
     public List<T> select(Connection connection, PredicateClause predicateClause) throws SQLException, IllegalAccessException, IOException, InstantiationException {
