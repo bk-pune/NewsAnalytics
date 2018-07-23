@@ -5,10 +5,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class DAOUtils {
     private static final JsonFactory jsonFactory = new JsonFactory();
@@ -86,5 +89,35 @@ public class DAOUtils {
 
     public JsonFactory getJsonFactory() {
         return jsonFactory;
+    }
+
+    public static String javaToJSON(Object o) throws Exception {
+        String jsonReply = null;
+        if (o != null) {
+            ObjectWriter ow = new ObjectMapper().writer();
+            try {
+                jsonReply = ow.writeValueAsString(o);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        return jsonReply;
+    }
+
+    public static <T> List<T> asList(T... object) {
+        if (object != null) {
+            List<T> list = new ArrayList<T>(object.length);
+            addInCollection(list, object);
+            return list;
+        }
+        return null;
+    }
+
+    public static <T> void addInCollection(Collection<T> collection, T[] objects) {
+        if (objects != null && collection != null) {
+            for (T data : objects) {
+                collection.add(data);
+            }
+        }
     }
 }

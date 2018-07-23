@@ -13,5 +13,6 @@
         <module>dao</module>
         <module>model</module>
         <module>crawler</module>
+        <module>pipeline</module>
     </modules>
 </project>
