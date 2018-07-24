@@ -36,7 +36,7 @@ public class SelectTest extends AbstractTest {
         queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_SELECT_QUERY_WITH_QUOTES_EXPECTED));
         objects = (List<Object>) queryAndParameters.getParameters();
-        Assert.assertTrue(objects.get(0).equals("'http://news.analytics.test.com'")); // with quotes here
+        Assert.assertTrue(objects.get(0).equals("http://news.analytics.test.com")); // with quotes here
     }
 
     @Test

@@ -1,7 +1,5 @@
 package news.analytics.parser.config;
 
-import news.analytics.model.constants.NewsAgency;
-
 import java.util.List;
 
 /**
@@ -10,18 +8,7 @@ import java.util.List;
  */
 public class NewsMetaConfig {
 
-    public NewsMetaConfig(NewsAgency agency) {
-        initialize(agency);
-    }
-
-    private void initialize(NewsAgency agency) {
-        switch (agency){
-            case THE_HINDU:
-                break;
-
-            case ECONOMIC_TIMES:
-                break;
-        }
+    public NewsMetaConfig() {
     }
 
     /**
@@ -115,6 +102,14 @@ public class NewsMetaConfig {
 
     public void setH1(List<Tag> h1) {
         this.h1 = h1;
+    }
+
+    public List<Tag> getH2() {
+        return h2;
+    }
+
+    public void setH2(List<Tag> h2) {
+        this.h2 = h2;
     }
 
     public List<Tag> getTags() {

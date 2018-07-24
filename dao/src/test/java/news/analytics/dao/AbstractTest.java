@@ -1,25 +1,9 @@
 package news.analytics.dao;
 
 import news.analytics.dao.connection.H2DataSource;
-import news.analytics.dao.core.GenericDao;
-import news.analytics.dao.query.InsertQueryBuilder;
 import news.analytics.dao.utils.DAOUtils;
-import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
-import news.analytics.modelinfo.ModelInfo;
-import news.analytics.modelinfo.ModelInfoProvider;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 public class AbstractTest {
     protected static final String SIMPLE_SELECT_QUERY_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT FROM RAW_NEWS";
@@ -41,7 +25,7 @@ public class AbstractTest {
 
     protected RawNews getTestObject() throws Exception {
         String jsonString = "{\"id\":2,\"uri\":\"http://news.analytics.test.com\",\"newsAgency\":\"TOI\",\"rawContent\":\"Raw HTML\"}";
-        RawNews rawNews = (RawNews) new DAOUtils().fromJson(jsonString, RawNews.class);
+        RawNews rawNews = (RawNews) DAOUtils.fromJson(jsonString, RawNews.class);
         return rawNews;
     }
 

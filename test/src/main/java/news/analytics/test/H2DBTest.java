@@ -1,35 +1,37 @@
 package news.analytics.test;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class H2DBTest {
     public static void main(String[] a) throws Exception {
-
-        String createTableQuery = "CREATE TABLE \"RAW_NEWS\" (\"ID\" INT PRIMARY KEY,\"URI\" VARCHAR2(500 CHAR) NOT NULL, \"NEWS_AGENCY\" VARCHAR2(250 CHAR), \"RAW_CONTENT\" CLOB)";
-        String insertQuery = "INSERT INTO RAW_NEWS (ID, URI, NEWS_AGENCY, RAW_CONTENT) VALUES (1, 'http://news.analytics.test.com', 'The Hindu', 'Raw HTML')";
-        String selectQuery = "SELECT * FROM RAW_NEWS";
         Class.forName("org.h2.Driver");
         String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDb";
         Connection connection = DriverManager.getConnection(jdbcUrl, "admin", "bkpune");
+
+        String fileName = "MetadataScript.sql";
+        if(a != null && a.length == 1){
+            fileName = a[0];
+        }
+        InputStream inputStream = H2DBTest.class.getClassLoader().getResourceAsStream(fileName);
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        PreparedStatement preparedStatement = null;
+        String sql = "";
         try{
-            PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.commit();
-
-            System.out.println("Table created");
-
-            preparedStatement = connection.prepareStatement(insertQuery);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            connection.commit();
-
-            connection.close();
+            while((sql = br.readLine()) != null){
+                System.out.println("Executing query : "+sql);
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+                connection.commit();
+            }
+            br.close();
         } catch (Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         } finally {
             connection.close();
         }

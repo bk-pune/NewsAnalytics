@@ -21,7 +21,7 @@ public class DAOUtils {
      * @return
      * @throws Exception
      */
-    public Object fromJson(String jsonString, Class entityClass) throws Exception {
+    public static Object fromJson(String jsonString, Class entityClass) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Object ret = null;
         JsonParser jsonParser = jsonFactory.createParser(jsonString);

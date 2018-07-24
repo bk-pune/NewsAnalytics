@@ -9,4 +9,8 @@ public enum NewsAgency {
     NewsAgency(String s) {
         this.newsAgency = s;
     }
+
+    public String getNewsAgency() {
+        return newsAgency;
+    }
 }

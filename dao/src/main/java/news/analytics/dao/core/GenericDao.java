@@ -20,7 +20,7 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     private DeleteQueryBuilder deleteQueryBuilder;
     private InsertQueryBuilder insertQueryBuilder;
 
-    public GenericDao(Class clazz) {
+    public GenericDao(Class<T> clazz) {
         modelInfo = ModelInfoProvider.getModelInfo(clazz);
         selectQueryBuilder = new SelectQueryBuilder(modelInfo);
         updateQueryBuilder = new UpdateQueryBuilder(modelInfo);

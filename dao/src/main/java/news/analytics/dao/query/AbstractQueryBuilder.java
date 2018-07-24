@@ -32,11 +32,7 @@ public abstract class AbstractQueryBuilder<T> {
         sb.append(QUESTION_MARK);
 
         Object value = predicateClause.getValue();
-        if(value instanceof String){
-            parameters.add("'" + value +"'");
-        } else {
             parameters.add(value);
-        }
 
         // TODO recursion for next predicate clause
         PredicateClause nextPredicateClause = predicateClause.getNextPredicateClause();

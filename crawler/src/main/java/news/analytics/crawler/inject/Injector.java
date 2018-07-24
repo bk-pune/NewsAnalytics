@@ -3,15 +3,16 @@ package news.analytics.crawler.inject;
 import news.analytics.crawler.constants.FetchStatus;
 import news.analytics.crawler.utils.CrawlerUtils;
 import news.analytics.dao.connection.DataSource;
-import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.Seed;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Injects the given URLs as Seeds in the database.
@@ -39,6 +40,7 @@ public class Injector {
 
             // generic dao.insert
             genericDao.insert(dataSource.getConnection(), seeds);
+            injectedCount = seeds.size();
         } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
