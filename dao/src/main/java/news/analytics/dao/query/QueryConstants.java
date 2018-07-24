@@ -15,4 +15,5 @@ public class QueryConstants {
     public static final String COMMA = ",";
     public static final String QUESTION_MARK = "?";
     public static final String EQUALS = "=";
+    public static final String LIMIT = "LIMIT";
 }

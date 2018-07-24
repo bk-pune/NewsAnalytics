@@ -34,10 +34,20 @@ public abstract class AbstractQueryBuilder<T> {
         Object value = predicateClause.getValue();
             parameters.add(value);
 
-        // TODO recursion for next predicate clause
+        /*// TODO recursion for next predicate clause
         PredicateClause nextPredicateClause = predicateClause.getNextPredicateClause();
-        if(nextPredicateClause != null){
+        if(nextPredicateClause != null) {
             sb.append(SPACE).append(predicateClause.getPredicateJoinOperator());
+        }*/
+
+        if(predicateClause.getLimitClause() != null){
+            sb.append(SPACE).append(predicateClause.getLimitClause());
+        }
+        if(predicateClause.getOrderByClause() != null){
+            sb.append(SPACE).append(predicateClause.getOrderByClause());
+        }
+        if(predicateClause.getGroupByClause() != null){
+            sb.append(SPACE).append(predicateClause.getGroupByClause()).append(SPACE);
         }
         queryAndParameters.put(sb.toString(), parameters);
         return queryAndParameters;

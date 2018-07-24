@@ -40,6 +40,7 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     }
 
     public List<T> update(Connection connection, List<T> objects) {
+        // TODO
         return new ArrayList<T>();
     }
 

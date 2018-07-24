@@ -1,5 +1,6 @@
 package news.analytics.crawler.main;
 
+import news.analytics.crawler.fetch.Fetcher;
 import news.analytics.crawler.inject.Injector;
 import news.analytics.crawler.stats.StatsProvider;
 import news.analytics.dao.connection.DataSource;
@@ -16,22 +17,27 @@ import java.util.Scanner;
 
 import static news.analytics.crawler.constants.CrawlerConstants.EXIT;
 import static news.analytics.crawler.constants.CrawlerConstants.menuString;
+import static news.analytics.dao.query.QueryConstants.LIMIT;
+import static news.analytics.dao.query.QueryConstants.SPACE;
 
 public class Crawler {
 
     private final DataSource dataSource;
     private Injector injector;
     private StatsProvider statsProvider;
+    private Fetcher fetcher;
+    private Properties properties;
 
-    private Crawler(String driverClass, String jdbcUrl, String userName, String password) {
-        dataSource = H2DataSource.getDataSource(driverClass, jdbcUrl, userName, password);
+    private Crawler(String propertiesFilePath) throws IOException {
+        properties = loadProperties(propertiesFilePath); // will be loaded from classpath
+        dataSource = H2DataSource.getDataSource(properties.getProperty("driverClass"), properties.getProperty("dbUrl"), properties.getProperty("dbUser"), properties.getProperty("dbPassword"));
         injector = new Injector(dataSource);
         statsProvider = new StatsProvider(dataSource);
+        fetcher = new Fetcher(dataSource);
     }
 
     public static void main(String[] args) throws IOException {
-        Properties properties = loadProperties("config.properties"); // will be loaded from classpath
-        Crawler crawler = new Crawler(properties.getProperty("driverClass"), properties.getProperty("dbUrl"), properties.getProperty("dbUser"), properties.getProperty("dbPassword"));
+        Crawler crawler = new Crawler("config.properties");
         System.out.println("Crawler initialized successfully.");
         String input = "";
         Scanner sc = new Scanner(System.in);
@@ -44,12 +50,13 @@ public class Crawler {
                     input = sc.nextLine();
                     crawler.startInjector(input);
                 } else if(input.equalsIgnoreCase("2")) { // fetch
-                    crawler.startFetcher();
+                    System.out.println("Please enter fetch predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
+                    String predicateString = sc.nextLine();
+                    crawler.startFetcher(predicateString);
                 } else if(input.equalsIgnoreCase("3")) { // show stats
                     System.out.println("Enter predicate, leave empty for all results: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
                     crawler.showStats(predicateString);
-
                 } else if(input.equalsIgnoreCase("0")) {
                     System.out.println("Good bye !");
                     break;
@@ -59,23 +66,33 @@ public class Crawler {
                 continue;
             }
         }
-
     }
 
-    private void showStats(String predicateString) throws SQLException, IOException, InstantiationException, IllegalAccessException {
+    private void showStats(String predicateString) throws Exception {
         String stats;
         if(predicateString == null || predicateString.trim().length() == 0){
             stats = statsProvider.getStats(null);
         } else {
-            String[] split = predicateString.split("="); // FETCH_STATUS = UNFETCHED => [0]-> FETCH_STATUS [1] -> UNFETCHED
-            PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.EQUAL, split[1].trim());
+            PredicateClause predicateClause = getPredicateFromString(predicateString);
             stats = statsProvider.getStats(predicateClause);
         }
         System.out.println(stats);
     }
 
-    private void startFetcher() {
-        // TODO
+    private PredicateClause getPredicateFromString(String predicateString) throws Exception {
+        // FETCH_STATUS = UNFETCHED
+        // [0]-> FETCH_STATUS
+        // [1] -> '='
+        // a[2] -> UNFETCHED
+        String[] split = predicateString.split(" ");
+        PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.getPredicateOperatorForString(split[1].trim()), split[2].trim());
+        return predicateClause;
+    }
+
+    private void startFetcher(String predicateString) throws Exception {
+        PredicateClause predicateClause = getPredicateFromString(predicateString);
+        predicateClause.setLimitClause(LIMIT + SPACE + properties.getProperty("limit"));
+        fetcher.start(predicateClause, Integer.parseInt(properties.getProperty("fetcherThreads")));
     }
 
     // TODO make it threaded so that injector and fetcher can run in parallel

@@ -27,5 +27,41 @@ public enum PredicateOperator {
     public String getOperatorString() {
         return this.operator;
     }
+
+    public static PredicateOperator getPredicateOperatorForString(String predicateOperator) throws IllegalArgumentException {
+        switch (predicateOperator) {
+            case "=" :
+                return EQUAL;
+            case ">=" :
+                return GREATER_THAN_EQUAL_TO;
+            case "<=" :
+                return LESS_THAN_EQUAL_TO;
+            case "!=" :
+                return NOT_EQUAL;
+            case ">":
+                return GREATER_THAN;
+            case "<":
+                return LESS_THAN;
+            case "IN" :
+                return IN;
+            case "NOT IN" :
+                return NOT_IN;
+            case "NOT BETWEEN" :
+                return NOT_BETWEEN;
+            case "BETWEEN" :
+                return BETWEEN;
+            case "LIKE" :
+                return LIKE;
+            case "IS NOT NULL" :
+                return IS_NOT_NULL;
+            case "IS NULL":
+                return IS_NULL;
+            default:
+                throw new IllegalArgumentException("No such operator supported.");
+
+        }
+
+
+    }
 }
 

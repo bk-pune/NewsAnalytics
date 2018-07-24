@@ -8,6 +8,11 @@ public class PredicateClause {
     private PredicateOperator operator;
     private Object value;
 
+    private String limitClause;
+    private String orderByClause;
+    private String groupByClause;
+
+
     private PredicateJoinOperator predicateJoinOperator;
     private PredicateClause nextPredicateClause;
 
@@ -47,5 +52,29 @@ public class PredicateClause {
 
     public PredicateClause getNextPredicateClause() {
         return nextPredicateClause;
+    }
+
+    public String getLimitClause() {
+        return limitClause;
+    }
+
+    public void setLimitClause(String limitClause) {
+        this.limitClause = limitClause;
+    }
+
+    public String getOrderByClause() {
+        return orderByClause;
+    }
+
+    public void setOrderByClause(String orderByClause) {
+        this.orderByClause = orderByClause;
+    }
+
+    public String getGroupByClause() {
+        return groupByClause;
+    }
+
+    public void setGroupByClause(String groupByClause) {
+        this.groupByClause = groupByClause;
     }
 }
