@@ -12,13 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Pick ups the Seeds having status = unfetched from crawlDB and gets the content.
+ * Pick up the Seeds having status = unfetched from crawlDB and gets the content.
  */
 public class Fetcher {
     private GenericDao<Seed> seedDao;
     private GenericDao<RawNews> rawNewsDao;
     private DataSource dataSource;
-    Thread fetcherThread;
 
     public Fetcher(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -28,11 +27,21 @@ public class Fetcher {
 
     public void start(PredicateClause predicateClause, int threadLimit) throws SQLException, IllegalAccessException, IOException, InstantiationException {
         List<Seed> select = seedDao.select(dataSource.getConnection(), predicateClause);
-        List<List<Seed>> partition = Lists.partition(select, threadLimit);
-        // create threads, assign each partition to each thread
-        for(int i=0; i<threadLimit; i++){
-
+        if(select.isEmpty()){
+            return;
         }
 
+        int eachPartitionSize = select.size();
+        if(select.size() > threadLimit){
+          eachPartitionSize  = select.size()/threadLimit;
+        }
+
+        List<List<Seed>> partitions = Lists.partition(select, eachPartitionSize);
+
+        // create threads, assign each partition to each thread
+        for(int i=0; i<partitions.size(); i++){
+            FetchWorker worker = new FetchWorker(dataSource, seedDao, rawNewsDao, partitions.get(i));
+            worker.start();
+        }
     }
 }

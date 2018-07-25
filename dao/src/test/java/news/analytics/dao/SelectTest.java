@@ -26,13 +26,13 @@ public class SelectTest extends AbstractTest {
 
         Assert.assertTrue(queryAndParameters.getQueryString().equals(SIMPLE_SELECT_QUERY_EXPECTED));
 
-        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, 1L);
+        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, 1L);
         queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_SELECT_QUERY_EXPECTED));
         List<Object> objects = (List<Object>) queryAndParameters.getParameters();
         Assert.assertTrue(objects.get(0).equals(1L));
 
-        predicateClause = new PredicateClause("URI", PredicateOperator.EQUAL, "http://news.analytics.test.com");
+        predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://news.analytics.test.com");
         queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_SELECT_QUERY_WITH_QUOTES_EXPECTED));
         objects = (List<Object>) queryAndParameters.getParameters();
@@ -49,7 +49,7 @@ public class SelectTest extends AbstractTest {
         Assert.assertTrue(queryString.equals(SIMPLE_SELECT_QUERY_EXPECTED));
 
         GenericDao genericDao = new GenericDao<RawNews>(RawNews.class);
-        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, 1L);
+        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, 1L);
 
         List<RawNews> select = genericDao.select(dataSource.getConnection(), predicateClause);
         Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(1L));

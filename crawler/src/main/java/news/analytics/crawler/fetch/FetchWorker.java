@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,8 +25,8 @@ public class FetchWorker extends Thread {
 
     public FetchWorker(DataSource dataSource, GenericDao seedDao, GenericDao rawNewsDao, List<Seed> seedList) {
         this.dataSource = dataSource;
-        seedDao = seedDao;
-        rawNewsDao = rawNewsDao;
+        this.seedDao = seedDao;
+        this.rawNewsDao = rawNewsDao;
         this.seedList = seedList;
     }
 
@@ -35,14 +36,17 @@ public class FetchWorker extends Thread {
         for(Seed seed : seedList) {
             String rawHtml = null;
             try {
+                Connection connection = dataSource.getConnection();
+                // fetch
                 rawHtml = fetch(seed); // seed gets updated with fetch status
 
                 // insert RawNews only if fetched
                 if(seed.getFetchStatus().equals(FetchStatus.FETCHED)) {
-                    insert(seed, rawHtml);
+                    insert(seed, rawHtml, connection);
                 }
 
-                update(seed);
+                update(connection, seed);
+                connection.commit();
             } catch (IOException e) {
                 e.printStackTrace();
                 // TODO failed url handling
@@ -61,13 +65,13 @@ public class FetchWorker extends Thread {
         int responseCode = connection.getResponseCode();
 
         String fetchStatus = FetchStatus.UNFETCHED;
-        if(responseCode > 400 && responseCode < 500) {
+        if(responseCode >= 400 && responseCode < 500) {
             fetchStatus = FetchStatus.CLIENT_ERROR;
-        } else if(responseCode > 300 && responseCode < 400) {
+        } else if(responseCode >= 300 && responseCode < 400) {
             fetchStatus = FetchStatus.REDIRECT;
         } else if(responseCode > 500) {
             fetchStatus = FetchStatus.SERVER_ERROR;
-        } else if(responseCode > 200 && responseCode < 300) { // usually 200 ok
+        } else if(responseCode >= 200 && responseCode < 300) { // usually 200 ok
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
@@ -82,15 +86,15 @@ public class FetchWorker extends Thread {
         return sb.toString();
     }
 
-    private boolean update(Seed seed) throws SQLException {
-        List<Seed> update = seedDao.update(dataSource.getConnection(), Lists.newArrayList(seed));
+    private boolean update(Connection connection, Seed seed) throws SQLException {
+        seedDao.update(connection, Lists.newArrayList(seed));
         return true;
     }
 
-    private boolean insert(Seed seed, String rawHtml) throws SQLException {
+    private boolean insert(Seed seed, String rawHtml, Connection connection) throws SQLException {
         String uri = seed.getUri();
         RawNews rawNews = getRawNews(rawHtml, uri);
-        List<RawNews> insert = rawNewsDao.insert(dataSource.getConnection(), Lists.newArrayList(rawNews));
+        rawNewsDao.insert(connection, Lists.newArrayList(rawNews));
         return true;
     }
 

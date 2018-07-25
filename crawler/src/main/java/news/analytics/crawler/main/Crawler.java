@@ -54,7 +54,7 @@ public class Crawler {
                     String predicateString = sc.nextLine();
                     crawler.startFetcher(predicateString);
                 } else if(input.equalsIgnoreCase("3")) { // show stats
-                    System.out.println("Enter predicate, leave empty for all results: "); // FETCH_STATUS = UNFETCHED
+                    System.out.println("Enter predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
                     crawler.showStats(predicateString);
                 } else if(input.equalsIgnoreCase("0")) {
@@ -70,12 +70,12 @@ public class Crawler {
 
     private void showStats(String predicateString) throws Exception {
         String stats;
-        if(predicateString == null || predicateString.trim().length() == 0){
-            stats = statsProvider.getStats(null);
-        } else {
-            PredicateClause predicateClause = getPredicateFromString(predicateString);
-            stats = statsProvider.getStats(predicateClause);
+        if(predicateString == null || predicateString.trim().length() == 0) {
+            predicateString = "FETCH_STATUS = UNFETCHED";
         }
+
+        PredicateClause predicateClause = getPredicateFromString(predicateString);
+        stats = statsProvider.getStats(predicateClause);
         System.out.println(stats);
     }
 
@@ -84,6 +84,9 @@ public class Crawler {
         // [0]-> FETCH_STATUS
         // [1] -> '='
         // a[2] -> UNFETCHED
+        if(predicateString == null || predicateString.equals("")){
+            predicateString = "FETCH_STATUS = UNFETCHED";
+        }
         String[] split = predicateString.split(" ");
         PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.getPredicateOperatorForString(split[1].trim()), split[2].trim());
         return predicateClause;

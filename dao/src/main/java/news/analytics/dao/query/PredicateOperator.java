@@ -3,7 +3,7 @@ package news.analytics.dao.query;
 public enum PredicateOperator {
     IS_NULL("IS NULL"),
     IS_NOT_NULL("IS NOT NULL"),
-    EQUAL("="),
+    EQUALS("="),
     EQUALS_IGNORE_CASE("="),
     NOT_EQUAL("!="),
     LIKE("LIKE"),
@@ -31,7 +31,7 @@ public enum PredicateOperator {
     public static PredicateOperator getPredicateOperatorForString(String predicateOperator) throws IllegalArgumentException {
         switch (predicateOperator) {
             case "=" :
-                return EQUAL;
+                return EQUALS;
             case ">=" :
                 return GREATER_THAN_EQUAL_TO;
             case "<=" :

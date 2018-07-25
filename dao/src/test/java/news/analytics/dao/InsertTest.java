@@ -5,7 +5,6 @@ import news.analytics.dao.query.InsertQueryBuilder;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 import news.analytics.dao.query.QueryAndParameters;
-import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
 import news.analytics.modelinfo.ModelInfo;
@@ -13,8 +12,7 @@ import news.analytics.modelinfo.ModelInfoProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +38,20 @@ public class InsertTest extends AbstractTest {
         RawNews testObject = getTestObject();
         List<NewsEntity> objects = new ArrayList(1);
         objects.add(testObject);
+
         GenericDao genericDao = new GenericDao<RawNews>(RawNews.class);
-        genericDao.insert(dataSource.getConnection(), objects);
+        Connection connection = dataSource.getConnection();
+        genericDao.insert(connection, objects);
+        connection.commit();
 
         // now fetch the record and check if they are equal
-        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, testObject.getId());
-        List<RawNews> select = genericDao.select(dataSource.getConnection(), predicateClause);
+        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, testObject.getId());
+        List<RawNews> select = genericDao.select(connection, predicateClause);
         Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(testObject.getId()));
 
         // delete
-        predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, testObject.getId());
-        genericDao.delete(dataSource.getConnection(), objects);
+        genericDao.delete(connection, objects);
+        connection.commit();
+        connection.close();
     }
 }

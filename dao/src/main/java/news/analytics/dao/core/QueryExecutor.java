@@ -32,8 +32,7 @@ public class QueryExecutor<T> {
         if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
             throw new RuntimeException("Query needs parameters which are missing in parameters list !");
 
-        if (queryParameters != null && queryParameters.size() > 0 &&
-                queryParameters.get(0) != null) {
+        if (queryParameters != null && queryParameters.size() > 0 && queryParameters.get(0) != null) {
             for(List row : queryParameters){
                 setParametersOnPreparedStatement(preparedStatement, row);
                 preparedStatement.addBatch();
@@ -42,6 +41,22 @@ public class QueryExecutor<T> {
             preparedStatement.close();
         }
     }
+
+    protected void executeUpdate(Connection connection, String sqlQuery, List<List<Object>> queryParameters) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
+            throw new RuntimeException("Query needs parameters which are missing in parameters list !");
+
+        if (queryParameters != null && queryParameters.size() > 0 && queryParameters.get(0) != null) {
+            for(List row : queryParameters){
+                setParametersOnPreparedStatement(preparedStatement, row);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+            preparedStatement.close();
+        }
+    }
+
 
     protected void executeDelete(Connection connection, String sqlQuery, List<Object> queryParameters) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);

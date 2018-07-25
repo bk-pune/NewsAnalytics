@@ -29,48 +29,35 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     }
 
     public List<T> insert(Connection connection, List<T> objects) throws SQLException {
-        try {
-            QueryAndParameters queryStringAndParameters = insertQueryBuilder.getQueryStringAndParameters(objects);
-            executeInsert(connection, queryStringAndParameters.getQueryString(), (List<List<Object>>) queryStringAndParameters.getParameters());
-            connection.commit();
-        } finally {
-            connection.close();
-        }
+        QueryAndParameters queryStringAndParameters = insertQueryBuilder.getQueryStringAndParameters(objects);
+        executeInsert(connection, queryStringAndParameters.getQueryString(), (List<List<Object>>) queryStringAndParameters.getParameters());
         return objects;
     }
 
-    public List<T> update(Connection connection, List<T> objects) {
-        // TODO
-        return new ArrayList<T>();
+    public List<T> update(Connection connection, List<T> objects) throws SQLException {
+        QueryAndParameters queryStringAndParameters = updateQueryBuilder.getQueryStringAndParameters(objects);
+        executeUpdate(connection, queryStringAndParameters.getQueryString(), (List<List<Object>>) queryStringAndParameters.getParameters());
+        return objects;
     }
 
     public List<T> delete(Connection connection, List<T> objects) throws SQLException {
-        try {
-            QueryAndParameters queryStringAndParameters = deleteQueryBuilder.getQueryStringAndParameters(objects);
-            String sqlQuery = "";
-            sqlQuery = queryStringAndParameters.getQueryString();
-            List<Object> parameters = (List<Object>) queryStringAndParameters.getParameters();
-            executeDelete(connection, sqlQuery, parameters);
-            connection.commit();
-            return objects;
-        } finally {
-            connection.close();
-        }
+        QueryAndParameters queryStringAndParameters = deleteQueryBuilder.getQueryStringAndParameters(objects);
+        String sqlQuery = "";
+        sqlQuery = queryStringAndParameters.getQueryString();
+        List<Object> parameters = (List<Object>) queryStringAndParameters.getParameters();
+        executeDelete(connection, sqlQuery, parameters);
+        return objects;
     }
 
     public List<T> select(Connection connection, PredicateClause predicateClause) throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        try {
-            QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
-            String sqlQuery = "";
-            List<Object> parameters = null;
-            sqlQuery = queryStringAndParameters.getQueryString();
-            parameters = (List<Object>) queryStringAndParameters.getParameters();
-            ResultSet resultSet = executeSelect(connection, sqlQuery, parameters);
-            List<T> objects = fromResultSetToObjects(resultSet);
-            return objects;
-        } finally {
-            connection.close();
-        }
+        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
+        String sqlQuery = "";
+        List<Object> parameters = null;
+        sqlQuery = queryStringAndParameters.getQueryString();
+        parameters = (List<Object>) queryStringAndParameters.getParameters();
+        ResultSet resultSet = executeSelect(connection, sqlQuery, parameters);
+        List<T> objects = fromResultSetToObjects(resultSet);
+        return objects;
     }
 
     private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException, IOException, IllegalAccessException, InstantiationException {

@@ -6,6 +6,7 @@ import news.analytics.dao.query.PredicateClause;
 import news.analytics.model.Seed;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -22,14 +23,17 @@ public class StatsProvider {
         this.dataSource = dataSource;
     }
     public String getStats(PredicateClause predicateClause) throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        List select = genericDao.select(dataSource.getConnection(), predicateClause);
+        Connection connection = dataSource.getConnection();
+        List select = genericDao.select(connection, predicateClause);
+        connection.close();
+
         StringBuilder sb = new StringBuilder();
         sb.append("\n");
         if (predicateClause != null) {
             sb.append(predicateClause.getColumnName()).append(" ").append(predicateClause.getOperator()).append(" ").append(predicateClause.getValue());
             sb.append("\t=>");
         }
-        sb.append(select.size());
+        sb.append(select.size() + "\n" + "\n");
         return sb.toString();
     }
 }

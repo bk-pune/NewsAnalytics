@@ -1,7 +1,9 @@
 package news.analytics.dao;
 
 import news.analytics.dao.core.GenericDao;
-import news.analytics.dao.query.*;
+import news.analytics.dao.query.DeleteQueryBuilder;
+import news.analytics.dao.query.InsertQueryBuilder;
+import news.analytics.dao.query.QueryAndParameters;
 import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
 import news.analytics.modelinfo.ModelInfo;
@@ -9,8 +11,7 @@ import news.analytics.modelinfo.ModelInfoProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,7 @@ public class DeleteTest extends AbstractTest {
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_DELETE_QUERY_EXPECTED));
         List<Object> parameters = (List<Object>) queryAndParameters.getParameters();
         Assert.assertTrue(parameters.get(0).equals(2L));
-
     }
-
 
     @Test
     public void deleteTest() throws Exception {
@@ -38,11 +37,12 @@ public class DeleteTest extends AbstractTest {
         RawNews testObject = getTestObject();
         List<NewsEntity> objects = new ArrayList(1);
         objects.add(testObject);
+        Connection connection = dataSource.getConnection();
         GenericDao genericDao = new GenericDao<RawNews>(RawNews.class);
-        genericDao.insert(dataSource.getConnection(), objects);
-
+        genericDao.insert(connection, objects);
+        connection.commit();
         // delete
-        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUAL, testObject.getId());
-        genericDao.delete(dataSource.getConnection(), objects);
+        genericDao.delete(connection, objects);
+        connection.commit();
     }
 }

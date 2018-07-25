@@ -1,5 +1,6 @@
 package news.analytics.crawler.inject;
 
+import com.google.common.collect.Lists;
 import news.analytics.crawler.constants.FetchStatus;
 import news.analytics.crawler.utils.CrawlerUtils;
 import news.analytics.dao.connection.DataSource;
@@ -10,9 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Injects the given URLs as Seeds in the database.
@@ -28,23 +28,27 @@ public class Injector {
 
     public int inject(String fileName) throws IOException, SQLException {
         int injectedCount = 0;
+        int rejetedCount = 0;
+        Connection connection = dataSource.getConnection();
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String nextLine;
-            List<Seed> seeds = new LinkedList<Seed>();
             while ((nextLine = br.readLine()) != null){
-                Seed freshSeed = getFreshSeed(nextLine);
-                seeds.add(freshSeed);
+                try {
+                    genericDao.insert(connection, Lists.newArrayList(getFreshSeed(nextLine)));
+                    connection.commit();
+                    injectedCount++;
+                } catch (Exception e){
+                    rejetedCount++;
+                }
             }
             br.close();
-
-            // generic dao.insert
-            genericDao.insert(dataSource.getConnection(), seeds);
-            injectedCount = seeds.size();
         } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
             throw e;
+        } finally {
+            connection.close();
         }
         return injectedCount;
     }
