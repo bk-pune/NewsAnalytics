@@ -6,7 +6,7 @@ import news.analytics.crawler.stats.StatsProvider;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.query.PredicateClause;
-import news.analytics.dao.query.PredicateOperator;
+import news.analytics.dao.utils.DAOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,6 +52,7 @@ public class Crawler {
                 } else if(input.equalsIgnoreCase("2")) { // fetch
                     System.out.println("Please enter fetch predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
+                    System.setProperty("http.agent", crawler.properties.getProperty("crawlerName"));
                     crawler.startFetcher(predicateString);
                 } else if(input.equalsIgnoreCase("3")) { // show stats
                     System.out.println("Enter predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
@@ -74,26 +75,13 @@ public class Crawler {
             predicateString = "FETCH_STATUS = UNFETCHED";
         }
 
-        PredicateClause predicateClause = getPredicateFromString(predicateString);
+        PredicateClause predicateClause = DAOUtils.getPredicateFromString(predicateString);
         stats = statsProvider.getStats(predicateClause);
         System.out.println(stats);
     }
 
-    private PredicateClause getPredicateFromString(String predicateString) throws Exception {
-        // FETCH_STATUS = UNFETCHED
-        // [0]-> FETCH_STATUS
-        // [1] -> '='
-        // a[2] -> UNFETCHED
-        if(predicateString == null || predicateString.equals("")){
-            predicateString = "FETCH_STATUS = UNFETCHED";
-        }
-        String[] split = predicateString.split(" ");
-        PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.getPredicateOperatorForString(split[1].trim()), split[2].trim());
-        return predicateClause;
-    }
-
     private void startFetcher(String predicateString) throws Exception {
-        PredicateClause predicateClause = getPredicateFromString(predicateString);
+        PredicateClause predicateClause = DAOUtils.getPredicateFromString(predicateString);
         predicateClause.setLimitClause(LIMIT + SPACE + properties.getProperty("limit"));
         fetcher.start(predicateClause, Integer.parseInt(properties.getProperty("fetcherThreads")));
     }

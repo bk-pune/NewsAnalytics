@@ -8,6 +8,7 @@ import news.analytics.model.RawNews;
 import news.analytics.model.Seed;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -26,20 +27,23 @@ public class Fetcher {
     }
 
     public void start(PredicateClause predicateClause, int threadLimit) throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        List<Seed> select = seedDao.select(dataSource.getConnection(), predicateClause);
-        if(select.isEmpty()){
+        Connection connection = dataSource.getConnection();
+        List<Seed> select = seedDao.select(connection, predicateClause);
+        connection.close();
+
+        if (select.isEmpty()) {
             return;
         }
 
         int eachPartitionSize = select.size();
-        if(select.size() > threadLimit){
-          eachPartitionSize  = select.size()/threadLimit;
+        if (select.size() > threadLimit) {
+            eachPartitionSize = select.size() / threadLimit;
         }
 
         List<List<Seed>> partitions = Lists.partition(select, eachPartitionSize);
 
         // create threads, assign each partition to each thread
-        for(int i=0; i<partitions.size(); i++){
+        for (int i = 0; i < partitions.size(); i++) {
             FetchWorker worker = new FetchWorker(dataSource, seedDao, rawNewsDao, partitions.get(i));
             worker.start();
         }

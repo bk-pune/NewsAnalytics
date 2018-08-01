@@ -1,8 +1,7 @@
-package news.analytics.parser;
+package news.analytics.pipeline.config;
 
 import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.constants.NewsAgency;
-import news.analytics.parser.config.NewsMetaConfig;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

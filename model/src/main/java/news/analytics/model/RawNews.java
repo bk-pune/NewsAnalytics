@@ -13,7 +13,7 @@ public class RawNews extends NewsEntity {
     @DBColumn(column = "ID", dataType = DataType.LONG, primaryKey = true, constraints = @DBConstraint(constraintType = ConstraintType.PRIMARY_KEY, constraintName = "ID_PK_RAW_NEWS"))
     private Long id;
 
-    @DBColumn(column = "URI", dataType = DataType.VARCHAR, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_RAW_NEWS"))
+    @DBColumn(column = "URI", dataType = DataType.VARCHAR, nullable = false, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_RAW_NEWS"))
     private String uri;
 
     @DBColumn(column = "NEWS_AGENCY", dataType = DataType.VARCHAR, nullable = false)
@@ -21,6 +21,9 @@ public class RawNews extends NewsEntity {
 
     @DBColumn(column = "RAW_CONTENT", dataType = DataType.CLOB)
     private String rawContent;
+
+    @DBColumn(column = "PROCESS_STATUS", dataType = DataType.VARCHAR, nullable = false)
+    private String processStatus;
 
     public Long getId() {
         return id;
@@ -52,5 +55,13 @@ public class RawNews extends NewsEntity {
 
     public void setRawContent(String rawContent) {
         this.rawContent = rawContent;
+    }
+
+    public String getProcessStatus() {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
     }
 }

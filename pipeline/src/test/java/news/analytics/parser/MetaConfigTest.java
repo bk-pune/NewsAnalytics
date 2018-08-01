@@ -1,7 +1,8 @@
 package news.analytics.parser;
 
 import news.analytics.model.constants.NewsAgency;
-import news.analytics.parser.config.NewsMetaConfig;
+import news.analytics.pipeline.config.NewsMetaConfig;
+import news.analytics.pipeline.config.NewsMetaConfigProvider;
 import org.junit.Assert;
 import org.junit.Test;
 

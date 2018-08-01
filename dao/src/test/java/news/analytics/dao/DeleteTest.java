@@ -26,7 +26,7 @@ public class DeleteTest extends AbstractTest {
 
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_DELETE_QUERY_EXPECTED));
         List<Object> parameters = (List<Object>) queryAndParameters.getParameters();
-        Assert.assertTrue(parameters.get(0).equals(2L));
+        Assert.assertTrue(parameters.get(0).equals(1L));
     }
 
     @Test

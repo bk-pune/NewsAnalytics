@@ -28,7 +28,7 @@ public class InsertTest extends AbstractTest {
         QueryAndParameters queryStringAndParameters = insertQueryBuilder.getQueryStringAndParameters(objects);
         Assert.assertTrue(queryStringAndParameters.getQueryString().equals(INSERT_QUERY_EXPECTED));
         List<List<Object>> parameters = (List<List<Object>>) queryStringAndParameters.getParameters();
-        Assert.assertTrue(parameters.size() == 1 && parameters.get(0).get(0).equals(2L));
+        Assert.assertTrue(parameters.size() == 1 && parameters.get(0).get(0).equals(1L));
     }
 
     @Test

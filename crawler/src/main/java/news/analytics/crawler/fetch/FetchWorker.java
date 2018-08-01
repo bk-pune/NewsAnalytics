@@ -2,16 +2,19 @@ package news.analytics.crawler.fetch;
 
 import com.google.common.collect.Lists;
 import news.analytics.crawler.constants.FetchStatus;
+import news.analytics.crawler.constants.ProcessStatus;
 import news.analytics.crawler.utils.CrawlerUtils;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.RawNews;
 import news.analytics.model.Seed;
+import news.analytics.model.constants.NewsAgency;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,11 +35,13 @@ public class FetchWorker extends Thread {
 
     @Override
     public void run() {
+
         // Fetch -> Insert in getRawNews -> Update seed status
         for(Seed seed : seedList) {
             String rawHtml = null;
+            Connection connection = null;
             try {
-                Connection connection = dataSource.getConnection();
+                connection = dataSource.getConnection();
                 // fetch
                 rawHtml = fetch(seed); // seed gets updated with fetch status
 
@@ -45,11 +50,18 @@ public class FetchWorker extends Thread {
                     insert(seed, rawHtml, connection);
                 }
 
+                // update status of the seed to cralDb
                 update(connection, seed);
+
                 connection.commit();
             } catch (IOException e) {
                 e.printStackTrace();
-                // TODO failed url handling
+                System.out.println("Rolling back.");
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    System.out.println("Failed rollback:"+ e1);
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -60,6 +72,7 @@ public class FetchWorker extends Thread {
         StringBuilder sb = new StringBuilder();
         URL uri = new URL(seed.getUri());
         HttpURLConnection connection = (HttpURLConnection)uri.openConnection();
+
         connection.setRequestMethod("GET");
         connection.connect();
         int responseCode = connection.getResponseCode();
@@ -91,23 +104,26 @@ public class FetchWorker extends Thread {
         return true;
     }
 
-    private boolean insert(Seed seed, String rawHtml, Connection connection) throws SQLException {
+    private boolean insert(Seed seed, String rawHtml, Connection connection) throws SQLException, MalformedURLException {
         String uri = seed.getUri();
         RawNews rawNews = getRawNews(rawHtml, uri);
         rawNewsDao.insert(connection, Lists.newArrayList(rawNews));
         return true;
     }
 
-    private RawNews getRawNews(String rawHtml, String uri) {
+    private RawNews getRawNews(String rawHtml, String uri) throws MalformedURLException {
         RawNews rawNews = new RawNews();
         rawNews.setId(CrawlerUtils.hashIt(uri));
         rawNews.setUri(uri);
         rawNews.setRawContent(rawHtml);
         rawNews.setNewsAgency(getNewsAgencyFromUri(uri));
+        rawNews.setProcessStatus(ProcessStatus.RAW_NEWS_UNPROCESSED);
         return rawNews;
     }
 
-    private String getNewsAgencyFromUri(String uri) {
-        return null;
+    private String getNewsAgencyFromUri(String uri) throws MalformedURLException {
+        String host = new URL(uri).getHost();
+        NewsAgency newsAgency = NewsAgency.getNewsAgency(host);
+        return newsAgency.getNewsAgency();
     }
 }

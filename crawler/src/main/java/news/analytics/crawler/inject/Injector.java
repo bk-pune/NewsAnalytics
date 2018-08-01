@@ -39,8 +39,9 @@ public class Injector {
                     connection.commit();
                     injectedCount++;
                 } catch (Exception e){
+                    System.out.println(e);
                     rejetedCount++;
-                }
+                };
             }
             br.close();
         } catch (FileNotFoundException e) {

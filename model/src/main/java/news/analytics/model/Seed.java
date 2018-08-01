@@ -6,6 +6,9 @@ import news.analytics.model.annotations.DBConstraint;
 import news.analytics.model.annotations.DBTable;
 import news.analytics.model.constants.DataType;
 
+/**
+ * Represents a URI which is to be crawled by the crawler.
+ */
 @DBTable(mappedTable = "SEEDS")
 public class Seed extends NewsEntity {
     private static final long serialVersionUID = 1212178891279811324L;

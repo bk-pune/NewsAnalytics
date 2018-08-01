@@ -5,17 +5,34 @@ import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 import news.analytics.dao.query.QueryAndParameters;
 import news.analytics.dao.query.SelectQueryBuilder;
+import news.analytics.model.NewsEntity;
 import news.analytics.model.RawNews;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectTest extends AbstractTest {
+
+    @BeforeClass
+    public static void init() throws Exception {
+        RawNews testObject = getTestObject();
+        List<NewsEntity> objects = new ArrayList(1);
+        objects.add(testObject);
+
+        GenericDao genericDao = new GenericDao<RawNews>(RawNews.class);
+        Connection connection = dataSource.getConnection();
+        genericDao.insert(connection, objects);
+        connection.commit();
+    }
 
     @Test
     public void selectQueryTest() {
@@ -53,6 +70,16 @@ public class SelectTest extends AbstractTest {
 
         List<RawNews> select = genericDao.select(dataSource.getConnection(), predicateClause);
         Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(1L));
+    }
+
+    @AfterClass
+    public static void cleanUp() throws SQLException, IllegalAccessException, IOException, InstantiationException {
+        Connection connection = dataSource.getConnection();
+        GenericDao<RawNews> genericDao = new GenericDao<RawNews>(RawNews.class);
+        List<RawNews> select = genericDao.select(dataSource.getConnection(), new PredicateClause("ID", PredicateOperator.EQUALS, 1L));
+        if(!select.isEmpty())
+            genericDao.delete(connection, select);
+        connection.commit();
     }
 
 }

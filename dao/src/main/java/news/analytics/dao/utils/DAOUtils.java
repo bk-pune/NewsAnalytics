@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import news.analytics.dao.query.PredicateClause;
+import news.analytics.dao.query.PredicateOperator;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -119,5 +121,18 @@ public class DAOUtils {
                 collection.add(data);
             }
         }
+    }
+
+    public static PredicateClause getPredicateFromString(String predicateString) throws Exception {
+        // FETCH_STATUS = UNFETCHED
+        // [0]-> FETCH_STATUS
+        // [1] -> '='
+        // a[2] -> UNFETCHED
+        if(predicateString == null || predicateString.equals("")){
+            predicateString = "FETCH_STATUS = UNFETCHED";
+        }
+        String[] split = predicateString.split(" ");
+        PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.getPredicateOperatorForString(split[1].trim()), split[2].trim());
+        return predicateClause;
     }
 }

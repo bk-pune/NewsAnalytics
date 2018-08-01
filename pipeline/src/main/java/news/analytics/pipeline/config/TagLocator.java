@@ -1,21 +1,21 @@
-package news.analytics.parser.config;
+package news.analytics.pipeline.config;
 
 /**
- * Represents a tag which contains information on RawNews.
- * In actual raw html content, HTML tag matching 'this' TagLocator will be found out.
+ * Represents a tag which contains information on RawNews.<br>
+ * In actual raw html content, HTML tag matching 'this' TagLocator will be found out.<br>
  *
- * For example: if the given meta tag from raw html is as follows,
- * <meta name="keywords" content="Triple talaq case, Triple talaq bill, BJP"/>
- * Following TagLocator will represent above html tag
- * tagIdentifierTagName = meta
- * tagIdentifierAttributeName = name
- * tagIdentifierAttributeValue = keywords
- * valueAttributeName = content
- *
- * Similarly for html tag <meta charset="utf-8">, corresponding tag locator will look like:
- * tagIdentifierTagName = meta
- * tagIdentifierAttributeName = charset
- * valueAttributeName = charset
+ * For example: if the given meta tag from raw html is as follows-<br>
+ * <b>&lt;meta name="keywords" content="Keyword1, Keyword2"/&gt;</b><br>
+ * Following TagLocator will represent above html tag<br>
+ * tagIdentifierTagName = meta<br>
+ * tagIdentifierAttributeName = name<br>
+ * tagIdentifierAttributeValue = keywords<br>
+ * valueAttributeName = content<br>
+ *<br><br>
+ * Similarly for html tag <b>&lt;meta charset="utf-8"&gt; </b>, corresponding tag locator will look like:<br>
+ * tagIdentifierTagName = meta<br>
+ * tagIdentifierAttributeName = charset<br>
+ * valueAttributeName = charset<br>
  */
 
 public class TagLocator {
