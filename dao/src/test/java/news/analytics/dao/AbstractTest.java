@@ -20,7 +20,7 @@ public class AbstractTest {
 
     protected static RawNews getTestObject() throws Exception {
         String jsonString = "{\"id\":1,\"uri\":\"http://news.analytics.test.com\",\"newsAgency\":\"TOI\",\"rawContent\":\"Raw HTML\",\"processStatus\":\"RAW_NEWS_UNPROCESSED\"}";
-        RawNews rawNews = (RawNews) DAOUtils.fromJson(jsonString, RawNews.class);
+        RawNews rawNews = (RawNews) DAOUtils.fromJsonToObject(jsonString, RawNews.class);
         return rawNews;
     }
 

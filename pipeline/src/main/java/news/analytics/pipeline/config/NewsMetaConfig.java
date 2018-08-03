@@ -17,11 +17,6 @@ public class NewsMetaConfig {
     private TagLocator charset;
 
     /**
-     * Name of the News provider agency
-     */
-    private String newsAgencyName;
-
-    /**
      * Tag keeping title of the article, generally only one per news item
      */
     private TagLocator title;
@@ -31,6 +26,9 @@ public class NewsMetaConfig {
      * Generally in one tag but can occur divided in multiple tags.
      */
     private List<TagLocator> content;
+
+    /** Identifies the section of news e.g. International, society, sports, politics */
+    private TagLocator section;
 
     /**
      * Usually, news websites add tags to each news. This tag will locates such values from the current news item.
@@ -60,21 +58,22 @@ public class NewsMetaConfig {
      */
     private TagLocator description;
 
-    private TagLocator publishDate;
-    private TagLocator modifiedDate;
-    private TagLocator creationDate;
-
     /**
      * Every site mentions the news author. This tag locates the author name.
      */
     private TagLocator author;
 
-    public String getNewsAgencyName() {
-        return newsAgencyName;
+    private TagLocator publishDate;
+    private TagLocator modifiedDate;
+    private TagLocator creationDate;
+
+
+    public TagLocator getSection() {
+        return section;
     }
 
-    public void setNewsAgencyName(String newsAgencyName) {
-        this.newsAgencyName = newsAgencyName;
+    public void setSection(TagLocator section) {
+        this.section = section;
     }
 
     public TagLocator getTitle() {

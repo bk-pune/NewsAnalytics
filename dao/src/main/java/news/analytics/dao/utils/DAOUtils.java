@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class DAOUtils {
      * @return
      * @throws Exception
      */
-    public static Object fromJson(String jsonString, Class entityClass) throws Exception {
+    public static Object fromJsonToObject(String jsonString, Class entityClass) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         Object ret = null;
         JsonParser jsonParser = jsonFactory.createParser(jsonString);
@@ -39,6 +41,14 @@ public class DAOUtils {
         } finally {
             jsonParser.close();
         }
+    }
+
+    public static JsonNode fromJsonToNode(String jsonString) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        //read JSON like DOM Parser
+        JsonNode rootNode = objectMapper.readTree(jsonString);
+        return rootNode;
     }
 
     /**

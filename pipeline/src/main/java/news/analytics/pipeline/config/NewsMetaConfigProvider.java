@@ -4,6 +4,7 @@ import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.constants.NewsAgency;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -48,7 +49,19 @@ public class NewsMetaConfigProvider {
             sb.append(tmp);
         }
         br.close();
-        newsMetaConfig = (NewsMetaConfig) DAOUtils.fromJson(sb.toString(), NewsMetaConfig.class);
+        newsMetaConfig = (NewsMetaConfig) DAOUtils.fromJsonToObject(sb.toString(), NewsMetaConfig.class);
         return newsMetaConfig;
+    }
+
+    public String getRawConfig(String newsAgency) throws IOException {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(newsAgency+".config");
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String tmp = "";
+        StringBuilder sb = new StringBuilder();
+        while ((tmp = br.readLine()) != null){
+            sb.append(tmp);
+        }
+        br.close();
+        return sb.toString();
     }
 }
