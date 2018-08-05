@@ -1,6 +1,7 @@
 package news.analytics.pipeline.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.utils.DAOUtils;
@@ -10,7 +11,9 @@ import news.analytics.pipeline.config.NewsMetaConfigProvider;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class TransformWorker extends Thread {
     private GenericDao<RawNews> rawNewsDao;
@@ -38,9 +41,14 @@ public class TransformWorker extends Thread {
         Document document = Jsoup.parse(rawNews.getRawContent());
 
         String rawConfig = NewsMetaConfigProvider.getNewsMetaConfigProvider().getRawConfig(rawNews.getNewsAgency());
-        JsonNode jsonNode = DAOUtils.fromJsonToNode(rawConfig);
+        JsonNode rootNode = DAOUtils.fromJsonToNode(rawConfig);
+        Iterator<JsonNode> iterator = rootNode.iterator();
+        Iterator<Map.Entry<String, JsonNode>> fields = rootNode.fields();
 
 
+        // Case 1: Only tagIdentifierTagName
+        // Case 2: tagIdentifierTagName && tagIdentifierTagId
+        // Case 3: tagIdentifierTagName && tagIdentifierAttributeName
         // apply NewsMetaConfig
         // construct TransformedNews
         // return
