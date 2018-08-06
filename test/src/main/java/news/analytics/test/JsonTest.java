@@ -1,34 +1,80 @@
 package news.analytics.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Lists;
 import news.analytics.dao.utils.DAOUtils;
-import news.analytics.model.constants.NewsAgency;
+import news.analytics.pipeline.model.NodeConfigHolder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
 public class JsonTest {
+    // fieldName -> [node1, node2, node3]
+    private static NodeConfigHolder tag = new NodeConfigHolder();
+    private static NodeConfigHolder tag_having_attribute = new NodeConfigHolder(); //e.g. title
+    private static NodeConfigHolder first_attribute = new NodeConfigHolder(); //e.g. charset
+    private static NodeConfigHolder second_attribute = new NodeConfigHolder(); //e.g. content
+
+    private static final String TAG = "TAG";
+    private static final String FIRST_ATTRIBUTE = "first_attribute";
+    private static final String SECOND_ATTRIBUTE = "second_attribute";
+    private static final String TAG_HAVING_ATTRIBUTE = "tag_having_attribute";
+    private static ArrayList<String> jsonKeys = Lists.newArrayList("valueLocatorType", "tagIdentifierTagName", "tagIdentifierAttributeName",
+            "tagIdentifierAttributeValue", "valueAttributeName");
+
     public static void main(String[] args) throws IOException {
+        loadNodes(); // we have tag and attributeNodes with us
+    }
+
+    private static void loadNodes() throws IOException {
         String rawConfig = getRawConfig("The Hindu");
         JsonNode rootNode = DAOUtils.fromJsonToNode(rawConfig);
         Iterator<Map.Entry<String, JsonNode>> nodes = rootNode.fields();
 
+        // Top level iterator
         while (nodes.hasNext()) {
-            Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) nodes.next();
-            System.out.println("key --> " + entry.getKey() + " value-->" + entry.getValue());
+            System.out.println("\n==========================\n");
+            Map.Entry<String, JsonNode> entry = nodes.next();
+            String nodeKey = entry.getKey();
+            JsonNode jsonNode = entry.getValue();
+
+            // if it is array, then process each node inside it
+            if (jsonNode.isArray()) {
+                Iterator<JsonNode> elements = jsonNode.elements();
+                while (elements.hasNext()) {
+                    JsonNode nodeInArray = elements.next();
+                    processNode(nodeKey, nodeInArray);
+                }
+            } else {
+                processNode(nodeKey, jsonNode);
+            }
+        }
+    }
+
+    private static void processNode(String nodeKey, JsonNode parentNode) {
+        String valueLocatorType = parentNode.get(jsonKeys.get(0)).textValue();
+        if (TAG.equals(valueLocatorType)) {
+            tag.put(nodeKey, parentNode);
+        } else if (TAG_HAVING_ATTRIBUTE.equals(valueLocatorType)) {
+            tag_having_attribute.put(nodeKey, parentNode);
+        } else if (FIRST_ATTRIBUTE.equals(valueLocatorType)) {
+            first_attribute.put(nodeKey, parentNode);
+        } else if (SECOND_ATTRIBUTE.equals(valueLocatorType)) {
+            second_attribute.put(nodeKey, parentNode);
         }
     }
 
     public static String getRawConfig(String newsAgency) throws IOException {
-        InputStream inputStream = JsonTest.class.getClassLoader().getResourceAsStream("The Hindu.config");
+        InputStream inputStream = JsonTest.class.getClassLoader().getResourceAsStream(newsAgency + ".config");
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String tmp = "";
         StringBuilder sb = new StringBuilder();
-        while ((tmp = br.readLine()) != null){
+        while ((tmp = br.readLine()) != null) {
             sb.append(tmp);
         }
         br.close();

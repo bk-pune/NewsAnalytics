@@ -1,12 +1,12 @@
 package news.analytics.pipeline.config;
 
-import news.analytics.dao.utils.DAOUtils;
-import news.analytics.model.constants.NewsAgency;
+import com.google.common.collect.Lists;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,47 +14,13 @@ import java.util.Map;
  * Provides meta-data configuration for given news agency.
  */
 public class NewsMetaConfigProvider {
-    private static NewsMetaConfigProvider newsMetaConfigProvider;
+    private static Map<String, String> rawConfigCache = new HashMap<String, String>();
 
-    private Map<String, NewsMetaConfig> newsMetaConfigMap;
-    private NewsMetaConfig theHinduMetaConfig; // The Hindu
-    private NewsMetaConfig etMetaConfig; // Economic Times
+    private static ArrayList<String> jsonKeys = Lists.newArrayList("valueLocatorType", "tagIdentifierTagName", "tagIdentifierAttributeName",
+            "tagIdentifierAttributeValue", "valueAttributeName");
 
-    private NewsMetaConfigProvider() {
-        newsMetaConfigMap = new HashMap<String, NewsMetaConfig>(2);
-    }
-
-    public static NewsMetaConfigProvider getNewsMetaConfigProvider(){
-        if(newsMetaConfigProvider == null) {
-            newsMetaConfigProvider = new NewsMetaConfigProvider();
-        }
-        return newsMetaConfigProvider;
-    }
-
-    public NewsMetaConfig getNewsMetaConfig(NewsAgency agency) throws Exception {
-        NewsMetaConfig newsMetaConfig = newsMetaConfigMap.get(agency.getNewsAgency());
-        if (newsMetaConfig == null){
-            newsMetaConfig = loadNewsConfig(agency.getNewsAgency());
-        }
-        return newsMetaConfig;
-    }
-
-    private NewsMetaConfig loadNewsConfig(String newsAgency) throws Exception {
-        NewsMetaConfig newsMetaConfig = null;
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(newsAgency+".config");
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String tmp = "";
-        StringBuilder sb = new StringBuilder();
-        while ((tmp = br.readLine()) != null){
-            sb.append(tmp);
-        }
-        br.close();
-        newsMetaConfig = (NewsMetaConfig) DAOUtils.fromJsonToObject(sb.toString(), NewsMetaConfig.class);
-        return newsMetaConfig;
-    }
-
-    public String getRawConfig(String newsAgency) throws IOException {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(newsAgency+".config");
+    private static String loadRawConfig(String newsAgency) throws IOException {
+        InputStream inputStream = NewsMetaConfigProvider.class.getClassLoader().getResourceAsStream(newsAgency+".config");
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String tmp = "";
         StringBuilder sb = new StringBuilder();
@@ -63,5 +29,18 @@ public class NewsMetaConfigProvider {
         }
         br.close();
         return sb.toString();
+    }
+
+    public static ArrayList<String> getJsonKeys() {
+        return jsonKeys;
+    }
+
+    public static String getRawConfig(String newsAgency) throws IOException {
+        String rawConfig = rawConfigCache.get(newsAgency);
+        if(rawConfig == null){
+            rawConfig = loadRawConfig(newsAgency);
+            rawConfigCache.put(newsAgency, rawConfig);
+        }
+        return rawConfig;
     }
 }
