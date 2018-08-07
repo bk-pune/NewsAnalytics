@@ -7,6 +7,7 @@ import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
+import news.analytics.pipeline.transform.Transformer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class Crawler {
     private Injector injector;
     private StatsProvider statsProvider;
     private Fetcher fetcher;
+    private Transformer transformer;
     private Properties properties;
 
     private Crawler(String propertiesFilePath) throws IOException {
@@ -34,6 +36,7 @@ public class Crawler {
         injector = new Injector(dataSource);
         statsProvider = new StatsProvider(dataSource);
         fetcher = new Fetcher(dataSource);
+        transformer = new Transformer(dataSource);
     }
 
     public static void main(String[] args) throws IOException {
@@ -54,7 +57,9 @@ public class Crawler {
                     String predicateString = sc.nextLine();
                     System.setProperty("http.agent", crawler.properties.getProperty("crawlerName"));
                     crawler.startFetcher(predicateString);
-                } else if(input.equalsIgnoreCase("3")) { // show stats
+                } else if(input.equalsIgnoreCase("3")) { // start transformer
+                    crawler.startTransformer();
+                } else if(input.equalsIgnoreCase("4")) { // show stats
                     System.out.println("Enter predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
                     crawler.showStats(predicateString);
@@ -92,6 +97,12 @@ public class Crawler {
         int injectedCount = injector.inject(fileName);
         System.out.println("Total seeds injected in crawlDb: "+injectedCount);
         return injectedCount;
+    }
+
+    private void startTransformer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
+        System.out.println("Starting transform stage...");
+        transformer.transform(Integer.parseInt(properties.getProperty("transformerThreads")));
+        System.out.println("Transformer started successfully.");
     }
 
     private static void showMenu() {

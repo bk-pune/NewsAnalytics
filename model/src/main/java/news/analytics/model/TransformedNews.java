@@ -56,7 +56,7 @@ public class TransformedNews extends NewsEntity {
 
     /** Snippet of news article */
     @DBColumn(column = "SNIPPET", dataType = DataType.VARCHAR) // size 1000
-    private Long description;
+    private String description;
 
     @DBColumn(column = "PUBLISH_DATE", dataType = DataType.LONG)
     private Long publishDate;
@@ -166,11 +166,11 @@ public class TransformedNews extends NewsEntity {
         this.extractedTags = extractedTags;
     }
 
-    public Long getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Long description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

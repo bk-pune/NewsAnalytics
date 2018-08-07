@@ -16,14 +16,22 @@ import java.util.Map;
 public class JsonTest {
     // fieldName -> [node1, node2, node3]
     private static NodeConfigHolder tag = new NodeConfigHolder();
-    private static NodeConfigHolder tag_having_attribute = new NodeConfigHolder(); //e.g. title
+    private static NodeConfigHolder tag_identified_by_attribute = new NodeConfigHolder(); //e.g. title
     private static NodeConfigHolder first_attribute = new NodeConfigHolder(); //e.g. charset
     private static NodeConfigHolder second_attribute = new NodeConfigHolder(); //e.g. content
 
+    /* Tag value, tag to be identified by its name only */
     private static final String TAG = "TAG";
+
+    /* Attribute value. Tag to be identified by its name and given attribute name */
     private static final String FIRST_ATTRIBUTE = "first_attribute";
+
+    /* Attribute value. Tag to be identified by its name, given attribute name and given attribute value. The actual value attribute name is mentioned inside tag. */
     private static final String SECOND_ATTRIBUTE = "second_attribute";
-    private static final String TAG_HAVING_ATTRIBUTE = "tag_having_attribute";
+
+    /* Tag value, tag to be identified by the specified attribute name and attribute value */
+    private static final String TAG_IDENTIFIED_BY_ATTRIBUTE = "tag_identified_by_attribute";
+
     private static ArrayList<String> jsonKeys = Lists.newArrayList("valueLocatorType", "tagIdentifierTagName", "tagIdentifierAttributeName",
             "tagIdentifierAttributeValue", "valueAttributeName");
 
@@ -60,8 +68,8 @@ public class JsonTest {
         String valueLocatorType = parentNode.get(jsonKeys.get(0)).textValue();
         if (TAG.equals(valueLocatorType)) {
             tag.put(nodeKey, parentNode);
-        } else if (TAG_HAVING_ATTRIBUTE.equals(valueLocatorType)) {
-            tag_having_attribute.put(nodeKey, parentNode);
+        } else if (TAG_IDENTIFIED_BY_ATTRIBUTE.equals(valueLocatorType)) {
+            tag_identified_by_attribute.put(nodeKey, parentNode);
         } else if (FIRST_ATTRIBUTE.equals(valueLocatorType)) {
             first_attribute.put(nodeKey, parentNode);
         } else if (SECOND_ATTRIBUTE.equals(valueLocatorType)) {

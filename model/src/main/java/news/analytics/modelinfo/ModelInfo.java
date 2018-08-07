@@ -91,6 +91,10 @@ public class ModelInfo<T> {
         }
     }
 
+    public Field getFieldFromFieldName(String fieldName) {
+        return fieldMap.get(fieldName);
+    }
+
     public Object get(T o, Field field) {
         String column = field.getName();
         Method method;

@@ -3,7 +3,6 @@ package news.analytics.pipeline.transform;
 import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.dao.query.PredicateClause;
 import news.analytics.model.RawNews;
 import news.analytics.model.Seed;
 
@@ -26,11 +25,11 @@ public class Transformer {
         this.dataSource = dataSource;
     }
 
-    public void transform(PredicateClause predicateClause, int threadLimit) throws SQLException, IllegalAccessException, IOException, InstantiationException {
+    public void transform(int threadLimit) throws SQLException, IllegalAccessException, IOException, InstantiationException {
         // 1. fetch from RawNews where processStatus = ProcessStatus.RAW_NEWS_UNPROCESSED
-        // 2. split the records, and create that many TransformWorker
+        // 2. split the records, and create TransformWorkers
         Connection connection = dataSource.getConnection();
-        List<RawNews> rawNewsList = rawNewsDao.select(connection, predicateClause);
+        List<RawNews> rawNewsList = rawNewsDao.select(connection, null);
         connection.close();
 
         if (rawNewsList.isEmpty()) {
