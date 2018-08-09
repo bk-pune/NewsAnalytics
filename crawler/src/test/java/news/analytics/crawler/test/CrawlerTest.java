@@ -26,12 +26,16 @@ import static news.analytics.dao.query.QueryConstants.SPACE;
 
 public class CrawlerTest {
     private static DataSource dataSource;
+    private static final String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest";
+    private static final String username = "admin";
+    private static final String password = "bkpune";
+    private static final String driverClass = "org.h2.Driver";
 
     @BeforeClass
     public static void setup(){
         try {
             // create db if doesn't exist, create table
-            dataSource = H2DataSource.getDataSource("org.h2.Driver", "jdbc:h2:C:\\NewsAnalytics\\newsDb", "admin", "bkpune");
+            dataSource = H2DataSource.getDataSource(driverClass, jdbcUrl, username, password);
         } catch (Exception e){
             e.printStackTrace();
         }

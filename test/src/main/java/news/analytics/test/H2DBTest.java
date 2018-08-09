@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 public class H2DBTest {
     public static void main(String[] a) throws Exception {
         Class.forName("org.h2.Driver");
-        String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDb";
+        String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest";
         Connection connection = DriverManager.getConnection(jdbcUrl, "admin", "bkpune");
 
         String fileName = "MetadataScript.sql";

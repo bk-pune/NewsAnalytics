@@ -6,6 +6,11 @@ import news.analytics.model.RawNews;
 import org.junit.BeforeClass;
 
 public class AbstractTest {
+    protected static final String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest";
+    protected static final String username = "admin";
+    protected static final String password = "bkpune";
+    protected static final String driverClass = "org.h2.Driver";
+
     protected static final String SIMPLE_SELECT_QUERY_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT, PROCESS_STATUS FROM RAW_NEWS";
 
     protected static final String PREDICATE_SELECT_QUERY_EXPECTED = "SELECT ID, URI, NEWS_AGENCY, RAW_CONTENT, PROCESS_STATUS FROM RAW_NEWS WHERE ID = ?";
