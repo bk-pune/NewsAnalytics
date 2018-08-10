@@ -7,7 +7,9 @@ import news.analytics.model.annotations.DBTable;
 import news.analytics.model.constants.DataType;
 
 /**
- * Represents a news after first step of transformation is done on RawNews
+ * Represents a news after first step of transformation is done on RawNews.<br>
+ * Contains information extracted only from RawNews.
+ *
  */
 @DBTable(mappedTable = "TRANSFORMED_NEWS")
 public class TransformedNews extends NewsEntity {
@@ -45,14 +47,6 @@ public class TransformedNews extends NewsEntity {
 
     @DBColumn(column = "H2", dataType = DataType.VARCHAR) // size 500
     private String h2;
-
-    /** Tags from the meta elements in html */
-    @DBColumn(column = "TAGS", dataType = DataType.VARCHAR) // size 1000
-    private String defaultTags;
-
-    /** Tags extracted by the pipeline by analyzing the content */
-    @DBColumn(column = "EXTRACTED_TAGS", dataType = DataType.VARCHAR) // size 1000
-    private String extractedTags;
 
     /** Snippet of news article */
     @DBColumn(column = "SNIPPET", dataType = DataType.VARCHAR) // size 1000
@@ -134,14 +128,6 @@ public class TransformedNews extends NewsEntity {
         this.h2 = h2;
     }
 
-    public String getDefaultTags() {
-        return defaultTags;
-    }
-
-    public void setDefaultTags(String defaultTags) {
-        this.defaultTags = defaultTags;
-    }
-
     public String getUri() {
         return uri;
     }
@@ -156,14 +142,6 @@ public class TransformedNews extends NewsEntity {
 
     public void setNewsAgency(String newsAgency) {
         this.newsAgency = newsAgency;
-    }
-
-    public String getExtractedTags() {
-        return extractedTags;
-    }
-
-    public void setExtractedTags(String extractedTags) {
-        this.extractedTags = extractedTags;
     }
 
     public String getDescription() {
