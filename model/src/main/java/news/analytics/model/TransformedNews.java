@@ -64,6 +64,10 @@ public class TransformedNews extends NewsEntity {
     @DBColumn(column = "AUTHOR", dataType = DataType.VARCHAR)
     private String author;
 
+    /** Plain text of the news html page */
+    @DBColumn(column = "PLAIN_TEXT", dataType = DataType.VARCHAR)
+    private String plainText;
+
     public String getSection() {
         return section;
     }
@@ -182,5 +186,13 @@ public class TransformedNews extends NewsEntity {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getPlainText() {
+        return plainText;
+    }
+
+    public void setPlainText(String plainText) {
+        this.plainText = plainText;
     }
 }

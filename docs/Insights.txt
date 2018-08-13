@@ -9,11 +9,17 @@ Short-term/Long-term predictions
 Interest rates of banks
 Predicted trend Vs Actual trend
 
+* Crime rate trends
+
 * Identify fake news and the Reliability index of news agencies
+“Fake news represents a threat to democracy if people are deliberately using it on social media platforms to spread misinformation around an election” - Damian Collins, a British lawmaker.
 To identify fake or suspicious news, it is important to know the sources cited in the news article.
 The best way to check the reliability is to identify if that information is also present in at least one reputable media: the main newspapers (the broadsheet ones) or news agencies.
 This is a basic criterion in journalism: cross-check information using reliable sources !!!
 You can also compare metrics on Twitter, Facebook, and other social media.
+
+*VISUALIZE CRITICAL TRENDS
+News Media Analytics quickly illustrate news trends and reduce time spent interpreting data.
 
 * Biased news web sites
 => https://www.studentnewsdaily.com/types-of-media-bias/

@@ -41,7 +41,7 @@ public class NewsMetaConfigProvider {
     }
 
     private static NewsMetaConfig loadNewsMetaConfig(String newsAgency) throws IOException {
-        InputStream inputStream = NewsMetaConfigProvider.class.getClassLoader().getResourceAsStream(newsAgency+".config");
+        InputStream inputStream = NewsMetaConfigProvider.class.getClassLoader().getResourceAsStream("config/"+newsAgency+".config");
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String tmp = "";
         StringBuilder sb = new StringBuilder();

@@ -5,7 +5,8 @@ import java.util.List;
 
 public enum NewsAgency {
     THE_HINDU("The Hindu", Arrays.asList("economictimes.indiatimes.com")),
-    ECONOMIC_TIMES("Economic Times", Arrays.asList("www.thehindu.com"));
+    ECONOMIC_TIMES("Economic Times", Arrays.asList("www.thehindu.com")),
+    MAHARASHTRA_TIMES("Maharashtra Times", Arrays.asList("maharashtratimes.indiatimes.com"));
 
     private final String newsAgency;
     private final List<String> hostNames;
@@ -29,6 +30,8 @@ public enum NewsAgency {
                 return ECONOMIC_TIMES;
             case "www.thehindu.com" :
                 return THE_HINDU;
+            case "maharashtratimes.indiatimes.com":
+                return MAHARASHTRA_TIMES;
             default:
                 return null;
         }

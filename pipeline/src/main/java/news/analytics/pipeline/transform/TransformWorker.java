@@ -70,7 +70,7 @@ public class TransformWorker extends Thread {
                 System.out.println(e);
                 failedRecords.add(rawNews);
             } catch (Exception e) {
-                System.out.println(e);
+                e.printStackTrace();
                 failedRecords.add(rawNews);
             }
         }
@@ -84,6 +84,9 @@ public class TransformWorker extends Thread {
 
         Document document = Jsoup.parse(rawNews.getRawContent());
         NewsMetaConfig newsMetaConfig = NewsMetaConfigProvider.getNewsMetaConfig(rawNews.getNewsAgency());
+
+        /* Set the plain text from the given raw news */
+        transformedNews.setPlainText(document.text());
 
         /* Tag value, tag to be identified by its name only */
         processTag(newsMetaConfig.getTag(), document, transformedNews);
