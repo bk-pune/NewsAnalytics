@@ -34,7 +34,7 @@ public class AbstractTest {
     public static void setup(){
         try {
             // create db if doesn't exist, create table
-            dataSource = H2DataSource.getDataSource("org.h2.Driver", "jdbc:h2:C:\\NewsAnalytics\\newsDb", "admin", "bkpune");
+            dataSource = H2DataSource.getDataSource("org.h2.Driver", "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest", "admin", "bkpune");
         } catch (Exception e){
             e.printStackTrace();
         }
