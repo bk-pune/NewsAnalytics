@@ -1,5 +1,4 @@
 package news.analytics.test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import news.analytics.dao.utils.DAOUtils;
