@@ -7,7 +7,9 @@ public enum NewsAgency {
     THE_HINDU("The Hindu", Arrays.asList("economictimes.indiatimes.com")),
     ECONOMIC_TIMES("Economic Times", Arrays.asList("www.thehindu.com")),
     MAHARASHTRA_TIMES("Maharashtra Times", Arrays.asList("maharashtratimes.indiatimes.com")),
-    LOKMAT("Lokmat", Arrays.asList("www.lokmat.com"));
+    LOKMAT("Lokmat", Arrays.asList("www.lokmat.com")),
+    SAKAL("Sakal", Arrays.asList("www.esakal.com")),
+    SAAMANA("Saamana", Arrays.asList("www.saamana.com"));;
 
     private final String newsAgency;
     private final List<String> hostNames;
@@ -35,6 +37,10 @@ public enum NewsAgency {
                 return MAHARASHTRA_TIMES;
             case "www.lokmat.com":
                 return LOKMAT;
+            case "www.saamana.com":
+                return SAAMANA;
+            case "www.esakal.com":
+                return SAKAL;
             default:
                 return null;
         }

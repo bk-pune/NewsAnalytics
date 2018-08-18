@@ -16,13 +16,12 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-
-import static news.analytics.dao.query.QueryConstants.LIMIT;
-import static news.analytics.dao.query.QueryConstants.SPACE;
 
 public class CrawlerTest {
     private static DataSource dataSource;
@@ -45,37 +44,50 @@ public class CrawlerTest {
     public void test() throws Exception {
         testInject();
         testFetch();
+        testTranform();
     }
 
     public void testInject() throws Exception {
         GenericDao<Seed> dao = new GenericDao<Seed>(Seed.class);
         List<Seed> old = dao.select(dataSource.getConnection(), DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED"));
         Injector injector = new Injector(dataSource);
-        int injectedCount = injector.inject(CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile());
+        String seedFile = CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile();
+        BufferedReader br = new BufferedReader(new FileReader(seedFile));
+        int seedCount = 0;
+        while (br.readLine() != null){
+            seedCount++;
+        }
+        br.close();
 
-        Assert.assertTrue(injectedCount == 3);
+        int injectedCount = injector.inject(seedFile);
+
+        Assert.assertTrue(injectedCount == seedCount); // all seeds should get inserted every time
 
         List<Seed> latest =  dao.select(dataSource.getConnection(), DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED"));
-        Assert.assertTrue(latest.size() - old.size() == 3);
+        Assert.assertTrue(latest.size() == seedCount);
     }
 
     public void testFetch() throws Exception {
         Fetcher fetcher = new Fetcher(dataSource);
         PredicateClause predicateClause = DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED");
-        predicateClause.setLimitClause(LIMIT + SPACE + 3);
+//        predicateClause.setLimitClause(LIMIT + SPACE + 3);
         fetcher.start(predicateClause, 1);
 
-        // sleep for 15 secs
-        Thread.sleep(15 * 1000);
-        predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "https://www.thehindu.com/news/national/457-indians-in-pakistani-jails/article22347552.ece");
+        // sleep for 2 secs per url, let the fetcher threads fetch data
+        Thread.sleep(20 * 2 * 1000);
+        predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://www.lokmat.com/pune/businessman-kills-family-and-himself/");
 
         Connection connection = dataSource.getConnection();
         GenericDao<RawNews> dao = new GenericDao<RawNews>(RawNews.class);
         List<RawNews> select = dao.select(connection, predicateClause);
         connection.close();
         Assert.assertTrue(select.size() == 1);
-        Assert.assertTrue(select.get(0).getUri().equals("https://www.thehindu.com/news/national/457-indians-in-pakistani-jails/article22347552.ece"));
+        Assert.assertTrue(select.get(0).getUri().equals("http://www.lokmat.com/pune/businessman-kills-family-and-himself/"));
         Assert.assertTrue(select.get(0).getProcessStatus().equals(ProcessStatus.RAW_NEWS_UNPROCESSED));
+    }
+
+    private void testTranform() {
+        // TODO
     }
 
     @AfterClass
@@ -101,4 +113,5 @@ public class CrawlerTest {
         Assert.assertTrue(rawNewsGenericDao.select(connection, null).size() == 0);
         connection.close();
     }
+
 }

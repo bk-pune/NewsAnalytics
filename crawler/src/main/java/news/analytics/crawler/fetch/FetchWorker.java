@@ -54,15 +54,22 @@ public class FetchWorker extends Thread {
                 update(connection, seed);
 
                 connection.commit();
+                connection.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("Rolling back.");
                 try {
                     connection.rollback();
+                    connection.close();
                 } catch (SQLException e1) {
                     System.out.println("Failed rollback:"+ e1);
                 }
             } catch (SQLException e) {
+                try {
+                    connection.close();
+                } catch (SQLException e1) {
+                    // log
+                }
                 throw new RuntimeException(e);
             }
         }

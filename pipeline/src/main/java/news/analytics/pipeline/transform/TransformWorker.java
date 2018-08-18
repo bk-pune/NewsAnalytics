@@ -105,7 +105,6 @@ public class TransformWorker extends Thread {
 
     private void processTagIdentifiedByTagAttribute(NodeConfigHolder tag_identified_by_attribute, Document document, TransformedNews transformedNews) {
         Map<String, List<JsonNode>> nodeConfigMap = tag_identified_by_attribute.getNodeConfigMap();
-        //
         /*
         "content":
             {
@@ -274,7 +273,9 @@ public class TransformWorker extends Thread {
         Object returnValue = null;
         Class<?> type = field.getType();
         String value = PipelineUtils.getFirstValueFromSet(values);
-
+        if(value == null || value.trim().equals("")) {
+            return null;
+        }
         if (type.isAssignableFrom(String.class)) {
             returnValue = PipelineUtils.getCommaSeparatedValues(values);
         } else if (type.isAssignableFrom(Long.class)) {
