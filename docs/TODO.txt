@@ -1,0 +1,15 @@
+- create test data - 2018 articles for MaTa, eSakal, Lokmat
+	- generate seeds
+	- inject
+	- crawl
+
+- create dictionary - political dictionary (for now)
+- dictionary wise tagging
+
+- Sentiment analysis for marathi
+	- adverb dictionary
+		- provide polarity multiplier score for each adverb
+	- positive words
+	- negative
+	- neutral
+	- Algo for finding out polarity
