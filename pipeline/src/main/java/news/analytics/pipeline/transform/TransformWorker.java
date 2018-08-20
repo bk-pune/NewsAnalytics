@@ -1,10 +1,12 @@
 package news.analytics.pipeline.transform;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.RawNews;
 import news.analytics.model.TransformedNews;
+import news.analytics.model.constants.ProcessStatus;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 import news.analytics.pipeline.config.ConfigConstants;
@@ -26,56 +28,65 @@ import java.util.*;
 
 public class TransformWorker extends Thread {
     private GenericDao<TransformedNews> transformedNewsDao;
+    private GenericDao<RawNews> rawNewsDao;
     private DataSource dataSource;
     private List<RawNews> rawNewsList;
-    private Map<String, String> rawConfigCache;
     private List<RawNews> failedRecords;
     private ModelInfo modelInfo;
 
-    public TransformWorker(DataSource dataSource, GenericDao transformedNewsDao, List<RawNews> rawNewsList) {
+    public TransformWorker(DataSource dataSource, GenericDao transformedNewsDao, GenericDao<RawNews> rawNewsDao, List<RawNews> rawNewsList) {
         this.dataSource = dataSource;
         this.transformedNewsDao = transformedNewsDao;
+        this.rawNewsDao = rawNewsDao;
         this.rawNewsList = rawNewsList;
-        rawConfigCache = new HashMap<String, String>();
         failedRecords = new ArrayList<RawNews>();
         modelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
     }
 
     public void run() {
-        int batchCounter = 0;
-        List<TransformedNews> batch = new ArrayList<TransformedNews>(100);
         for (RawNews rawNews : rawNewsList) {
             Connection connection = null;
             try {
-                // commit in the batch of 100 for higher performance
-                if (batchCounter >= 100) {
-                    batchCounter = 0;
-                    connection = dataSource.getConnection();
-                    transformedNewsDao.insert(connection, batch);
-                    connection.commit();
-                    connection.close();
-                } else {
-                    TransformedNews tranformedNews = transform(rawNews);
-                    batch.add(tranformedNews);
-                    batchCounter++;
-                }
+                connection = dataSource.getConnection();
+
+                // RawNews => TransformedNews
+                TransformedNews transformedNews = transform(rawNews);
+                transformedNewsDao.insert(connection, Lists.newArrayList(transformedNews));
+
+                // update RawNews status from UNPROCESSED to PROCESSED
+                rawNews.setProcessStatus(ProcessStatus.RAW_NEWS_PROCESSED);
+                rawNewsDao.update(connection, Lists.newArrayList(rawNews));
+
+                connection.commit();
             } catch (SQLException e) {
+                e.printStackTrace();
                 if(connection != null) {
                     try {
-                        connection.close();
+                        connection.rollback();
                     } catch (SQLException e1) {
-                        System.out.println("Error closing connection: " + e1);
+                        System.out.println("Error rolling back on connection: " + e1);
                     }
                 }
-                System.out.println(e);
                 failedRecords.add(rawNews);
             } catch (Exception e) {
                 e.printStackTrace();
                 failedRecords.add(rawNews);
+            }  finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("Error while closing the connection : "+e);
+                }
             }
         }
     }
 
+    /**
+     * Conversion of RawNews to TransformedNews by applying news meta config of corresponding NewsMetaConfig
+     * @param rawNews RawNews containing raw html data
+     * @return TransformedNews containing title, h1, h2, text content, etc.
+     * @throws Exception If transformation fails
+     */
     private TransformedNews transform(RawNews rawNews) throws Exception {
         TransformedNews transformedNews = new TransformedNews();
         transformedNews.setId(rawNews.getId());

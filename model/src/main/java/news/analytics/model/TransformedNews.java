@@ -30,7 +30,7 @@ public class TransformedNews extends NewsEntity {
     private String charset;
 
     /** Section of the news - international, society, sports, politics, etc*/
-    @DBColumn(column = "CHARSET", dataType = DataType.VARCHAR, nullable = false)
+    @DBColumn(column = "SECTION", dataType = DataType.VARCHAR, nullable = false)
     private String section;
 
     @DBColumn(column = "TITLE", dataType = DataType.VARCHAR, nullable = false) // size 500
@@ -39,7 +39,7 @@ public class TransformedNews extends NewsEntity {
     @DBColumn(column = "CONTENT", dataType = DataType.CLOB)
     private String content;
 
-    @DBColumn(column = "KEYWORDS", dataType = DataType.CLOB)
+    @DBColumn(column = "KEYWORDS", dataType = DataType.VARCHAR)
     private String keywords; // store them as json?
 
     @DBColumn(column = "H1", dataType = DataType.VARCHAR) // size 500

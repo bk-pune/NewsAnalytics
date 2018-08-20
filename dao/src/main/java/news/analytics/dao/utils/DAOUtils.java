@@ -133,14 +133,11 @@ public class DAOUtils {
         }
     }
 
-    public static PredicateClause getPredicateFromString(String predicateString) throws Exception {
+    public static PredicateClause getPredicateFromString(String predicateString) {
         // FETCH_STATUS = UNFETCHED
         // [0]-> FETCH_STATUS
         // [1] -> '='
         // a[2] -> UNFETCHED
-        if(predicateString == null || predicateString.equals("")){
-            predicateString = "FETCH_STATUS = UNFETCHED";
-        }
         String[] split = predicateString.split(" ");
         PredicateClause predicateClause = new PredicateClause(split[0].trim(), PredicateOperator.getPredicateOperatorForString(split[1].trim()), split[2].trim());
         return predicateClause;
