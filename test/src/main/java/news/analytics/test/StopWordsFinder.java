@@ -10,27 +10,20 @@ import java.util.Set;
 public class StopWordsFinder {
     public static void main(String[] args) throws IOException {
         Set<String> stopWords = new HashSet<String>(1000);
+
         loadExistingStopwords(stopWords);
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\sampleText_1.txt"));
-        String line = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line + " ");
-        }
-        bufferedReader.close();
-
+        String sampleText = loadSampleText();
         // tokenize on \\s
-        // check if word ends with full stop or question mark
-        String[] words = stringBuilder.toString().split(" ");
+        String[] words = sampleText.split(" ");
         for(String word : words) {
             String tmp = null;
-            if(word.endsWith("?") || word.endsWith(".") || word.endsWith(";")) {
-                tmp = word.replace(".", "")
-                        .replace("?", "")
-                        .replace(";", "")
-                        .replace("'", "")
-                        .replace("\"", "");
+            if( word.endsWith("?") || word.endsWith(".") || word.endsWith(";") || word.endsWith("\"") ||
+                word.startsWith("(") || word.startsWith("[") || word.startsWith("<") || word.startsWith("{") ||
+                word.startsWith("\"") || word.startsWith("'") || word.startsWith("-") || word.startsWith(":")) {
+
+                tmp = word.replaceAll("[\\-+.^\\:,]","")
+                          .replaceAll("\\p{P}","");
             }
             if(tmp != null && !tmp.trim().equals("")) {
                 stopWords.add(tmp);
@@ -40,10 +33,21 @@ public class StopWordsFinder {
         writeStopwords(stopWords);
     }
 
-    private static void loadExistingStopwords(Set<String> stopWords) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("G:\\Work\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt"));
+    private static String loadSampleText() throws IOException {
+        InputStream resourceAsStream = StopWordsFinder.class.getClassLoader().getResourceAsStream("samples/otherSamples/sampleText_1.txt");
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
         String line = null;
         StringBuilder stringBuilder = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line + " ");
+        }
+        bufferedReader.close();
+        return stringBuilder.toString();
+    }
+    private static void loadExistingStopwords(Set<String> stopWords) throws IOException {
+        InputStream resourceAsStream = TagsGenerator.class.getClassLoader().getResourceAsStream("samples/otherSamples/stopwords.txt");
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
+        String line = null;
         while ((line = bufferedReader.readLine()) != null) {
             stopWords.add(line);
         }
@@ -51,7 +55,7 @@ public class StopWordsFinder {
     }
 
     private static void writeStopwords(Set<String> stopWords) throws IOException {
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("G:\\Work\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt"));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\stopwords.txt"));
         for (String word : stopWords) {
             bufferedWriter.write(word);
             bufferedWriter.newLine();
