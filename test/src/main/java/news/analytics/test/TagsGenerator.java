@@ -3,9 +3,9 @@ package news.analytics.test;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -15,81 +15,19 @@ import java.util.*;
 public class TagsGenerator {
 
     private Map<String, String> tagDictionary;
-    private String dictionaryPath;
 
     //TODO Read from configurations
     private static int thresholdCount = 3;
 
-    public TagsGenerator(String dictionaryPath) {
-
-        this.dictionaryPath = dictionaryPath;
-        try {
-            this.setTagDictionary();
-        } catch (IOException e) {
-            System.out.println("Dictionary not found + " + e.getMessage());
-            System.out.println("Continuing tag generation without dictionary !!");
-        }
-
+    public TagsGenerator(String dictionaryPath) throws IOException {
+        initTagDictionary(dictionaryPath);
     }
 
-    /**
-     * Wrapper method to extract tags from article available on path
-     */
-    public Set<String> applyTags(String articlePath) throws IOException {
-
-        Set<String> tags = new HashSet<String>();
-
-        BufferedReader reader = new BufferedReader(new FileReader(new File(articlePath)));
-
-        String inputLine;
-        StringBuilder article = new StringBuilder();
-
-        // A simple word count while loop over article
-        while ((inputLine = reader.readLine()) != null) {
-
-            if (inputLine.equalsIgnoreCase(""))
-                continue;
-
-            article.append(inputLine);
-
-            // Apply tags from dictionary
-            for (String dictionaryTag : tagDictionary.keySet()) {
-                if (inputLine.contains(dictionaryTag)) {
-                    //tags.add(tagDictionary.get(dictionaryTag));
-
-                    int tagCount = StringUtils.countMatches(inputLine, dictionaryTag);
-                    tags.add(tagDictionary.get(dictionaryTag));
-
-                    if (tagCount > thresholdCount) {
-                        tags.add(dictionaryTag);
-                    }
-                }
-            }
-        }
-
-        // Word Occurrence count for complete article, to add tags based on word count
-        String completeArticle = article.toString();
-        Map<String, Integer> wordCount = new HashMap<String, Integer>();
-        String[] words = completeArticle.split("\\s+");
-
-        for (String word : words) {
-            if (word.length() < 2)
-                continue;
-
-            if (!wordCount.containsKey(word)) {
-                int count = StringUtils.countMatches(completeArticle, word);
-                wordCount.put(word, count);
-            }
-        }
-
-        tags = getTags(wordCount, tags);
-        return tags;
-    }
-
-    private void setTagDictionary() throws IOException {
+    private void initTagDictionary(String dictionaryPath) throws IOException {
 
         tagDictionary = new HashMap<String, String>();
-        BufferedReader reader = new BufferedReader(new FileReader(new File(dictionaryPath)));
+        InputStream resourceAsStream = TagsGenerator.class.getClassLoader().getResourceAsStream(dictionaryPath);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
         String inputLine;
 
         while ((inputLine = reader.readLine()) != null) {
@@ -106,7 +44,48 @@ public class TagsGenerator {
         System.out.println(tagDictionary);
     }
 
-    private Set<String> getTags(Map<String, Integer> wordCount, Set<String> tags) {
+    /**
+     * Extract tags from given text
+     *
+     * @param text
+     * @return Set of tags for the given text
+     */
+    public Set<String> applyTags(String text) {
+
+        Set<String> tags = new HashSet<String>();
+        // Apply tags from dictionary
+        for (String dictionaryTag : tagDictionary.keySet()) {
+            if (text.contains(dictionaryTag)) {
+                //tags.add(tagDictionary.get(dictionaryTag));
+
+                int tagCount = StringUtils.countMatches(text, dictionaryTag);
+                tags.add(tagDictionary.get(dictionaryTag));
+
+                if (tagCount > thresholdCount) {
+                    tags.add(dictionaryTag);
+                }
+            }
+        }
+
+        // Word Occurrence count for complete article, to add tags based on word count
+        Map<String, Integer> wordCount = new HashMap<String, Integer>();
+        String[] words = text.split("\\s+");
+
+        for (String word : words) {
+            if (word.length() < 2)
+                continue;
+
+            if (!wordCount.containsKey(word)) {
+                int count = StringUtils.countMatches(text, word);
+                wordCount.put(word, count);
+            }
+        }
+
+        tags = getTags(wordCount, tags);
+        return tags;
+    }
+
+    public Set<String> getTags(Map<String, Integer> wordCount, Set<String> tags) {
 
         if (wordCount != null) {
             // Apply tags based on word counts and dictionary
@@ -126,7 +105,7 @@ public class TagsGenerator {
         return tags;
     }
 
-    private Set<String> optimizeTags(Set<String> tags) {
+    public Set<String> optimizeTags(Set<String> tags) {
 
         String tagStr = tags.toString();
         Iterator<String> tagsItr = tags.iterator();
@@ -157,28 +136,26 @@ public class TagsGenerator {
         return tags;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        TagsGenerator tagsGenerator = new TagsGenerator("dictionaries/SampleTagDictionary.dic");
+        // Apply tags for multiple articles using following call
+        Set<String> tags = tagsGenerator.applyTags(loadArticle("samples/samplesForTagGeneration/SampleArticle.txt"));
+        System.out.println("tags: " + tags);
 
-        String dictionaryPath = "C:\\Users\\Shruti.Ghayal\\projects\\test\\src\\main" +
-                "\\resources\\SampleTagDictionary";
-        String articlePath = "C:\\Users\\Shruti.Ghayal\\projects\\test\\src\\main" +
-                "\\resources\\SampleArticle";
+        tags = tagsGenerator.optimizeTags(tags);
+        System.out.println("optimized tags: " + tags);
+    }
 
-        TagsGenerator tagsGenerator = new TagsGenerator(dictionaryPath);
-
-        try {
-            // Apply tags for multiple articles using following call
-            Set<String> tags = tagsGenerator.applyTags(articlePath);
-            System.out.println("tags: " + tags);
-
-            tags = tagsGenerator.optimizeTags(tags);
-            System.out.println("optimized tags: " + tags);
-
-        } catch (IOException e) {
-            System.out.println("Something went wrong while reading article: " + articlePath);
-            e.printStackTrace();
+    private static String loadArticle(String articlePath) throws IOException {
+        InputStream resourceAsStream = TagsGenerator.class.getClassLoader().getResourceAsStream(articlePath);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
+        String line = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
         }
-
+        bufferedReader.close();
+        return stringBuilder.toString();
     }
 }
 

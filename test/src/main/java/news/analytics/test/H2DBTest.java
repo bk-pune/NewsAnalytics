@@ -18,7 +18,7 @@ public class H2DBTest {
         String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest";
         Connection connection = DriverManager.getConnection(jdbcUrl, "admin", "bkpune");
 
-        String fileName = "MetadataScript.sql";
+        String fileName = "metaConfigs/MetadataScript.sql";
         if(a != null && a.length == 1){
             fileName = a[0];
         }
