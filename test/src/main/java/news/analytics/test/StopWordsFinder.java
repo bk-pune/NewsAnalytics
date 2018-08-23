@@ -22,8 +22,10 @@ public class StopWordsFinder {
                 word.startsWith("(") || word.startsWith("[") || word.startsWith("<") || word.startsWith("{") ||
                 word.startsWith("\"") || word.startsWith("'") || word.startsWith("-") || word.startsWith(":")) {
 
-                tmp = word.replaceAll("[\\-+.^\\:,]","")
-                          .replaceAll("\\p{P}","");
+                tmp = word.replaceAll("[-+.^\\:,]","")
+                        .replaceAll("\\p{P}","")
+                        .replaceAll("[0-9]", "")
+                        .replaceAll("[०-९]]", "");
             }
             if(tmp != null && !tmp.trim().equals("")) {
                 stopWords.add(tmp);
@@ -34,8 +36,7 @@ public class StopWordsFinder {
     }
 
     private static String loadSampleText() throws IOException {
-        InputStream resourceAsStream = StopWordsFinder.class.getClassLoader().getResourceAsStream("samples/otherSamples/sampleText_1.txt");
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\sampleText_1.txt"));
         String line = null;
         StringBuilder stringBuilder = new StringBuilder();
         while ((line = bufferedReader.readLine()) != null) {
@@ -45,8 +46,7 @@ public class StopWordsFinder {
         return stringBuilder.toString();
     }
     private static void loadExistingStopwords(Set<String> stopWords) throws IOException {
-        InputStream resourceAsStream = TagsGenerator.class.getClassLoader().getResourceAsStream("samples/otherSamples/stopwords.txt");
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\stopwords.txt"));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
             stopWords.add(line);

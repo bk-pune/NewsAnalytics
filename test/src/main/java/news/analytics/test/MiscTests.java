@@ -1,18 +1,21 @@
 package news.analytics.test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import news.analytics.model.RawNews;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MiscTests {
-    public static void main(String[] args) throws JsonProcessingException {
-        RawNews rawNews = new RawNews();
-        rawNews.setId(2L);
-        rawNews.setNewsAgency("TOI");
-        rawNews.setUri("http://news.analytics.test.com");
-        rawNews.setRawContent("Raw HTML");
-        ObjectMapper om = new ObjectMapper();
-        String s = om.writeValueAsString(rawNews);
-        System.out.println(s);
+    public static void main(String[] args) throws IOException {
+        Document document = Jsoup.parse(new File("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\marathi_adverbs.txt"), "UTF-8");
+        Elements buttons = document.getElementsByTag("button");
+        for(Element button : buttons) {
+            System.out.println(button.text());
+        }
+
     }
 }
+
