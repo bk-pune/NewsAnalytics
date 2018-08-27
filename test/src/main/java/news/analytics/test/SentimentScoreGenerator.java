@@ -144,7 +144,7 @@ public class SentimentScoreGenerator {
     private static List<SampleArticle> loadSampleArticles() throws IOException {
         List<SampleArticle> samples = new ArrayList<SampleArticle>(10);
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\SentimentSamples.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\SentimentSamples.txt"));
         SampleArticle sampleArticle = new SampleArticle();
         String line = null;
         int lineCounter = 0;
@@ -169,11 +169,11 @@ public class SentimentScoreGenerator {
     }
 
     private static void loadDictionaries() throws IOException {
-        positive = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
-        negative = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
-        neutral = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
-        adverbs = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
-        stopwords = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
+        positive = load("G:\\Work\\\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
+        negative = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
+        neutral = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
+        adverbs = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
+        stopwords = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
         adverbWithPositive = attachAdverb("positive");
         adverbWithNegative = attachAdverb("negative");
         adverbWithNeutral = attachAdverb("neutral");
