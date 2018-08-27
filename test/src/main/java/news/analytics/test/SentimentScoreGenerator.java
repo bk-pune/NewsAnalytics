@@ -36,18 +36,27 @@ public class SentimentScoreGenerator {
     }
 
     private static void generateSentimentScore(SampleArticle sampleArticle) {
-        double titleScore = process(sampleArticle.getTitle()) / (sampleArticle.getTitle().split(" ").length * 0.4); // 40%
-        double h1Score = process(sampleArticle.getH1()) / (sampleArticle.getH1().split(" ").length * 0.3); // 30%
-        double textScore = process(sampleArticle.getText()) / (sampleArticle.getText().split(" ").length * 0.3); // 30%
+        String title = removeStopWords(sampleArticle.getTitle());
+        String h1 = removeStopWords(sampleArticle.getH1());
+
+        double titleScore = process(title);
+        titleScore = titleScore /(title.split(" ").length); // * 0.4; // 40%
+        double h1Score = process(h1);
+        h1Score = h1Score / (h1.split(" ").length); // * 0.3; // 30%
+
+        String text = sampleArticle.getText();
+        String[] sentences = text.split("\\.");
+        double textScore = 0;
+        for(String sentence : sentences ) {
+            sentence = removeStopWords(sentence);
+            textScore += process(sentence.trim())/sentence.split(" ").length;
+        }
 
         double average = (titleScore + h1Score + textScore);
 
-        System.out.println("Title: " + sampleArticle.getTitle() + "\ntitleScore: " + titleScore);
-        System.out.println();
+        System.out.println("Title: " + title + "\ntitleScore: " + titleScore);
         System.out.println("H1: " + h1Score);
-        System.out.println();
         System.out.println("Text: " + textScore);
-        System.out.println();
         System.out.println("Average Score: " + average);
         System.out.println("***********");
     }
@@ -123,6 +132,13 @@ public class SentimentScoreGenerator {
 
         // Avg Score = (Positive - Negative) / number of chars in the line
         return (positiveScore - negativeScore);
+    }
+
+    private static String removeStopWords(String text) {
+//        for(String stopWord : stopwords){
+//            text = text.replaceAll(stopWord, "");
+//        }
+        return text;
     }
 
     private static List<SampleArticle> loadSampleArticles() throws IOException {
