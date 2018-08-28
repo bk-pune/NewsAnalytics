@@ -7,6 +7,7 @@ import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
+import news.analytics.pipeline.analyze.Analyzer;
 import news.analytics.pipeline.transform.Transformer;
 
 import java.io.FileNotFoundException;
@@ -28,6 +29,7 @@ public class Crawler {
     private StatsProvider statsProvider;
     private Fetcher fetcher;
     private Transformer transformer;
+    private Analyzer analyzer;
     private Properties properties;
 
     private Crawler(String propertiesFilePath) throws IOException {
@@ -37,6 +39,7 @@ public class Crawler {
         statsProvider = new StatsProvider(dataSource);
         fetcher = new Fetcher(dataSource);
         transformer = new Transformer(dataSource);
+        analyzer = new Analyzer(dataSource);
     }
 
     public static void main(String[] args) throws IOException {
@@ -59,9 +62,14 @@ public class Crawler {
                     crawler.startFetcher(predicateString);
                 } else if(input.equalsIgnoreCase("3")) { // start transformer
                     crawler.startTransformer();
-                } else if(input.equalsIgnoreCase("4")) { // show stats
+                } else if(input.equalsIgnoreCase("4")) { // start analyzer
+                    crawler.startAnalyzer();
+                } else if(input.equalsIgnoreCase("5")) { // show stats
                     System.out.println("Enter predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
+                    if(predicateString == null || predicateString.trim().equals("")) {
+                        predicateString = "FETCH_STATUS = UNFETCHED";
+                    }
                     crawler.showStats(predicateString);
                 } else if(input.equalsIgnoreCase("0")) {
                     System.out.println("Good bye !");
@@ -100,9 +108,15 @@ public class Crawler {
     }
 
     private void startTransformer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
-        System.out.println("Starting transform stage...");
-        transformer.transform(Integer.parseInt(properties.getProperty("transformerThreads")));
+        System.out.println("Starting transformer...");
+        transformer.transform(Integer.parseInt(properties.getProperty("processorThreads")));
         System.out.println("Transformer started successfully.");
+    }
+
+    private void startAnalyzer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
+        System.out.println("Starting analyzer...");
+        analyzer.analyze(Integer.parseInt(properties.getProperty("processorThreads")));
+        System.out.println("Analyzer started successfully.");
     }
 
     private static void showMenu() {

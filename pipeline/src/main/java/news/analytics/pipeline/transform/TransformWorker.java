@@ -48,16 +48,10 @@ public class TransformWorker extends Thread {
             Connection connection = null;
             try {
                 connection = dataSource.getConnection();
-
                 // RawNews => TransformedNews
                 TransformedNews transformedNews = transform(rawNews);
-                transformedNewsDao.insert(connection, Lists.newArrayList(transformedNews));
-
-                // update RawNews status from UNPROCESSED to PROCESSED
-                rawNews.setProcessStatus(ProcessStatus.RAW_NEWS_PROCESSED);
-                rawNewsDao.update(connection, Lists.newArrayList(rawNews));
-
-                connection.commit();
+                // Save in TransformedNews table- acts as a persist point
+                persist(connection, rawNews, Lists.newArrayList(transformedNews));
             } catch (SQLException e) {
                 e.printStackTrace();
                 if(connection != null) {
@@ -79,6 +73,23 @@ public class TransformWorker extends Thread {
                 }
             }
         }
+    }
+
+    /**
+     * Saves the transformed news inside db. Also updates RawNews status from UNPROCESSED to PROCESSED.
+     * @param connection DB connection
+     * @param rawNews Instance of raw news
+     * @param transformedNewsList Processed transformed news
+     * @throws SQLException
+     */
+    private void persist(Connection connection, RawNews rawNews, ArrayList<TransformedNews> transformedNewsList) throws SQLException {
+        transformedNewsDao.insert(connection, transformedNewsList);
+
+        // update RawNews status from UNPROCESSED to PROCESSED
+        rawNews.setProcessStatus(ProcessStatus.RAW_NEWS_PROCESSED);
+        rawNewsDao.update(connection, Lists.newArrayList(rawNews));
+
+        connection.commit();
     }
 
     /**
@@ -111,6 +122,7 @@ public class TransformWorker extends Thread {
         /* Tag value, tag to be identified by the specified attribute name and attribute value */
         processTagIdentifiedByTagAttribute(newsMetaConfig.getTag_identified_by_attribute(), document, transformedNews);
 
+        transformedNews.setProcessStatus(ProcessStatus.TRANSFORMED_NEWS_NOT_ANALYZED);
         return transformedNews;
     }
 

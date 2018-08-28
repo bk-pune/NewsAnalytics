@@ -39,20 +39,20 @@ public class SentimentScoreGenerator {
         String title = removeStopWords(sampleArticle.getTitle());
         String h1 = removeStopWords(sampleArticle.getH1());
 
-        double titleScore = process(title);
+        Float titleScore = process(title);
         titleScore = titleScore /(title.split(" ").length); // * 0.4; // 40%
-        double h1Score = process(h1);
+        Float h1Score = process(h1);
         h1Score = h1Score / (h1.split(" ").length); // * 0.3; // 30%
 
         String text = sampleArticle.getText();
         String[] sentences = text.split("\\.");
-        double textScore = 0;
+        Float textScore = 0F;
         for(String sentence : sentences ) {
-            sentence = removeStopWords(sentence);
+//            sentence = removeStopWords(sentence); // stopwords removal not working fine, it is replacing partial characters
             textScore += process(sentence.trim())/sentence.split(" ").length;
         }
 
-        double average = (titleScore + h1Score + textScore);
+        Float average = (titleScore + h1Score + textScore);
 
         System.out.println("Title: " + title + "\ntitleScore: " + titleScore);
         System.out.println("H1: " + h1Score);
@@ -61,38 +61,35 @@ public class SentimentScoreGenerator {
         System.out.println("***********");
     }
 
-    private static double process(String line) {
+    private static Float process(String line) {
+        // Negative + Exclamation =-> Negative ++ // --> Will be considered later
+
         // Maintain separate counts of Positive and Negative words
-        Double positiveScore = 0D;
-        Double negativeScore = 0D;
+        Float positiveScore = 0F;
+        Float negativeScore = 0F;
         if (line == null || line.trim() == "") {
-            return 0;
+            return 0F;
         }
         // If title/h1 contains question mark/exclamation mark
         if (line.endsWith("?")) {
-            negativeScore += 2;
+            Float score = process(line.substring(0, line.indexOf("?")));
+            if(score > 0)
+                positiveScore ++;
         }
         if (line.endsWith("!")) {
-            positiveScore += 2;
+            Float score = process(line.substring(0, line.indexOf("!")));
+            if(score < 0)
+                negativeScore ++;
         }
 
-        // Extract text between double quotes => meaning someone 'said this' -> Sentiment Analysis on this sentence
+        // Extract text between quotes => meaning someone "said this" -> Sentiment Analysis on this sentence
         String[] valuesInQuotes = StringUtils.substringsBetween(line, "\"", "\"");
-
-        /* Other approach using pattern matcher
-         * Pattern p = Pattern.compile("\"([^\"]*)\"");
-         * Matcher m = p.matcher(line);
-         * while (m.find()) {
-         *   System.out.println(m.group(1));
-         * }
-         */
         if (valuesInQuotes != null && valuesInQuotes.length > 0) {
             for (String values : valuesInQuotes) {
                 process(values);
             }
         }
 
-        // Each occurrence  = +1.
         // Adjective followed by a noun/verb -> = +2
         for (String positiveWord : positive) {
             if (line.contains(positiveWord)) {
@@ -129,22 +126,21 @@ public class SentimentScoreGenerator {
             }
         }
 
-
-        // Avg Score = (Positive - Negative) / number of chars in the line
+        // Avg Score = (Positive - Negative)
         return (positiveScore - negativeScore);
     }
 
     private static String removeStopWords(String text) {
-//        for(String stopWord : stopwords){
-//            text = text.replaceAll(stopWord, "");
-//        }
+        for(String stopWord : stopwords){
+            text = text.replaceAll(stopWord, "");
+        }
         return text;
     }
 
     private static List<SampleArticle> loadSampleArticles() throws IOException {
         List<SampleArticle> samples = new ArrayList<SampleArticle>(10);
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\SentimentSamples.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\SentimentSamples.txt"));
         SampleArticle sampleArticle = new SampleArticle();
         String line = null;
         int lineCounter = 0;
@@ -169,11 +165,11 @@ public class SentimentScoreGenerator {
     }
 
     private static void loadDictionaries() throws IOException {
-        positive = load("G:\\Work\\\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
-        negative = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
-        neutral = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
-        adverbs = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
-        stopwords = load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
+        positive = load("D:\\Bhushan\\personal\\\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
+        negative = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
+        neutral = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
+        adverbs = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
+        stopwords = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
         adverbWithPositive = attachAdverb("positive");
         adverbWithNegative = attachAdverb("negative");
         adverbWithNeutral = attachAdverb("neutral");

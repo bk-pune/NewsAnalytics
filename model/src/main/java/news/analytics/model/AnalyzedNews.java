@@ -7,20 +7,20 @@ import news.analytics.model.annotations.DBTable;
 import news.analytics.model.constants.DataType;
 
 /**
- * Represents a news after first step of transformation is done on RawNews.<br>
- * Contains information extracted only from RawNews.
+ * Represents a news after second step of analysis is done on TransformedNews.<br>
+ * In addition to the original contents of TransformedNews, it contains generated values such as sentiment score, primary tags, secondary tags.<br>
  *
  */
-@DBTable(mappedTable = "TRANSFORMED_NEWS")
-public class TransformedNews extends NewsEntity {
-    private static final long serialVersionUID = 1223217431627688173L;
-    public TransformedNews() {
+@DBTable(mappedTable = "ANALYZED_NEWS")
+public class AnalyzedNews extends NewsEntity {
+    private static final long serialVersionUID = 15272974768832L;
+    public AnalyzedNews() {
     }
 
-    @DBColumn(column = "ID", dataType = DataType.LONG, primaryKey = true, constraints = @DBConstraint(constraintType = ConstraintType.PRIMARY_KEY, constraintName = "ID_PK_TRANSFORMED_NEWS"))
+    @DBColumn(column = "ID", dataType = DataType.LONG, primaryKey = true, constraints = @DBConstraint(constraintType = ConstraintType.PRIMARY_KEY, constraintName = "ID_PK_ANALYZED_NEWS"))
     private Long id;
 
-    @DBColumn(column = "URI", dataType = DataType.VARCHAR, nullable = false, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_TRANSFORMED_NEWS"))
+    @DBColumn(column = "URI", dataType = DataType.VARCHAR, nullable = false, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_ANALYZED_NEWS"))
     private String uri;
 
     @DBColumn(column = "NEWS_AGENCY", dataType = DataType.VARCHAR, nullable = false)
@@ -71,21 +71,14 @@ public class TransformedNews extends NewsEntity {
     @DBColumn(column = "PROCESS_STATUS", dataType = DataType.VARCHAR, nullable = false)
     private String processStatus;
 
-    public String getProcessStatus() {
-        return processStatus;
-    }
+    @DBColumn(column = "SENTIMENT_SCORE", dataType = DataType.FLOAT, nullable = false)
+    private Float sentimentScore;
 
-    public void setProcessStatus(String processStatus) {
-        this.processStatus = processStatus;
-    }
+    @DBColumn(column = "PRIMARY_TAGS", dataType = DataType.VARCHAR)
+    private String primaryTags;
 
-    public String getSection() {
-        return section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
-    }
+    @DBColumn(column = "SECONDARY_TAGS", dataType = DataType.VARCHAR)
+    private String secondaryTags;
 
     public Long getId() {
         return id;
@@ -95,12 +88,36 @@ public class TransformedNews extends NewsEntity {
         this.id = id;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getNewsAgency() {
+        return newsAgency;
+    }
+
+    public void setNewsAgency(String newsAgency) {
+        this.newsAgency = newsAgency;
+    }
+
     public String getCharset() {
         return charset;
     }
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     public String getTitle() {
@@ -141,22 +158,6 @@ public class TransformedNews extends NewsEntity {
 
     public void setH2(String h2) {
         this.h2 = h2;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public String getNewsAgency() {
-        return newsAgency;
-    }
-
-    public void setNewsAgency(String newsAgency) {
-        this.newsAgency = newsAgency;
     }
 
     public String getDescription() {
@@ -205,5 +206,37 @@ public class TransformedNews extends NewsEntity {
 
     public void setPlainText(String plainText) {
         this.plainText = plainText;
+    }
+
+    public String getProcessStatus() {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
+    }
+
+    public Float getSentimentScore() {
+        return sentimentScore;
+    }
+
+    public void setSentimentScore(Float sentimentScore) {
+        this.sentimentScore = sentimentScore;
+    }
+
+    public String getPrimaryTags() {
+        return primaryTags;
+    }
+
+    public void setPrimaryTags(String primaryTags) {
+        this.primaryTags = primaryTags;
+    }
+
+    public String getSecondaryTags() {
+        return secondaryTags;
+    }
+
+    public void setSecondaryTags(String secondaryTags) {
+        this.secondaryTags = secondaryTags;
     }
 }
