@@ -58,6 +58,9 @@ public class Crawler {
                 } else if(input.equalsIgnoreCase("2")) { // fetch
                     System.out.println("Please enter fetch predicate. [Default FETCH_STATUS = UNFETCHED]: "); // FETCH_STATUS = UNFETCHED
                     String predicateString = sc.nextLine();
+                    if(predicateString == null || predicateString.trim().equals("")) {
+                        predicateString = "FETCH_STATUS = UNFETCHED";
+                    }
                     System.setProperty("http.agent", crawler.properties.getProperty("crawlerName"));
                     crawler.startFetcher(predicateString);
                 } else if(input.equalsIgnoreCase("3")) { // start transformer

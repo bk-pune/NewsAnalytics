@@ -9,6 +9,7 @@ import news.analytics.model.constants.ProcessStatus;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,9 +25,10 @@ public class AnalyzeWorker extends Thread {
     private List<TransformedNews> failedRecords;
     private ModelInfo analyzedNewsModelInfo;
     private ModelInfo transformedNewsModelInfo;
+    private SentimentAnalyzer sentimentAnalyzer;
 
 
-    public AnalyzeWorker(DataSource dataSource, GenericDao<AnalyzedNews> analyzedNewsDao, GenericDao<TransformedNews> transformedNewsDao, List<TransformedNews> transformedNewsList) {
+    public AnalyzeWorker(DataSource dataSource, GenericDao<AnalyzedNews> analyzedNewsDao, GenericDao<TransformedNews> transformedNewsDao, List<TransformedNews> transformedNewsList) throws IOException {
         this.dataSource = dataSource;
         this.analyzedNewsGenericDao = analyzedNewsDao;
         this.transformedNewsDao = transformedNewsDao;
@@ -34,6 +36,7 @@ public class AnalyzeWorker extends Thread {
         failedRecords = new ArrayList<TransformedNews>();
         analyzedNewsModelInfo = ModelInfoProvider.getModelInfo(AnalyzedNews.class);
         transformedNewsModelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
+        sentimentAnalyzer = new SentimentAnalyzer();
     }
 
     @Override
@@ -44,8 +47,9 @@ public class AnalyzeWorker extends Thread {
                 connection = dataSource.getConnection();
                 // RawNews => TransformedNews
                 AnalyzedNews analyzedNews = analyze(transformedNews);
-                // Save in TransformedNews table- acts as a persist point
-                persist(connection, transformedNews, Lists.newArrayList(analyzedNews));
+                // Save in AnalyzedNews table- acts as a persist point
+                // commented as of now till all the fields are populated
+                // persist(connection, transformedNews, Lists.newArrayList(analyzedNews));
             } catch (SQLException e) {
                 e.printStackTrace();
                 if(connection != null) {
@@ -87,16 +91,18 @@ public class AnalyzeWorker extends Thread {
     }
 
     private AnalyzedNews analyze(TransformedNews transformedNews) {
-        // pass 2 -
         // inherit all the existing properties from transformed news
         AnalyzedNews analyzedNews = inheritExistingProperties(transformedNews);
 
         // sentiment generation
-
-
+        Float sentimentScore = sentimentAnalyzer.generateSentimentScore(transformedNews);
+        analyzedNews.setSentimentScore(sentimentScore);
 
         // custom tag extraction
-        // setting tag order.priority
+
+
+        // setting tag order/priority
+
 
         return analyzedNews;
     }
