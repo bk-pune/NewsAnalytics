@@ -1,15 +1,15 @@
 package news.analytics.test;
 
 import java.io.*;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *Program tries to find out the stop words from the text.
  */
 public class StopWordsFinder {
     public static void main(String[] args) throws IOException {
-        Set<String> stopWords = new HashSet<String>(1000);
+        Set<String> stopWords = new TreeSet<>();
 
         loadExistingStopwords(stopWords);
 
@@ -32,7 +32,10 @@ public class StopWordsFinder {
             }
         }
 
-        writeStopwords(stopWords);
+        for(String word : stopWords) {
+            System.out.println(word);
+        }
+//        writeStopwords(stopWords);
     }
 
     private static String loadSampleText() throws IOException {
@@ -46,7 +49,7 @@ public class StopWordsFinder {
         return stringBuilder.toString();
     }
     private static void loadExistingStopwords(Set<String> stopWords) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\stopwords.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt"));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
             stopWords.add(line);
