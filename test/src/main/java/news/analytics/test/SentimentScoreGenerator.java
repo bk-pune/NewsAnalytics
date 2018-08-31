@@ -131,9 +131,9 @@ public class SentimentScoreGenerator {
     }
 
     private static String removeStopWords(String text) {
-        for(String stopWord : stopwords){
-            text = text.replaceAll(stopWord, "");
-        }
+//        for(String stopWord : stopwords){
+//            text = text.replaceAll(stopWord, "");
+//        }
         return text;
     }
 

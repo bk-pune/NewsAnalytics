@@ -53,19 +53,19 @@ public class TagsGenerator {
     public Set<String> applyTags(String text) {
 
         Set<String> tags = new HashSet<String>();
-        // Apply tags from dictionary
-        for (String dictionaryTag : tagDictionary.keySet()) {
-            if (text.contains(dictionaryTag)) {
-                //tags.add(tagDictionary.get(dictionaryTag));
-
-                int tagCount = StringUtils.countMatches(text, dictionaryTag);
-                tags.add(tagDictionary.get(dictionaryTag));
-
-                if (tagCount > thresholdCount) {
-                    tags.add(dictionaryTag);
-                }
-            }
-        }
+//        // Apply tags from dictionary
+//        for (String dictionaryTag : tagDictionary.keySet()) {
+//            if (text.contains(dictionaryTag)) {
+//                //tags.add(tagDictionary.get(dictionaryTag));
+//
+//                int tagCount = StringUtils.countMatches(text, dictionaryTag);
+//                tags.add(tagDictionary.get(dictionaryTag));
+//
+//                if (tagCount > thresholdCount) {
+//                    tags.add(dictionaryTag);
+//                }
+//            }
+//        }
 
         // Word Occurrence count for complete article, to add tags based on word count
         Map<String, Integer> wordCount = new HashMap<String, Integer>();

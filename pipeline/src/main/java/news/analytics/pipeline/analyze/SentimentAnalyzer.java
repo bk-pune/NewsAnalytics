@@ -3,12 +3,7 @@ package news.analytics.pipeline.analyze;
 import news.analytics.model.TransformedNews;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class SentimentAnalyzer {
     private Set<String> positive;
@@ -20,8 +15,15 @@ public class SentimentAnalyzer {
     private Set<String> adverbWithNegative;
     private Set<String> adverbWithNeutral;
 
-    public SentimentAnalyzer() throws IOException {
-        loadDictionaries();
+    public SentimentAnalyzer(Set<String> positive, Set<String> negative, Set<String> neutral, Set<String> adverbs, Set<String> stopwords, Set<String> adverbWithPositive, Set<String> adverbWithNegative, Set<String> adverbWithNeutral) {
+        this.positive = positive;
+        this.negative = negative;
+        this.neutral = neutral;
+        this.adverbs = adverbs;
+        this.stopwords = stopwords;
+        this.adverbWithPositive = adverbWithPositive;
+        this.adverbWithNegative = adverbWithNegative;
+        this.adverbWithNeutral = adverbWithNeutral;
     }
 
     public Float generateSentimentScore(TransformedNews transformedNews) {
@@ -37,7 +39,7 @@ public class SentimentAnalyzer {
         String[] sentences = text.split("\\.");
         Float textScore = 0F;
         for(String sentence : sentences ) {
-        //  sentence = removeStopWords(sentence); // stopwords removal not working fine, it is replacing partial characters
+            sentence = removeStopWords(sentence); // stopwords removal not working fine, it is replacing partial characters
             textScore += process(sentence.trim())/sentence.split(" ").length;
         }
 
@@ -116,55 +118,8 @@ public class SentimentAnalyzer {
 
     private String removeStopWords(String text) {
         for(String stopWord : stopwords){
-            text = text.replaceAll(stopWord, "");
+            text = text.replaceAll(" " + stopWord + " ", " ");
         }
         return text;
-    }
-
-    private void loadDictionaries() throws IOException {
-        positive = loadFile("positive.txt");
-        negative = loadFile("negative.txt");
-        neutral = loadFile("neutral.txt");
-        adverbs = loadFile("marathi_adverbs.txt");
-        stopwords = loadFile("stopwords.txt");
-        adverbWithPositive = attachAdverb("positive");
-        adverbWithNegative = attachAdverb("negative");
-        adverbWithNeutral = attachAdverb("neutral");
-    }
-
-    private Set<String> attachAdverb(String wordDictionaryType) {
-        Set<String> words = new TreeSet<String>();
-        if (wordDictionaryType.equals("positive")) {
-            for (String word : positive) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        } else if (wordDictionaryType.equals("negative")) {
-            for (String word : negative) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        } else if (wordDictionaryType.equals("neutral")) {
-            for (String word : neutral) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        }
-        return words;
-    }
-
-    private Set<String> loadFile(String fileName) throws IOException {
-        InputStream resourceAsStream = SentimentAnalyzer.class.getClassLoader().getResourceAsStream("dictionary/" +fileName);
-        Set<String> pages = new TreeSet<String>();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resourceAsStream));
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line.trim());
-        }
-        bufferedReader.close();
-        return pages;
     }
 }

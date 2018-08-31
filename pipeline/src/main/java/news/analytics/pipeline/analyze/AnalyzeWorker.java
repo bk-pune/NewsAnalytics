@@ -26,9 +26,9 @@ public class AnalyzeWorker extends Thread {
     private ModelInfo analyzedNewsModelInfo;
     private ModelInfo transformedNewsModelInfo;
     private SentimentAnalyzer sentimentAnalyzer;
+    private TagGenerator tagGenerator;
 
-
-    public AnalyzeWorker(DataSource dataSource, GenericDao<AnalyzedNews> analyzedNewsDao, GenericDao<TransformedNews> transformedNewsDao, List<TransformedNews> transformedNewsList) throws IOException {
+    public AnalyzeWorker(DataSource dataSource, GenericDao<AnalyzedNews> analyzedNewsDao, GenericDao<TransformedNews> transformedNewsDao, List<TransformedNews> transformedNewsList, SentimentAnalyzer sentimentAnalyzer, TagGenerator tagGenerator) {
         this.dataSource = dataSource;
         this.analyzedNewsGenericDao = analyzedNewsDao;
         this.transformedNewsDao = transformedNewsDao;
@@ -36,7 +36,8 @@ public class AnalyzeWorker extends Thread {
         failedRecords = new ArrayList<TransformedNews>();
         analyzedNewsModelInfo = ModelInfoProvider.getModelInfo(AnalyzedNews.class);
         transformedNewsModelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
-        sentimentAnalyzer = new SentimentAnalyzer();
+        this.sentimentAnalyzer = sentimentAnalyzer;
+        this.tagGenerator = tagGenerator;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class AnalyzeWorker extends Thread {
         connection.commit();
     }
 
-    private AnalyzedNews analyze(TransformedNews transformedNews) {
+    private AnalyzedNews analyze(TransformedNews transformedNews) throws IOException {
         // inherit all the existing properties from transformed news
         AnalyzedNews analyzedNews = inheritExistingProperties(transformedNews);
 
@@ -99,12 +100,35 @@ public class AnalyzeWorker extends Thread {
         analyzedNews.setSentimentScore(sentimentScore);
 
         // custom tag extraction
-
-
-        // setting tag order/priority
-
+        generateTags(analyzedNews);
 
         return analyzedNews;
+    }
+
+    private void generateTags(AnalyzedNews analyzedNews) throws IOException {
+        List<String> secondaryTags = tagGenerator.generateTags(analyzedNews.getContent());
+        analyzedNews.setSecondaryTags(secondaryTags.toString());
+
+        // generated tags are from keywords from the source, then such tags are considered as the primary tags
+        List<String> primaryTags = new ArrayList<>();
+        String keywords = analyzedNews.getKeywords();
+        if(keywords != null) {
+            for(String tag : secondaryTags) {
+                if(keywords.contains(tag)) {
+                    primaryTags.add(tag);
+                }
+            }
+        }
+
+        if(primaryTags.size() == 0) {
+            if(secondaryTags.size() == 0) {
+                analyzedNews.setPrimaryTags(analyzedNews.getKeywords());
+            } else {
+                analyzedNews.setPrimaryTags(secondaryTags.toString());
+            }
+        } else {
+            analyzedNews.setPrimaryTags(primaryTags.toString());
+        }
     }
 
     private AnalyzedNews inheritExistingProperties(TransformedNews transformedNews) {
