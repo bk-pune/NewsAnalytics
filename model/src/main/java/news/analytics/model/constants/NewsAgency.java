@@ -43,6 +43,9 @@ public enum NewsAgency {
                 return SAAMANA;
             case "www.esakal.com":
                 return SAKAL;
+            case "www.loksatta.com":
+                return LOKSATTA;
+
             default:
                 return null;
         }

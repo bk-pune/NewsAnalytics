@@ -69,7 +69,8 @@ public class TagGenerator extends StopwordAnalyzerBase {
 
         while (theFilter.incrementToken()) {
             String bigram = charTermAttribute.toString();
-            if(! (bigram.startsWith("_") || bigram.endsWith("_")))
+            // dont add tokens with _ char or having length 1
+            if(! (bigram.startsWith("_") || bigram.endsWith("_") || bigram.length() == 1))
                 nGrams.add(bigram);
         }
         theFilter.end();

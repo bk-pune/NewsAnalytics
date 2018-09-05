@@ -6,14 +6,74 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ExtractSeeds {
     public static void main(String[] args) throws IOException, InterruptedException {
-        saamana();
+        loksatta();
+    }
+
+    private static void loksatta() throws IOException {
+//        https://www.loksatta.com/pune/page/102/
+        String host = "https://www.loksatta.com/";
+        Map<String, Integer> categoryWisePageCounterMap = new TreeMap();
+//
+        categoryWisePageCounterMap.put("pune/page/", 102);
+        categoryWisePageCounterMap.put("mumbai/page/", 200); // https://www.loksatta.com/mumbai/page/200/
+        categoryWisePageCounterMap.put("thane/page/", 65);
+
+        categoryWisePageCounterMap.put("navimumbai/page/", 30);
+        categoryWisePageCounterMap.put("nagpur/page/", 45);
+        categoryWisePageCounterMap.put("nashik/page/", 30);
+        categoryWisePageCounterMap.put("aurangabad/page/", 18);
+
+        categoryWisePageCounterMap.put("kolhapur/page/", 10);
+        categoryWisePageCounterMap.put("maharashtra/page/", 195);
+
+        Set<String> seeds = new TreeSet();
+        Set<String> failures = new TreeSet();
+        Set<String> pages = new TreeSet();
+
+        for(Map.Entry<String, Integer> entry: categoryWisePageCounterMap.entrySet()) {
+            for(int i = 1; i<=entry.getValue(); i++) {
+                String url = host + entry.getKey() + i;
+                pages.add(url);
+            }
+        }
+
+        for (String url : pages) {
+            System.out.println("# Page: " + url);
+            Document document = null;
+            try {
+                // for each url, connect, parse, get a[href]
+                document = Jsoup.connect(url).get();
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("# Failed Page: " + url);
+                failures.add(url);
+                continue;
+            }
+
+            Elements h2 = document.getElementsByTag("h2");
+            for (Element e : h2) {
+                Elements anchors = e.getElementsByTag("a");
+                for (Element a : anchors) {
+                    String href = a.attr("href");
+                    if (href.startsWith("http")|| href.startsWith("https")) {
+                        seeds.add(href);
+                    } else {
+//                        seeds.add(host + href);
+                    }
+                }
+            }
+        }
+
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\loksatta\\loksatta_2018_seeds.txt"));
+        for (String url : seeds) {
+            bufferedWriter.write(url);
+            bufferedWriter.newLine();
+        }
+        bufferedWriter.close();
     }
 
     private static void saamana() throws IOException {

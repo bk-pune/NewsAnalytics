@@ -4,6 +4,9 @@
 	- fetch
 	- transform
 
-Generate seeds for loksatta
-Generate seeds for blogs/articles for every site
-Getting started with Solr/Lucene
+Publish date extraction for esakal news - Bhushan
+Sample article json generation - Bhushan
+Rest controller and APIs - Bhushan
+Generate seeds for blogs/articles for every site - Bhushan
+Getting started with Solr/Lucene - Shruti
+Getting started on UI - Manoj

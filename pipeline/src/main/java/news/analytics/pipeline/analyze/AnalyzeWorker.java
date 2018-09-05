@@ -3,12 +3,15 @@ package news.analytics.pipeline.analyze;
 import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
+import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.AnalyzedNews;
 import news.analytics.model.TransformedNews;
 import news.analytics.model.constants.ProcessStatus;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -42,12 +45,14 @@ public class AnalyzeWorker extends Thread {
 
     @Override
     public void run() {
+        List<AnalyzedNews> analyzedNewsList = new ArrayList<>(transformedNewsList.size());
         for (TransformedNews transformedNews : transformedNewsList) {
             Connection connection = null;
             try {
                 connection = dataSource.getConnection();
                 // RawNews => TransformedNews
                 AnalyzedNews analyzedNews = analyze(transformedNews);
+                analyzedNewsList.add(analyzedNews);
                 // Save in AnalyzedNews table- acts as a persist point
                 // commented as of now till all the fields are populated
                 // persist(connection, transformedNews, Lists.newArrayList(analyzedNews));
@@ -71,6 +76,21 @@ public class AnalyzeWorker extends Thread {
                     System.out.println("Error while closing the connection : "+e);
                 }
             }
+        }
+
+        writeJson(analyzedNewsList);
+    }
+
+    private void writeJson(List<AnalyzedNews> analyzedNewsList) {
+
+        try {
+            String s = DAOUtils.javaToJSON(analyzedNewsList);
+//
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\analyzedNews.json"));
+            bufferedWriter.write(s);
+            bufferedWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
