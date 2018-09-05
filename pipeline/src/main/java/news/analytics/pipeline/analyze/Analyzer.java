@@ -25,6 +25,7 @@ public class Analyzer {
     private SentimentAnalyzer sentimentAnalyzer;
     private TagGenerator tagGenerator;
 
+    private Set<String> cities;
     private Set<String> positive;
     private Set<String> negative;
     private Set<String> neutral;

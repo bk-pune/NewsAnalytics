@@ -1,5 +1,6 @@
 package news.analytics.pipeline.analyze;
 
+import news.analytics.model.AnalyzedNews;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.*;
@@ -93,7 +94,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
         }
         tags = optimizeTags(tags);
         tags = sortDescByValue(tags);
-        return getTopThree(tags);
+        return getTopFive(tags);
     }
 
     private String removeStopWords(String text) {
@@ -105,16 +106,43 @@ public class TagGenerator extends StopwordAnalyzerBase {
         return textWithoutStopWords;
     }
 
-    private List<String> getTopThree(Map<String, Integer> tags) {
-        List<String> toReturn = new ArrayList<>(3);
+    private List<String> getTopFive(Map<String, Integer> tags) {
+        List<String> toReturn = new ArrayList<>(5);
         for(Map.Entry<String, Integer> entry : tags.entrySet()) {
             toReturn.add(entry.getKey());
-            if(toReturn.size() == 3) {
+            if(toReturn.size() == 5) {
                 break;
             }
         }
         return toReturn;
     }
+
+    public void generateTags(AnalyzedNews analyzedNews) throws IOException {
+        List<String> secondaryTags = generateTags(analyzedNews.getContent());
+        analyzedNews.setSecondaryTags(secondaryTags.toString());
+
+        // generated tags are from keywords from the source, then such tags are considered as the primary tags
+        List<String> primaryTags = new ArrayList<>();
+        String keywords = analyzedNews.getKeywords();
+        if(keywords != null) {
+            for(String tag : secondaryTags) {
+                if(keywords.contains(tag)) {
+                    primaryTags.add(tag);
+                }
+            }
+        }
+
+        if(primaryTags.size() == 0) {
+            if(secondaryTags.size() == 0) {
+                analyzedNews.setPrimaryTags(analyzedNews.getKeywords());
+            } else {
+                analyzedNews.setPrimaryTags(secondaryTags.toString());
+            }
+        } else {
+            analyzedNews.setPrimaryTags(primaryTags.toString());
+        }
+    }
+
 
     public <K, V extends Comparable<? super V>> Map<K, V> sortDescByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
@@ -152,4 +180,5 @@ public class TagGenerator extends StopwordAnalyzerBase {
 
         return tags;
     }
+
 }

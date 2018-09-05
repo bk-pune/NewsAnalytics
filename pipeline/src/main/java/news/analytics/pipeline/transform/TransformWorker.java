@@ -33,14 +33,16 @@ public class TransformWorker extends Thread {
     private List<RawNews> rawNewsList;
     private List<RawNews> failedRecords;
     private ModelInfo modelInfo;
+    private Set<String> cities;
 
-    public TransformWorker(DataSource dataSource, GenericDao transformedNewsDao, GenericDao<RawNews> rawNewsDao, List<RawNews> rawNewsList) {
+    public TransformWorker(DataSource dataSource, GenericDao transformedNewsDao, GenericDao<RawNews> rawNewsDao, List<RawNews> rawNewsList, Set<String> cities) {
         this.dataSource = dataSource;
         this.transformedNewsDao = transformedNewsDao;
         this.rawNewsDao = rawNewsDao;
         this.rawNewsList = rawNewsList;
-        failedRecords = new ArrayList<RawNews>();
+        failedRecords = new ArrayList<>();
         modelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
+        this.cities = cities;
     }
 
     public void run() {
@@ -122,8 +124,33 @@ public class TransformWorker extends Thread {
         /* Tag value, tag to be identified by the specified attribute name and attribute value */
         processTagIdentifiedByTagAttribute(newsMetaConfig.getTag_identified_by_attribute(), document, transformedNews);
 
+        /* Extract the city of the news */
+        extractCity(transformedNews);
+
         transformedNews.setProcessStatus(ProcessStatus.TRANSFORMED_NEWS_NOT_ANALYZED);
         return transformedNews;
+    }
+
+    public void extractCity(TransformedNews transformedNews) {
+        String content = transformedNews.getContent();
+        String firstLine = content.substring(0, content.indexOf("."));
+        String city = null;
+        for(String tmp : cities) {
+            if(firstLine.contains(tmp)) {
+                city = tmp;
+                break;
+            }
+        }
+        if(city == null) {
+            // look for the first city name inside content
+            for(String tmp : cities) {
+                if(content.contains(tmp)) {
+                    city = tmp;
+                    break;
+                }
+            }
+        }
+        transformedNews.setCity(city);
     }
 
     private void processTagIdentifiedByTagAttribute(NodeConfigHolder tag_identified_by_attribute, Document document, TransformedNews transformedNews) {

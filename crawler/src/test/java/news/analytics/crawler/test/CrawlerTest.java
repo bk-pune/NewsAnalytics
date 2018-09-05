@@ -69,8 +69,8 @@ public class CrawlerTest {
         PredicateClause predicateClause = DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED");
         fetcher.start(predicateClause, 1);
 
-        // sleep for 2 secs per url, let the fetcher threads fetch data
-        Thread.sleep(20 * 2 * 1000);
+        // sleep for 5 secs per url, let the fetcher threads fetch data
+        Thread.sleep(20 * 5 * 1000);
         predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://www.lokmat.com/pune/businessman-kills-family-and-himself/");
 
         Connection connection = dataSource.getConnection();

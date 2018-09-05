@@ -100,35 +100,9 @@ public class AnalyzeWorker extends Thread {
         analyzedNews.setSentimentScore(sentimentScore);
 
         // custom tag extraction
-        generateTags(analyzedNews);
+        tagGenerator.generateTags(analyzedNews);
 
         return analyzedNews;
-    }
-
-    private void generateTags(AnalyzedNews analyzedNews) throws IOException {
-        List<String> secondaryTags = tagGenerator.generateTags(analyzedNews.getContent());
-        analyzedNews.setSecondaryTags(secondaryTags.toString());
-
-        // generated tags are from keywords from the source, then such tags are considered as the primary tags
-        List<String> primaryTags = new ArrayList<>();
-        String keywords = analyzedNews.getKeywords();
-        if(keywords != null) {
-            for(String tag : secondaryTags) {
-                if(keywords.contains(tag)) {
-                    primaryTags.add(tag);
-                }
-            }
-        }
-
-        if(primaryTags.size() == 0) {
-            if(secondaryTags.size() == 0) {
-                analyzedNews.setPrimaryTags(analyzedNews.getKeywords());
-            } else {
-                analyzedNews.setPrimaryTags(secondaryTags.toString());
-            }
-        } else {
-            analyzedNews.setPrimaryTags(primaryTags.toString());
-        }
     }
 
     private AnalyzedNews inheritExistingProperties(TransformedNews transformedNews) {

@@ -71,6 +71,10 @@ public class TransformedNews extends NewsEntity {
     @DBColumn(column = "PROCESS_STATUS", dataType = DataType.VARCHAR, nullable = false)
     private String processStatus;
 
+    /** Section of the news - international, society, sports, politics, etc*/
+    @DBColumn(column = "CITY", dataType = DataType.VARCHAR, nullable = false)
+    private String city;
+
     public String getProcessStatus() {
         return processStatus;
     }
@@ -78,6 +82,15 @@ public class TransformedNews extends NewsEntity {
     public void setProcessStatus(String processStatus) {
         this.processStatus = processStatus;
     }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
 
     public String getSection() {
         return section;

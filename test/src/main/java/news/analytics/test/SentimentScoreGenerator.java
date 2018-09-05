@@ -44,11 +44,11 @@ public class SentimentScoreGenerator {
         Float h1Score = process(h1);
         h1Score = h1Score / (h1.split(" ").length); // * 0.3; // 30%
 
-        String text = sampleArticle.getText();
+        String text = removeStopWords(sampleArticle.getText());
         String[] sentences = text.split("\\.");
         Float textScore = 0F;
         for(String sentence : sentences ) {
-//            sentence = removeStopWords(sentence); // stopwords removal not working fine, it is replacing partial characters
+            System.out.println(sentence);
             textScore += process(sentence.trim())/sentence.split(" ").length;
         }
 
@@ -131,9 +131,10 @@ public class SentimentScoreGenerator {
     }
 
     private static String removeStopWords(String text) {
-//        for(String stopWord : stopwords){
-//            text = text.replaceAll(stopWord, "");
-//        }
+        for(String stopWord : stopwords){
+            text = text.replaceAll(" " + stopWord + " ", " ");
+            text = text.replaceAll("[(0-9)*(०-९)*]", " ");
+        }
         return text;
     }
 

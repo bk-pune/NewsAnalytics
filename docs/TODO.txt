@@ -1,30 +1,9 @@
-- create test data - 2018 articles for MaTa, Sakal, Lokmat
+- create test data - 2018 articles for MaTa, Sakal, Lokmat, Loksatta
 	- generate seeds - Done
 	- inject
 	- fetch
 	- transform
 
-- Sentiment analysis for marathi
-	- adverb dictionary
-		- provide polarity multiplier score for each adverb
-	- positive words
-	- negative
-	- neutral
-	- Algo for finding out polarity
-
-- Dictionary wise tagging and assigning scores
-    * Create tag dictionaries:
-    As of now, we will be tagging news articles only for following subjects.
-    Create tag list for each of these subjects.
-    - Politics
-        - Contains list of all political parties, their supporters, leaders, etc.
-        - These will be multiple lists such as -
-        Congress = [Rahul, Gandhi, Rahul Gandhi, congress, tharur, soniya]
-        BJP = [Modi, Devendra, bjp, bhajapa, etc]
-    - Crime
-        - All the crime related words and their variations
-    - Accidents
-
-    * Given a news article, tag it based on the occurrences of tags. There will be multiple tags per news article.
-      Identify the tag scores for each of the tags. Sort them based on descending order of the scores.
-      These tag scores will be used in search runtime.
+Generate seeds for loksatta
+Generate seeds for blogs/articles for every site
+Getting started with Solr/Lucene

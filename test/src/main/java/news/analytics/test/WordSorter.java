@@ -16,10 +16,10 @@ public class WordSorter {
 
     private static Set<String> loadExistingWords() throws IOException {
         Set<String> pages = new TreeSet<String>();
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\otherSamples\\stopwords.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\cities.txt"));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line.replaceAll("[a-zA-Z]", ""));
+            pages.add(line);
         }
         bufferedReader.close();
         return pages;

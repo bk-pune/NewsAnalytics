@@ -7,12 +7,14 @@ import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.RawNews;
 import news.analytics.model.TransformedNews;
+import news.analytics.pipeline.utils.PipelineUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Second stage of pipeline where raw news data will be transformed to more useful format.<br>
@@ -23,12 +25,14 @@ public class Transformer {
     private GenericDao<TransformedNews> transformedNewsDao;
     private DataSource dataSource;
     private List<Thread> transformWorkers;
+    private Set<String> cities;
 
-    public Transformer(DataSource dataSource) {
+    public Transformer(DataSource dataSource) throws IOException {
         rawNewsDao = new GenericDao<RawNews>(RawNews.class);
         transformedNewsDao = new GenericDao<TransformedNews>(TransformedNews.class);
         this.dataSource = dataSource;
         transformWorkers = new ArrayList<Thread>(10);
+        cities = PipelineUtils.loadDictionaryFile("cities.txt");
     }
 
     public void transform(int threadLimit) throws SQLException, IllegalAccessException, IOException, InstantiationException {
@@ -51,7 +55,7 @@ public class Transformer {
         List<List<RawNews>> partitions = Lists.partition(rawNewsList, eachPartitionSize);
         // create threads, assign each partition to each thread
         for (int i = 0; i < partitions.size(); i++) {
-            TransformWorker worker = new TransformWorker(dataSource, transformedNewsDao, rawNewsDao, partitions.get(i));
+            TransformWorker worker = new TransformWorker(dataSource, transformedNewsDao, rawNewsDao, partitions.get(i), cities);
             transformWorkers.add(worker);
             worker.start();
         }

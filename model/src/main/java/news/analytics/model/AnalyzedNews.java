@@ -71,6 +71,10 @@ public class AnalyzedNews extends NewsEntity {
     @DBColumn(column = "PROCESS_STATUS", dataType = DataType.VARCHAR, nullable = false)
     private String processStatus;
 
+    /** Section of the news - international, society, sports, politics, etc*/
+    @DBColumn(column = "CITY", dataType = DataType.VARCHAR, nullable = false)
+    private String city;
+
     @DBColumn(column = "SENTIMENT_SCORE", dataType = DataType.FLOAT, nullable = false)
     private Float sentimentScore;
 
@@ -79,6 +83,14 @@ public class AnalyzedNews extends NewsEntity {
 
     @DBColumn(column = "SECONDARY_TAGS", dataType = DataType.VARCHAR)
     private String secondaryTags;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public Long getId() {
         return id;

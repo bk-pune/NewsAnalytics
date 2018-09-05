@@ -9,7 +9,9 @@ public enum NewsAgency {
     MAHARASHTRA_TIMES("Maharashtra Times", Arrays.asList("maharashtratimes.indiatimes.com")),
     LOKMAT("Lokmat", Arrays.asList("www.lokmat.com")),
     SAKAL("Sakal", Arrays.asList("www.esakal.com")),
-    SAAMANA("Saamana", Arrays.asList("www.saamana.com"));;
+    SAAMANA("Saamana", Arrays.asList("www.saamana.com")),
+    LOKSATTA("Loksatta", Arrays.asList("www.loksatta.com"));
+
 
     private final String newsAgency;
     private final List<String> hostNames;
