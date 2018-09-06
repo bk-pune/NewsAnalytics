@@ -22,8 +22,6 @@ import org.jsoup.select.Elements;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TransformWorker extends Thread {
@@ -288,19 +286,6 @@ public class TransformWorker extends Thread {
 
     private void processTag(NodeConfigHolder tag, Document document, TransformedNews transformedNews) {
         Map<String, List<JsonNode>> nodeConfigMap = tag.getNodeConfigMap();
-        // Entry looks like below:
-        /*
-            "h1":
-            {
-               "valueLocatorType" : "tag",
-               "tagIdentifierTagName": "h1",
-            },
-            {
-               "valueLocatorType" : "tag",
-               "tagIdentifierTagName": "h1",
-            }
-         */
-
         for (Map.Entry<String, List<JsonNode>> entry : nodeConfigMap.entrySet()) {
             String fieldName = entry.getKey();
             List<JsonNode> jsonNodeList = entry.getValue();
@@ -331,13 +316,7 @@ public class TransformWorker extends Thread {
         } else if (type.isAssignableFrom(Long.class)) {
             if (field.getName().contains("date") || field.getName().contains("DATE") || field.getName().contains("Date")) {// Date fields to be converted into long
                 String dateInStringFormat = value;
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                try {
-                    returnValue = dateFormat.parse(dateInStringFormat).getTime();
-                } catch (ParseException e) {
-                    // TODO there can be multiple date formats supported
-                    System.out.println("Date parsing exception " + e);
-                }
+                returnValue = PipelineUtils.getLongDate(dateInStringFormat);
             } else {
                 returnValue = Long.parseLong(value);
             }
