@@ -4,6 +4,5 @@
 	- fetch
 	- transform
 
-Generate seeds for blogs/articles for every site - Bhushan
 Getting started with Solr/Lucene - Shruti
 Getting started on UI - Manoj

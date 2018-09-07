@@ -10,7 +10,7 @@ import java.util.*;
 
 public class ExtractSeeds {
     public static void main(String[] args) throws IOException, InterruptedException {
-        loksatta();
+        saamana();
     }
 
     private static void loksatta() throws IOException {
@@ -18,105 +18,93 @@ public class ExtractSeeds {
         String host = "https://www.loksatta.com/";
         Map<String, Integer> categoryWisePageCounterMap = new TreeMap();
 //
-        categoryWisePageCounterMap.put("pune/page/", 102);
-        categoryWisePageCounterMap.put("mumbai/page/", 200); // https://www.loksatta.com/mumbai/page/200/
-        categoryWisePageCounterMap.put("thane/page/", 65);
+        categoryWisePageCounterMap.put("arthasatta/page/", 25);
+        categoryWisePageCounterMap.put("sampadkiya-category/anvyartha/page/", 10);
 
-        categoryWisePageCounterMap.put("navimumbai/page/", 30);
-        categoryWisePageCounterMap.put("nagpur/page/", 45);
-        categoryWisePageCounterMap.put("nashik/page/", 30);
-        categoryWisePageCounterMap.put("aurangabad/page/", 18);
-
-        categoryWisePageCounterMap.put("kolhapur/page/", 10);
-        categoryWisePageCounterMap.put("maharashtra/page/", 195);
 
         Set<String> seeds = new TreeSet();
         Set<String> failures = new TreeSet();
         Set<String> pages = new TreeSet();
 
-        for(Map.Entry<String, Integer> entry: categoryWisePageCounterMap.entrySet()) {
-            for(int i = 1; i<=entry.getValue(); i++) {
-                String url = host + entry.getKey() + i;
-                pages.add(url);
-            }
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\loksatta_tmp.html"));
+        String line = null;
+        StringBuilder sb = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            sb.append(line+"\n");
         }
+        bufferedReader.close();
 
-        for (String url : pages) {
-            System.out.println("# Page: " + url);
-            Document document = null;
-            try {
-                // for each url, connect, parse, get a[href]
-                document = Jsoup.connect(url).get();
-            } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("# Failed Page: " + url);
-                failures.add(url);
-                continue;
-            }
+//        for (Map.Entry<String, Integer> entry : categoryWisePageCounterMap.entrySet()) {
+//            for (int i = 1; i <= entry.getValue(); i++) {
+//                String url = host + entry.getKey() + i;
+//                pages.add(url);
+//            }
+//        }
 
-            Elements h2 = document.getElementsByTag("h2");
-            for (Element e : h2) {
-                Elements anchors = e.getElementsByTag("a");
-                for (Element a : anchors) {
-                    String href = a.attr("href");
-                    if (href.startsWith("http")|| href.startsWith("https")) {
-                        seeds.add(href);
-                    } else {
+//        for (String url : pages) {
+//            System.out.println("# Page: " + url);
+        Document document = Jsoup.parse(sb.toString());;
+//            try {
+//                // for each url, connect, parse, get a[href]
+//                document = Jsoup.connect(url).get();
+//            } catch (Exception e) {
+//                System.out.println(e);
+//                System.out.println("# Failed Page: " + url);
+//                failures.add(url);
+//                continue;
+//            }
+
+        Elements h2 = document.getElementsByTag("h2");
+        for (Element e : h2) {
+            Elements anchors = e.getElementsByTag("a");
+            for (Element a : anchors) {
+                String href = a.attr("href");
+                if (href.startsWith("http") || href.startsWith("https")) {
+                    seeds.add(href);
+                } else {
 //                        seeds.add(host + href);
-                    }
                 }
             }
         }
-
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\loksatta\\loksatta_2018_seeds.txt"));
-        for (String url : seeds) {
-            bufferedWriter.write(url);
-            bufferedWriter.newLine();
+        Elements h1 = document.getElementsByTag("h2");
+        for (Element e : h1) {
+            Elements anchors = e.getElementsByTag("a");
+            for (Element a : anchors) {
+                String href = a.attr("href");
+                if (href.startsWith("http") || href.startsWith("https")) {
+                    seeds.add(href);
+                } else {
+//                        seeds.add(host + href);
+                }
+            }
         }
-        bufferedWriter.close();
+        System.out.println(seeds);
+//        }
+
     }
 
     private static void saamana() throws IOException {
         String host = "http://www.saamana.com/";
         String category = "category/";
 
-//        Map<String, Integer> categoryWisePageCounterMap = new HashMap<String, Integer>(15);
-//
-//        categoryWisePageCounterMap.put("maharashtra/1mumbai/page/", 495);
-//        categoryWisePageCounterMap.put("maharashtra/2thane/page/", 111);
-//        categoryWisePageCounterMap.put("maharashtra/3kokan/page/", 112);
-//        categoryWisePageCounterMap.put("maharashtra/4pune/page/", 179);
-//
-//        categoryWisePageCounterMap.put("maharashtra/5nashik/page/", 101);
-//        categoryWisePageCounterMap.put("maharashtra/6sambhajinagar/page/", 314);
-//        categoryWisePageCounterMap.put("maharashtra/7nagpur/page/", 60);
-//        categoryWisePageCounterMap.put("maharashtra/desh/page/", 500);
-//        categoryWisePageCounterMap.put("maharashtra/videsh/page/", 75);
-//
-//        categoryWisePageCounterMap.put("maharashtra/krida/page/", 180);
-//        categoryWisePageCounterMap.put("maharashtra/manoranjan/page/", 122);
-//        categoryWisePageCounterMap.put("maharashtra/college/page/", 20);
-//        categoryWisePageCounterMap.put("maharashtra/lifestyle/page/", 55);
+        Map<String, Integer> categoryWisePageCounterMap = new HashMap<String, Integer>(15);
+
+        categoryWisePageCounterMap.put("sampadakiya/rokhthok/page/", 5);
+        categoryWisePageCounterMap.put("sampadakiya/sampadakiya/page/", 7);
+        categoryWisePageCounterMap.put("sampadakiya/lekh/page/", 50);
+        categoryWisePageCounterMap.put("sampadakiya/agralekh/page/", 24);
 
         Set<String> seeds = new HashSet<String>();
         Set<String> failures = new HashSet<String>();
-        Set<String> pages = new HashSet<String>(15);
-
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\failed.txt"));
-
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line);
-        }
-        bufferedReader.close();
 
         // page counters are subject to change as new news articles will come in
-        for (String url : pages) {
-//            String key = entry.getKey();
-//            int pageCounter = entry.getValue();
+        for (Map.Entry<String, Integer> entry : categoryWisePageCounterMap.entrySet()) {
+            String key = entry.getKey();
+            int pageCounter = entry.getValue();
 
-//            for (int i = 1; i <= pageCounter; i++) {
-//                String url = host + category + key + i;  // http://www.saamana.com/ + category/ + maharashtra/1mumbai/page/ + 3
+            for (int i = 1; i <= pageCounter; i++) {
+                String url = host + category + key + i;  // http://www.saamana.com/ + category/ + maharashtra/1mumbai/page/ + 3
                 System.out.println("# Page: " + url);
                 Document document = null;
                 try {
@@ -135,7 +123,7 @@ public class ExtractSeeds {
                     Elements anchors = e.getElementsByTag("a");
                     for (Element a : anchors) {
                         String href = a.attr("href");
-                        if (href.startsWith("http")|| href.startsWith("https")) {
+                        if (href.startsWith("http") || href.startsWith("https")) {
                             seeds.add(href);
                         } else {
                             seeds.add(host + href);
@@ -143,9 +131,9 @@ public class ExtractSeeds {
                     }
                 }
             }
-//        }
+        }
 
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\saamana\\saamana_2018_seeds_set2.txt"));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\saamana\\saamana_articles.txt"));
         for (String url : seeds) {
             bufferedWriter.write(url);
             bufferedWriter.newLine();
@@ -161,98 +149,76 @@ public class ExtractSeeds {
     }
 
     private static void sakal() throws IOException, InterruptedException {
-        String host = "http://www.esakal.com";
+        String host = "http://www.esakal.com/";
         String page = "page";
 
-       /* Map<String, Integer> categoryWisePageCounterMap = new HashMap<String, Integer>(9);
-        categoryWisePageCounterMap.put("maratha-agitation", 34);
-        // http://www.esakal.com/maratha-agitation?page=0,0,0,0
-        // <div class="views-field-title newsheading"><a href="/pune-maratha-agitation/maratha-kranti-morcha-maratha-reservation-agitation-137039">Maratha Kranti Morcha: ?????? ????????? ??????...</a></div>
+        Map<String, Integer> categoryWisePageCounterMap = new HashMap<String, Integer>(9);
+        categoryWisePageCounterMap.put("blog", 15);
+        categoryWisePageCounterMap.put("sampadakiya", 135);
+        categoryWisePageCounterMap.put("saptarang", 110);
 
-        categoryWisePageCounterMap.put("maharashtra-news", 375);
-        categoryWisePageCounterMap.put("paschim-maharashtra-news", 1030);
-        categoryWisePageCounterMap.put("uttar-maharashtra-news", 568);
-        categoryWisePageCounterMap.put("vidarbha-news", 400);
-        categoryWisePageCounterMap.put("marathwada-news", 483);
-        categoryWisePageCounterMap.put("kokan-news", 315);
-        categoryWisePageCounterMap.put("mumbai-news", 545);
-        categoryWisePageCounterMap.put("pune-news", 1175);
-        categoryWisePageCounterMap.put("desh", 557);
-        categoryWisePageCounterMap.put("global", 70);
-        categoryWisePageCounterMap.put("krida", 226);
-*/
-
+        Set<String> pages = new HashSet<String>();
         Set<String> seeds = new HashSet<String>();
         Set<String> failures = new HashSet<String>();
-        Set<String> pages = new HashSet<String>(15);
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\sakal\\failed.txt"));
-
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line);
-        }
-        bufferedReader.close();
-
-        System.out.println("Total pages : " + pages.size());
-/*        // page counters are subject to change as new news articles will come in
         for (Map.Entry<String, Integer> entry : categoryWisePageCounterMap.entrySet()) {
             String category = entry.getKey();
-            int pageCounter = entry.getValue();*/
+            int pageCounter = entry.getValue();
 
-        for (String url : pages) {
-            System.out.println("# Page: " + url);
-            seeds.add("# Page: " + url);
-            Thread.sleep(20 * 1000);
-            Document document = null;
-            try {
-                // for each url, connect, parse, get a[href]
-                document = Jsoup.connect(url).get();
-            } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("# Failed Page: " + url);
-                failures.add(url);
-                continue;
-            }
 
-            // <h4 class="mainnewstitle"><a href="/krida-cricket/pressure-making-best-pitch-says-hunt-137550">????????? ???????? ????????? ????- ??? </a></h4>
-            Elements h4 = document.getElementsByTag("h4");
-            for (Element e : h4) {
-                if (e.attr("class") == null || !e.attr("class").trim().equalsIgnoreCase("mainnewstitle")) {
+            for (int i = 0; i <= pageCounter; i++) {
+                // http://www.esakal.com/saptarang?page=110
+                String url = host + category + "?page=" + i;
+
+                System.out.println("# Page: " + url);
+                pages.add("# Page: " + url);
+                Document document = null;
+                try {
+                    // for each url, connect, parse, get a[href]
+                    document = Jsoup.connect(url).get();
+                } catch (Exception e) {
+                    System.out.println(e);
+                    System.out.println("# Failed Page: " + url);
+                    failures.add(url);
                     continue;
                 }
-                Elements anchors = e.getElementsByTag("a");
-                for (Element a : anchors) {
-                    String seed = host + a.attr("href"); // href contains '/'
-                    seeds.add(seed);
-//                        System.out.println(seed);
+
+                // <h4 class="mainnewstitle"><a href="/krida-cricket/pressure-making-best-pitch-says-hunt-137550">????????? ???????? ????????? ????- ??? </a></h4>
+                Elements h4 = document.getElementsByTag("h4");
+                for (Element e : h4) {
+                    if (e.attr("class") == null || !e.attr("class").trim().equalsIgnoreCase("mainnewstitle")) {
+                        continue;
+                    }
+                    Elements anchors = e.getElementsByTag("a");
+                    for (Element a : anchors) {
+                        String seed = host + a.attr("href"); // href contains '/'
+                        seeds.add(seed);
+                    }
                 }
-            }
 //  <div class="newstitle"><a href="/krida/nadal-beats-tsitsipas-straight-sets-win-rogers-cup-137624">???????????????? ???? ‘??????’</a></div>
-            Elements newstitle = document.getElementsByClass("newstitle");
-            for (Element e : newstitle) {
-                Elements anchors = e.getElementsByTag("a");
-                for (Element a : anchors) {
-                    String seed = host + a.attr("href"); // href contains '/'
-                    seeds.add(seed);
-//                        System.out.println(seed);
+                Elements newstitle = document.getElementsByClass("newstitle");
+                for (Element e : newstitle) {
+                    Elements anchors = e.getElementsByTag("a");
+                    for (Element a : anchors) {
+                        String seed = host + a.attr("href"); // href contains '/'
+                        seeds.add(seed);
+                    }
                 }
-            }
 
 //<span class="mostreadedtitle"><a href="/krida/where-are-good-facilities-practice-says-vinesh-fogat-137569">????????? ???????? ?????? ???? ?????</a></span>
-            Elements mostReadArticle = document.getElementsByClass("mostreadedtitle");
-            for (Element e : mostReadArticle) {
-                Elements anchors = e.getElementsByTag("a");
-                for (Element a : anchors) {
-                    String seed = host + a.attr("href"); // href contains '/'
-                    seeds.add(seed);
-//                        System.out.println(seed);
+                Elements mostReadArticle = document.getElementsByClass("mostreadedtitle");
+                for (Element e : mostReadArticle) {
+                    Elements anchors = e.getElementsByTag("a");
+                    for (Element a : anchors) {
+                        String seed = host + a.attr("href"); // href contains '/'
+                        seeds.add(seed);
+                    }
                 }
             }
         }
 
         try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\sakal\\sakal_2018_seeds_set3.txt"));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\sakal\\sakal_articles.txt"));
             System.out.println("Total Seeds for Sakal : " + seeds.size());
             for (String url : seeds) {
                 bufferedWriter.write(url);
@@ -277,16 +243,8 @@ public class ExtractSeeds {
         String page = "page";
 
         Map<String, Integer> categoryWisePageCounterMap = new HashMap<String, Integer>(9);
-        categoryWisePageCounterMap.put("maharashtra", 1840);
-        categoryWisePageCounterMap.put("pune", 545);
-        categoryWisePageCounterMap.put("mumbai", 650);
-        categoryWisePageCounterMap.put("navi-mumbai", 108);
-        categoryWisePageCounterMap.put("thane", 351);
-        categoryWisePageCounterMap.put("vasai-virar", 96);
-        categoryWisePageCounterMap.put("raigad", 93);
-        categoryWisePageCounterMap.put("bollywood", 385);
-        categoryWisePageCounterMap.put("raigad", 93);
-        categoryWisePageCounterMap.put("sports", 386);
+        categoryWisePageCounterMap.put("manthan", 20);
+        categoryWisePageCounterMap.put("editorial", 155);
 
 
         Set<String> seeds = new HashSet<String>();
@@ -313,7 +271,7 @@ public class ExtractSeeds {
             }
         }
 
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\seeds.lokmat\\lokmat_2018_seeds.txt"));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\lokmat\\lokmat_articles.txt"));
         for (String url : seeds) {
             bufferedWriter.write(url);
             bufferedWriter.newLine();
