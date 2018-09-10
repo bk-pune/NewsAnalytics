@@ -130,25 +130,36 @@ public class TransformWorker extends Thread {
     }
 
     public void extractCity(TransformedNews transformedNews) {
+        String city = null;
+        String section = transformedNews.getSection();
+        for(String tmp : cities) {
+            if(section.contains(tmp)) {
+                city = tmp;
+                transformedNews.setCity(city);
+                return;
+            }
+        }
+
+        // look inside first line
         String content = transformedNews.getContent();
         String firstLine = content.substring(0, content.indexOf("."));
-        String city = null;
+
         for(String tmp : cities) {
             if(firstLine.contains(tmp)) {
                 city = tmp;
-                break;
+                transformedNews.setCity(city);
+                return;
             }
         }
-        if(city == null) {
-            // look for the first city name inside content
-            for(String tmp : cities) {
-                if(content.contains(tmp)) {
-                    city = tmp;
-                    break;
-                }
+
+        // look inside entire content
+        for(String tmp : cities) {
+            if(content.contains(tmp)) {
+                city = tmp;
+                transformedNews.setCity(city);
+                return;
             }
         }
-        transformedNews.setCity(city);
     }
 
     private void processTagIdentifiedByTagAttribute(NodeConfigHolder tag_identified_by_attribute, Document document, TransformedNews transformedNews) {
