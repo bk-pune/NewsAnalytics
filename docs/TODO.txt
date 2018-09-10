@@ -5,9 +5,9 @@
 	- transform
 
 Bhushan
-Collection datatype in AnalyzedNews for keywords and tags
 Improve sentiment score generation logic
 Remove words with single letter from keywords and tags
+Show better status report
 
 Shruti
 Search in full text

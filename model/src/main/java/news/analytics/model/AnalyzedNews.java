@@ -1,5 +1,6 @@
 package news.analytics.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import news.analytics.model.annotations.ConstraintType;
 import news.analytics.model.annotations.DBColumn;
 import news.analytics.model.annotations.DBConstraint;
@@ -214,6 +215,7 @@ public class AnalyzedNews extends NewsEntity {
         this.author = author;
     }
 
+    @JsonIgnore
     public String getPlainText() {
         return plainText;
     }
