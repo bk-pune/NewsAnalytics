@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Solr managed schema - automatically generated - DO NOT EDIT -->
+<schema name="news_core_1" version="1.6">
+  <uniqueKey>id</uniqueKey>
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="date" class="solr.TrieDateField" positionIncrementGap="0" docValues="true" precisionStep="0"/>
+  <fieldType name="double" class="solr.TrieDoubleField" positionIncrementGap="0" docValues="true" precisionStep="0"/>
+  <fieldType name="float" class="solr.TrieFloatField" positionIncrementGap="0" docValues="true" precisionStep="0"/>
+  <fieldType name="int" class="solr.TrieIntField" positionIncrementGap="0" docValues="true" precisionStep="0"/>
+  <fieldType name="long" class="solr.TrieLongField" positionIncrementGap="0" docValues="true" precisionStep="0"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+  <field name="_root_" type="long" docValues="false" indexed="false" stored="false"/>
+  <field name="_version_" type="long" indexed="false" stored="false"/>
+  <field name="author" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="charset" type="string" multiValued="false" indexed="false" stored="true"/>
+  <field name="city" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="content" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="creationDate" type="long" multiValued="false" indexed="true" stored="true"/>
+  <field name="description" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="h1" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="h2" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="id" type="long" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="keywords" type="string" multiValued="true" indexed="true" stored="true"/>
+  <field name="modifiedDate" type="long" multiValued="false" indexed="true" stored="true"/>
+  <field name="newsAgency" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="primaryTags" type="string" multiValued="true" indexed="true" stored="true"/>
+  <field name="processStatus" type="string" multiValued="false" indexed="false" stored="true"/>
+  <field name="publishDate" type="long" multiValued="false" indexed="true" stored="true"/>
+  <field name="secondaryTags" type="string" multiValued="true" indexed="false" stored="true"/>
+  <field name="section" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="sentimentScore" type="double" multiValued="false" indexed="true" stored="true"/>
+  <field name="title" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="uri" type="string" multiValued="false" indexed="false" stored="true"/>
+   
+   <copyField source="*" dest="allData"/>
+
+   <field name="allData" type="string" multiValued="false" indexed="true" stored="true"/>
+
+</schema>
