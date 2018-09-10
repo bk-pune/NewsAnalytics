@@ -4,5 +4,15 @@
 	- fetch
 	- transform
 
-Getting started with Solr/Lucene - Shruti
-Getting started on UI - Manoj
+Bhushan
+Collection datatype in AnalyzedNews for keywords and tags
+Improve sentiment score generation logic
+Remove words with single letter from keywords and tags
+
+Shruti
+Search in full text
+Search priority order- h1 -> primary tags -> keywords -> Secondary tags -> Content
+
+Manoj
+Theme, page layout
+Chart/Diagram analysis

@@ -52,7 +52,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
      * @return Top 3 tags
      * @throws IOException
      */
-    public List<String> generateTags(String text) throws IOException {
+    public Set<String> generateTags(String text) throws IOException {
         Map<String, Integer> tags = new TreeMap();
         Set<String> nGrams = new TreeSet<String>();
         String textWithoutStopWords = removeStopWords(text);
@@ -70,7 +70,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
         while (theFilter.incrementToken()) {
             String bigram = charTermAttribute.toString();
             // dont add tokens with _ char or having length 1
-            if(! (bigram.startsWith("_") || bigram.endsWith("_") || bigram.length() == 1))
+            if(!bigram.startsWith("_") && !bigram.endsWith("_") && bigram.length() != 1)
                 nGrams.add(bigram);
         }
         theFilter.end();
@@ -107,8 +107,8 @@ public class TagGenerator extends StopwordAnalyzerBase {
         return textWithoutStopWords;
     }
 
-    private List<String> getTopFive(Map<String, Integer> tags) {
-        List<String> toReturn = new ArrayList<>(5);
+    private Set<String> getTopFive(Map<String, Integer> tags) {
+        Set<String> toReturn = new TreeSet<>();
         for(Map.Entry<String, Integer> entry : tags.entrySet()) {
             toReturn.add(entry.getKey());
             if(toReturn.size() == 5) {
@@ -119,28 +119,31 @@ public class TagGenerator extends StopwordAnalyzerBase {
     }
 
     public void generateTags(AnalyzedNews analyzedNews) throws IOException {
-        List<String> secondaryTags = generateTags(analyzedNews.getContent());
-        analyzedNews.setSecondaryTags(secondaryTags.toString());
+        Set<String> secondaryTags = generateTags(analyzedNews.getContent());
+        analyzedNews.setSecondaryTags(secondaryTags);
 
         // generated tags are from keywords from the source, then such tags are considered as the primary tags
-        List<String> primaryTags = new ArrayList<>();
-        String keywords = analyzedNews.getKeywords();
+        Set<String> primaryTags = new TreeSet<>();
+        Set<String> keywords = analyzedNews.getKeywords();
         if(keywords != null) {
             for(String tag : secondaryTags) {
                 if(keywords.contains(tag)) {
                     primaryTags.add(tag);
                 }
             }
+        } else {
+            // if keywords are null, then keywords = secondary = primary
+            analyzedNews.setKeywords(secondaryTags);
         }
 
         if(primaryTags.size() == 0) {
             if(secondaryTags.size() == 0) {
                 analyzedNews.setPrimaryTags(analyzedNews.getKeywords());
             } else {
-                analyzedNews.setPrimaryTags(secondaryTags.toString());
+                analyzedNews.setPrimaryTags(secondaryTags);
             }
         } else {
-            analyzedNews.setPrimaryTags(primaryTags.toString());
+            analyzedNews.setPrimaryTags(primaryTags);
         }
     }
 
