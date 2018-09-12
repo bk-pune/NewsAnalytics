@@ -6,8 +6,23 @@
 
 Bhushan
 Improve sentiment score generation logic
+    Score assignment to l
+    Categorization of words -
+    Qualitative - Words describing quality - उत्तम, आनंदी, इमानी
+    Quantitative - Words describing quantity - अधिक, अति, अपूर्ण, कमी
+    Adjectives - Words describing about nouns - काटेरी, कुटिल, गोल
+    Adverbs - Words describing about verbs - कडकपणे, कडवटपणे, कर्कशपणे
+    Stopwords - Words with no significant meaning in the statment - असलेल्या, असा, करण्यात, करायचा, करायचे, करीत
+
+    Finding shortest form of the word for searching a substring -
+    अंधविश्वासामुळे  -> अंधविश्वास
+    अंधारमयपणे -> अंधारमय
+    गाफीलपणे -> गाफील
+
 Remove words with single letter from keywords and tags
 Show better status report
+Find out news trends
+Calculate news reliability index (Low priority as of now)
 
 Shruti
 Search in full text

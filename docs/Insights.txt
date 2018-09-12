@@ -1,14 +1,35 @@
+* Sentiment analysis of news reports
+=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
+=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
+=> https://www.researchgate.net/publication/321585830_Good_News_vs_Bad_News_What_are_they_talking_about
+What are the sentiments of people about a particular news -> How to get them?
+Categorisation is achieved by (often user-defined) Boolean search word expressions or by using lists of search words with varying (positive or negative) weights and a threshold.
+We have seen that there is a need to clearly define, what the source and the target of the sentiment are, subsequently separate the good and bad news content from the good and bad sentiment expressed on the target.
+Figure out most discussed news => How to do it?
+
+*Periodic trends in Sentiment score
+Timeline Graph showing trend of sentiment score.
+Example: Sentiment score graph today is in negatives for particular news paper. The user negotiates with the news agency.
+In next 15-30 days, trend starts showing improvement in sentiment score.
+Paid news, promotions over the time and their impact over next period.
+
+* Comparison of News websites
+Topic wise comparison
+Sentiment comparison
+Numeric values comparison
+Biased index comparison
+
+* Visualize critical trends
+News Media Analytics quickly illustrate news trends and reduce time spent interpreting data.
+    * Crime rate
+    * Accidents
+
 * Identify fake news and the Reliability index of news agencies
 “Fake news represents a threat to democracy if people are deliberately using it on social media platforms to spread misinformation around an election” - Damian Collins, a British lawmaker.
 To identify fake or suspicious news, it is important to know the sources cited in the news article.
 The best way to check the reliability is to identify if that information is also present in at least one reputable media: the main newspapers (the broadsheet ones) or news agencies.
 This is a basic criterion in journalism: cross-check information using reliable sources !!!
 You can also compare metrics on Twitter, Facebook, and other social media.
-
-* Visualize critical trends
-News Media Analytics quickly illustrate news trends and reduce time spent interpreting data.
-    * Crime rate
-    * Accidents
 
 * Biased news web sites
 => https://www.studentnewsdaily.com/types-of-media-bias/
@@ -21,24 +42,7 @@ Bias by placement Bias by placement is where on a website (or newspaper) or in a
 Bias by labeling
 Bias by spin – Bias by spin occurs when the story has only one interpretation of an event or policy, to the exclusion of the other
 
-* Sentiment analysis of news reports
-=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
-=> https://www.researchgate.net/publication/220746038_Sentiment_Analysis_in_the_News
-=> https://www.researchgate.net/publication/321585830_Good_News_vs_Bad_News_What_are_they_talking_about
-What are the sentiments of people about a particular news -> How to get them?
-Categorisation is achieved by (often user-defined) Boolean search word expressions or by using lists of search words with varying (positive or negative) weights and a threshold.
-We have seen that there is a need to clearly define, what the source and the target of the sentiment are, subsequently separate the good and bad news content from the good and bad sentiment expressed on the target.
-Figure out most discussed news => How to do it?
-Impact of news - A bad happened, news published. Rectified, good happened.
-
-* Comparison of News websites
-Topic wise comparison
-Sentiment comparison
-Numeric values comparison
-Biased index comparison
-
-* News and Politics - hand in hand
-Paid news, promotions over the time and their impact over next period
+* Impact of news - A bad happened, news published. Rectified, good happened.
 
 * Factors affecting economy of the country
 Natural Resources available. Investment in Human Capital. Investment in Capital Goods. Entrepreneurship.

@@ -74,12 +74,12 @@ public class SentimentScoreGenerator {
         if (line.endsWith("?")) {
             Float score = process(line.substring(0, line.indexOf("?")));
             if(score > 0)
-                positiveScore ++;
+                positiveScore +=positiveScore*10/100; // increase by 10%;
         }
         if (line.endsWith("!")) {
             Float score = process(line.substring(0, line.indexOf("!")));
             if(score < 0)
-                negativeScore ++;
+                negativeScore +=negativeScore*10/100; // increase by 10%
         }
 
         // Extract text between quotes => meaning someone "said this" -> Sentiment Analysis on this sentence
@@ -166,11 +166,11 @@ public class SentimentScoreGenerator {
     }
 
     private static void loadDictionaries() throws IOException {
-        positive = load("D:\\Bhushan\\personal\\\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
-        negative = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
-        neutral = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
-        adverbs = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
-        stopwords = load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
+        positive = Utils.load("D:\\Bhushan\\personal\\\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
+        negative = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt");
+        neutral = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt");
+        adverbs = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
+        stopwords = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt");
         adverbWithPositive = attachAdverb("positive");
         adverbWithNegative = attachAdverb("negative");
         adverbWithNeutral = attachAdverb("neutral");
@@ -200,16 +200,6 @@ public class SentimentScoreGenerator {
         return words;
     }
 
-    private static Set<String> load(String fileName) throws IOException {
-        Set<String> pages = new TreeSet<String>();
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line.trim());
-        }
-        bufferedReader.close();
-        return pages;
-    }
 
     static class SampleArticle {
         String title;
