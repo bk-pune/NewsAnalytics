@@ -96,7 +96,6 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     private Object getValue(ResultSet resultSet, int index, DataType fieldDatatype) throws SQLException {
         Object value = null;
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        String columnName = resultSetMetaData.getColumnName(index);
         try {
             switch (fieldDatatype) {
                 case BLOB:

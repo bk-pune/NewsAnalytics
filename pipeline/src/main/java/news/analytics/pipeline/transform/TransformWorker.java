@@ -130,47 +130,40 @@ public class TransformWorker extends Thread {
     }
 
     public void extractCity(TransformedNews transformedNews) {
+        String city = null;
+        String section = transformedNews.getSection();
+        for(String tmp : cities) {
+            if(section.contains(tmp)) {
+                city = tmp;
+                transformedNews.setCity(city);
+                return;
+            }
+        }
+
+        // look inside first line
         String content = transformedNews.getContent();
         String firstLine = content.substring(0, content.indexOf("."));
-        String city = null;
+
         for(String tmp : cities) {
             if(firstLine.contains(tmp)) {
                 city = tmp;
-                break;
+                transformedNews.setCity(city);
+                return;
             }
         }
-        if(city == null) {
-            // look for the first city name inside content
-            for(String tmp : cities) {
-                if(content.contains(tmp)) {
-                    city = tmp;
-                    break;
-                }
+
+        // look inside entire content
+        for(String tmp : cities) {
+            if(content.contains(tmp)) {
+                city = tmp;
+                transformedNews.setCity(city);
+                return;
             }
         }
-        transformedNews.setCity(city);
     }
 
     private void processTagIdentifiedByTagAttribute(NodeConfigHolder tag_identified_by_attribute, Document document, TransformedNews transformedNews) {
         Map<String, List<JsonNode>> nodeConfigMap = tag_identified_by_attribute.getNodeConfigMap();
-        /*
-        "content":
-            {
-              "valueLocatorType" : "tag_identified_by_attribute",
-              "tagIdentifierTagName": "div",
-              "tagIdentifierAttributeName": "id",
-              "tagIdentifierAttributeValue": "content-body-*"
-
-            },
-            {
-              "valueLocatorType" : "tag_identified_by_attribute",
-              "tagIdentifierTagName": "div",
-              "tagIdentifierAttributeName": "id",
-              "tagIdentifierAttributeValue": "content-body-*"
-
-            }
-       */
-
         for (Map.Entry<String, List<JsonNode>> entry : nodeConfigMap.entrySet()) {
             String fieldName = entry.getKey();
             List<JsonNode> jsonNodeList = entry.getValue();
@@ -199,25 +192,6 @@ public class TransformWorker extends Thread {
     private void processSecondAttribute(NodeConfigHolder secondAttribute, Document document, TransformedNews transformedNews) {
         Map<String, List<JsonNode>> nodeConfigMap = secondAttribute.getNodeConfigMap();
         // Entry looks like below:
-        /*
-        "keywords":
-            {
-              "valueLocatorType" : "second_attribute",
-              "tagIdentifierTagName": "meta",
-              "tagIdentifierAttributeName": "name",
-              "tagIdentifierAttributeValue": "keywords",
-              "valueAttributeName" : "content"
-
-            },
-            {
-              "valueLocatorType" : "second_attribute",
-              "tagIdentifierTagName": "meta",
-              "tagIdentifierAttributeName": "name",
-              "tagIdentifierAttributeValue": "news_keywords",
-              "valueAttributeName" : "content"
-
-            }
-         */
         for (Map.Entry<String, List<JsonNode>> entry : nodeConfigMap.entrySet()) {
             String fieldName = entry.getKey();
             List<JsonNode> jsonNodeList = entry.getValue();
@@ -247,19 +221,6 @@ public class TransformWorker extends Thread {
     private void processFirstAttribute(NodeConfigHolder firstAttribute, Document document, TransformedNews transformedNews) {
         Map<String, List<JsonNode>> nodeConfigMap = firstAttribute.getNodeConfigMap();
         // Entry looks like below:
-        /*
-            "charset" :
-            {
-                "valueLocatorType" : "first_attribute",
-                "tagIdentifierTagName" : "meta",
-                "tagIdentifierAttributeName": "charset"
-            },
-            {
-                "valueLocatorType" : "first_attribute",
-                "tagIdentifierTagName" : "meta",
-                "tagIdentifierAttributeName": "charset"
-            }
-        */
         for (Map.Entry<String, List<JsonNode>> entry : nodeConfigMap.entrySet()) {
             String fieldName = entry.getKey();
             List<JsonNode> jsonNodeList = entry.getValue();
@@ -308,6 +269,7 @@ public class TransformWorker extends Thread {
         Object returnValue = null;
         Class<?> type = field.getType();
         String value = PipelineUtils.getFirstValueFromSet(values);
+        cleansContent(value);
         if(value == null || value.trim().equals("")) {
             return null;
         }
@@ -324,9 +286,19 @@ public class TransformWorker extends Thread {
             returnValue = Integer.parseInt(value);
         } else if (type.isAssignableFrom(Short.class)) {
             returnValue = Short.parseShort(value);
+        } else {
+            return value;
         }
 
         // that's the all data types for now
         return returnValue;
+    }
+
+    private String cleansContent(String content) {
+        if(content != null) {
+            content = content.replaceAll("&zwnj;", "").replaceAll("&nbsp;", "")
+                    .replaceAll("&rsquo;", "").replaceAll("\\u200C", "");
+        }
+        return content;
     }
 }

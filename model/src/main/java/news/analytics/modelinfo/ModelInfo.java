@@ -3,6 +3,7 @@ package news.analytics.modelinfo;
 import news.analytics.model.NewsEntity;
 import news.analytics.model.annotations.DBColumn;
 import news.analytics.model.annotations.DBTable;
+import news.analytics.model.annotations.DataConverter;
 import news.analytics.model.constants.DataType;
 
 import java.lang.reflect.Field;
@@ -79,6 +80,12 @@ public class ModelInfo<T> {
 
     public <T extends NewsEntity> void setValueToObject(T instance, Object value, Field field) {
         try {
+            DataConverter converter = field.getAnnotation(DataConverter.class);
+            if(converter != null) {
+                Class c= Class.forName(converter.value());
+                Converter dataConverter = (Converter)c.newInstance();
+                value = dataConverter.convert((String) value);
+            }
             Method method;
             method = newsEntityClass.getMethod("set" + Character.toUpperCase(field.getName().charAt(0)) + field.getName().substring(1), field.getType());
             method.invoke(instance, value);
@@ -88,6 +95,10 @@ public class ModelInfo<T> {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,10 +1,13 @@
 package news.analytics.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import news.analytics.model.annotations.ConstraintType;
 import news.analytics.model.annotations.DBColumn;
 import news.analytics.model.annotations.DBConstraint;
 import news.analytics.model.annotations.DBTable;
 import news.analytics.model.constants.DataType;
+
+import java.util.Set;
 
 /**
  * Represents a news after second step of analysis is done on TransformedNews.<br>
@@ -40,7 +43,7 @@ public class AnalyzedNews extends NewsEntity {
     private String content;
 
     @DBColumn(column = "KEYWORDS", dataType = DataType.VARCHAR)
-    private String keywords; // store them as json?
+    private Set<String> keywords; // store them as json?
 
     @DBColumn(column = "H1", dataType = DataType.VARCHAR) // size 500
     private String h1;
@@ -79,10 +82,10 @@ public class AnalyzedNews extends NewsEntity {
     private Float sentimentScore;
 
     @DBColumn(column = "PRIMARY_TAGS", dataType = DataType.VARCHAR)
-    private String primaryTags;
+    private Set<String> primaryTags;
 
     @DBColumn(column = "SECONDARY_TAGS", dataType = DataType.VARCHAR)
-    private String secondaryTags;
+    private Set<String> secondaryTags;
 
     public String getCity() {
         return city;
@@ -148,11 +151,11 @@ public class AnalyzedNews extends NewsEntity {
         this.content = content;
     }
 
-    public String getKeywords() {
+    public Set<String> getKeywords() {
         return keywords;
     }
 
-    public void setKeywords(String keywords) {
+    public void setKeywords(Set<String> keywords) {
         this.keywords = keywords;
     }
 
@@ -212,6 +215,7 @@ public class AnalyzedNews extends NewsEntity {
         this.author = author;
     }
 
+    @JsonIgnore
     public String getPlainText() {
         return plainText;
     }
@@ -236,19 +240,19 @@ public class AnalyzedNews extends NewsEntity {
         this.sentimentScore = sentimentScore;
     }
 
-    public String getPrimaryTags() {
+    public Set<String> getPrimaryTags() {
         return primaryTags;
     }
 
-    public void setPrimaryTags(String primaryTags) {
+    public void setPrimaryTags(Set<String> primaryTags) {
         this.primaryTags = primaryTags;
     }
 
-    public String getSecondaryTags() {
+    public Set<String> getSecondaryTags() {
         return secondaryTags;
     }
 
-    public void setSecondaryTags(String secondaryTags) {
+    public void setSecondaryTags(Set<String> secondaryTags) {
         this.secondaryTags = secondaryTags;
     }
 }

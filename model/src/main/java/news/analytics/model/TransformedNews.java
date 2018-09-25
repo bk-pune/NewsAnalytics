@@ -1,10 +1,9 @@
 package news.analytics.model;
 
-import news.analytics.model.annotations.ConstraintType;
-import news.analytics.model.annotations.DBColumn;
-import news.analytics.model.annotations.DBConstraint;
-import news.analytics.model.annotations.DBTable;
+import news.analytics.model.annotations.*;
 import news.analytics.model.constants.DataType;
+
+import java.util.Set;
 
 /**
  * Represents a news after first step of transformation is done on RawNews.<br>
@@ -40,7 +39,8 @@ public class TransformedNews extends NewsEntity {
     private String content;
 
     @DBColumn(column = "KEYWORDS", dataType = DataType.VARCHAR)
-    private String keywords; // store them as json?
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
+    private Set<String> keywords;
 
     @DBColumn(column = "H1", dataType = DataType.VARCHAR) // size 500
     private String h1;
@@ -132,11 +132,11 @@ public class TransformedNews extends NewsEntity {
         this.content = content;
     }
 
-    public String getKeywords() {
+    public Set<String> getKeywords() {
         return keywords;
     }
 
-    public void setKeywords(String keywords) {
+    public void setKeywords(Set<String> keywords) {
         this.keywords = keywords;
     }
 
