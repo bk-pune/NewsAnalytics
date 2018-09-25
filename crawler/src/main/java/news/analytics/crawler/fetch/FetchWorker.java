@@ -79,13 +79,6 @@ public class FetchWorker extends Thread {
         StringBuilder sb = new StringBuilder();
         URL uri = new URL(seed.getUri());
         HttpURLConnection connection = (HttpURLConnection)uri.openConnection();
-//        connection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-//        connection.setRequestProperty("", "{'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',\n" +
-//                "       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',\n" +
-//                "       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',\n" +
-//                "       'Accept-Encoding': 'none',\n" +
-//                "       'Accept-Language': 'en-US,en;q=0.8',\n" +
-//                "       'Connection': 'keep-alive'}");
         connection.setRequestMethod("GET");
         connection.connect();
 

@@ -51,6 +51,7 @@ public class Injector {
         } finally {
             connection.close();
         }
+        notifyAll();
         return injectedCount;
     }
 
