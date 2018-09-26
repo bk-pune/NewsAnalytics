@@ -9,8 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>news.analytics.test</artifactId>
+    <artifactId>NewsAnalyticsApp</artifactId>
     <packaging>war</packaging>
+    <properties>
+        <jettyVersion>9.4.0.M0</jettyVersion>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -19,6 +22,14 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jettyVersion}</version>
+                <configuration>
+                    <war>${project.basedirTagGenerator}/target/NewsAnalyticsApp.war</war>
                 </configuration>
             </plugin>
         </plugins>
@@ -33,12 +44,6 @@
             <groupId>news.analytics</groupId>
             <artifactId>news.analytics.model</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>news.analytics</groupId>
@@ -90,16 +95,6 @@
             <artifactId>selenium-java</artifactId>
             <version>3.13.0</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>9.3.8.v20160314</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>9.3.8.v20160314</version>
         </dependency>
         <dependency>
            <groupId>org.apache.solr</groupId>
