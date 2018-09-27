@@ -29,7 +29,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jettyVersion}</version>
                 <configuration>
-                    <war>${project.basedirTagGenerator}/target/NewsAnalyticsApp.war</war>
+                    <war>${project.basedir}/target/NewsAnalyticsApp.war</war>
                 </configuration>
             </plugin>
         </plugins>
