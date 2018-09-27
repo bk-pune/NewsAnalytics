@@ -64,8 +64,8 @@ public class PipelineWorker extends Thread {
 
             // analyze
             AnalyzedNews analyze = analyzer.analyze(transformedNews, connection);
-
-            // Index TODO
+            System.out.println(analyze.getContent());
+            System.out.println(analyze.getSentimentScore());
         }
     }
 }

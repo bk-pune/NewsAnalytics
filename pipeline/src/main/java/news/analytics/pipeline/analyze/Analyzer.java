@@ -2,21 +2,20 @@ package news.analytics.pipeline.analyze;
 
 import com.google.common.collect.Lists;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.AnalyzedNews;
 import news.analytics.model.TransformedNews;
 import news.analytics.model.constants.ProcessStatus;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
-import news.analytics.pipeline.utils.PipelineUtils;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Analyzer {
     private GenericDao<TransformedNews> transformedNewsDao;
@@ -28,59 +27,17 @@ public class Analyzer {
     private ModelInfo transformedNewsModelInfo;
     private ModelInfo analyzedNewsModelInfo;
 
-    private Set<String> positive;
-    private Set<String> negative;
-    private Set<String> neutral;
-    private Set<String> adverbs;
     private Set<String> stopwords;
-    private Set<String> adverbWithPositive;
-    private Set<String> adverbWithNegative;
-    private Set<String> adverbWithNeutral;
 
     public Analyzer() throws IOException {
-        transformedNewsDao = new GenericDao<TransformedNews>(TransformedNews.class);
-        analyzedNewsDao = new GenericDao<AnalyzedNews>(AnalyzedNews.class);
+        transformedNewsDao = new GenericDao<>(TransformedNews.class);
+        analyzedNewsDao = new GenericDao<>(AnalyzedNews.class);
         failedRecords = new ArrayList<>();
-        loadDictionaries();
-        sentimentAnalyzer = new SentimentAnalyzer(positive, negative, neutral, adverbs, stopwords, adverbWithPositive, adverbWithNegative, adverbWithNeutral);
+        sentimentAnalyzer = new SentimentAnalyzer();
+        stopwords = sentimentAnalyzer.getStopwords();
         tagGenerator = new TagGenerator(stopwords);
         transformedNewsModelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
         analyzedNewsModelInfo = ModelInfoProvider.getModelInfo(AnalyzedNews.class);
-    }
-
-    private void loadDictionaries() throws IOException {
-        positive = PipelineUtils.loadDictionaryFile("positive.txt");
-        negative = PipelineUtils.loadDictionaryFile("negative.txt");
-        neutral = PipelineUtils.loadDictionaryFile("neutral.txt");
-        adverbs = PipelineUtils.loadDictionaryFile("marathi_adverbs.txt");
-        stopwords = PipelineUtils.loadDictionaryFile("stopwords.txt");
-        adverbWithPositive = attachAdverb("positive");
-        adverbWithNegative = attachAdverb("negative");
-        adverbWithNeutral = attachAdverb("neutral");
-    }
-
-    private Set<String> attachAdverb(String wordDictionaryType) {
-        Set<String> words = new TreeSet<String>();
-        if (wordDictionaryType.equals("positive")) {
-            for (String word : positive) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        } else if (wordDictionaryType.equals("negative")) {
-            for (String word : negative) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        } else if (wordDictionaryType.equals("neutral")) {
-            for (String word : neutral) {
-                for (String adverb : adverbs) {
-                    words.add(adverb + " " + word);
-                }
-            }
-        }
-        return words;
     }
 
     public AnalyzedNews analyze(TransformedNews transformedNews, Connection connection) {
@@ -106,19 +63,6 @@ public class Analyzer {
             failedRecords.add(transformedNews);
         }
         return analyzedNews;
-    }
-
-    private void writeJson(List<AnalyzedNews> analyzedNewsList) {
-
-        try {
-            String s = DAOUtils.javaToJSON(analyzedNewsList);
-//
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\samples\\analyzedNews.json"));
-            bufferedWriter.write(s);
-            bufferedWriter.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

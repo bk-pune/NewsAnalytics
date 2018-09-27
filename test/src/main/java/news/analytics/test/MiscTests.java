@@ -1,10 +1,5 @@
 package news.analytics.test;
 
-import news.analytics.dao.utils.DAOUtils;
-
-import java.util.Set;
-import java.util.TreeSet;
-
 public class MiscTests {
     public static void main(String[] args) throws Exception {
 //        Document document = Jsoup.parse(new File("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\marathi_adverbs.txt"), "UTF-8");
@@ -13,15 +8,15 @@ public class MiscTests {
 //            System.out.println(button.text());
 //        }
 
-        Set<String> stringSet = new TreeSet<>();
-        stringSet.add("a");
-        stringSet.add("b");
-        stringSet.add("c");
-        stringSet.add("d");
-        stringSet.add("e");
-        stringSet.add("f");
+        String uttam = "उत्तम";
+        String a = "क";
+        System.out.println(uttam.length());
+        System.out.println(a.length());
 
-        System.out.println(DAOUtils.javaToJSON(stringSet));
+        System.out.println(uttam.codePointCount(0, uttam.length()));
+        System.out.println(a.codePointCount(0, a.length()));
+
+
     }
 }
 
