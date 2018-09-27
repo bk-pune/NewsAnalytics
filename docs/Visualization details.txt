@@ -1,0 +1,26 @@
+Variables which will be used in diagrams :
+"newsAgency": "Sakal"
+"city": "Pune",
+"sentimentScore": -0.4409091
+
+Input : Search Term	 + Date range
+
+1)	news agency + Sentiment Score + City
+	D3 Zoomable Sunburst - https://beta.observablehq.com/@mbostock/d3-zoomable-sunburst
+	Main section - City wise news counts
+	Sub Section 1 - News agency wise counts
+	Sub Section 2 - Positive(Green) and Negative(Red) areas per news agency
+
+2)	news agency + Sentiment Score
+	Scatter chart with multiple categories/Bubble chart
+	Each news agency will be assigned a separate color
+	Individual news items will be shown as one point or a circle.
+	On mouse over, a balloon to be shown, containing news agency, URL and sentiment score of that item.
+	When user clicks on the url, it will open in new tab of browser.
+
+3)	Current trends
+	Word cloud	https://www.jasondavies.com/wordcloud/
+	Server will return a map of top 'n' words containing their respective scores.
+
+4) 	Google trends
+	Integrate google trends (in iframe?) on dashboard for the given search term.
