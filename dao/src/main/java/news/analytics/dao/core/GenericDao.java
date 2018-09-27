@@ -71,7 +71,7 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
                     Field field = fieldMapEntry.getValue();
                     DataType sqlDatatypeForField = modelInfo.getSQLDatatypeForField(field.getName());
                     Object value = getValue(resultSet, columnIndex, sqlDatatypeForField);
-                    modelInfo.setValueToObject(instance, value, field);
+                    modelInfo.setValueToObject(instance, value, field, true);
                     columnIndex++;
                 }
                 fetched.add(instance);

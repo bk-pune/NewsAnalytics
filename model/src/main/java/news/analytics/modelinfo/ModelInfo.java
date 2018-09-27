@@ -78,16 +78,24 @@ public class ModelInfo<T> {
         return newsEntityClass;
     }
 
-    public <T extends NewsEntity> void setValueToObject(T instance, Object value, Field field) {
+    public <T extends NewsEntity> void setValueToObject(T instance, Object value, Field field, boolean invokeConverter) {
         try {
-            DataConverter converter = field.getAnnotation(DataConverter.class);
-            if(converter != null) {
-                Class c= Class.forName(converter.value());
-                Converter dataConverter = (Converter)c.newInstance();
-                value = dataConverter.convert((String) value);
-            }
             Method method;
             method = newsEntityClass.getMethod("set" + Character.toUpperCase(field.getName().charAt(0)) + field.getName().substring(1), field.getType());
+            if(invokeConverter) {
+                try {
+                    DataConverter converter = field.getAnnotation(DataConverter.class);
+                    if (converter != null && value != null) {
+                        Class c = Class.forName(converter.value());
+                        Converter dataConverter = (Converter) c.newInstance();
+                        value = dataConverter.convert((String) value);
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+            }
             method.invoke(instance, value);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -95,10 +103,9 @@ public class ModelInfo<T> {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
+            System.out.println("Object:" + value + "\tField:"+field.getName());
         }
     }
 

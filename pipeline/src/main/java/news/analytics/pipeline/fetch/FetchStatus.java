@@ -1,4 +1,4 @@
-package news.analytics.crawler.constants;
+package news.analytics.pipeline.fetch;
 
 public class FetchStatus {
     public static final String UNFETCHED = "UNFETCHED";

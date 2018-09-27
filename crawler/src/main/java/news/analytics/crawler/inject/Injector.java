@@ -1,11 +1,12 @@
 package news.analytics.crawler.inject;
 
 import com.google.common.collect.Lists;
-import news.analytics.crawler.constants.FetchStatus;
-import news.analytics.crawler.utils.CrawlerUtils;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.Seed;
+import news.analytics.model.lock.Lock;
+import news.analytics.pipeline.fetch.FetchStatus;
+import news.analytics.pipeline.utils.PipelineUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,10 +21,12 @@ import java.sql.SQLException;
 public class Injector {
     private GenericDao genericDao;
     private DataSource dataSource;
+    private Lock injectorFetcherLock;
 
-    public Injector(DataSource dataSource) {
+    public Injector(DataSource dataSource, Lock injectorFetcherLock) {
         this.genericDao = new GenericDao(Seed.class);
         this.dataSource = dataSource;
+        this.injectorFetcherLock = injectorFetcherLock;
     }
 
     public int inject(String fileName) throws IOException, SQLException {
@@ -51,7 +54,10 @@ public class Injector {
         } finally {
             connection.close();
         }
-        notifyAll();
+        synchronized (injectorFetcherLock) {
+            // notify fetcher thread
+            injectorFetcherLock.notify();
+        }
         return injectedCount;
     }
 
@@ -60,7 +66,7 @@ public class Injector {
         seed.setUri(uri);
         seed.setFetchStatus(FetchStatus.UNFETCHED);
         seed.setHttpCode((short) -1); // by default status code is -1
-        seed.setId(CrawlerUtils.hashIt(uri));
+        seed.setId(PipelineUtils.hashIt(uri));
         return seed;
     }
 }

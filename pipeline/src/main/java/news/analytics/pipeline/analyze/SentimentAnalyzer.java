@@ -1,9 +1,12 @@
 package news.analytics.pipeline.analyze;
 
 import news.analytics.model.TransformedNews;
+import news.analytics.pipeline.utils.PipelineUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class SentimentAnalyzer {
     private Set<String> positive;
@@ -15,16 +18,19 @@ public class SentimentAnalyzer {
     private Set<String> adverbWithNegative;
     private Set<String> adverbWithNeutral;
 
-    public SentimentAnalyzer(Set<String> positive, Set<String> negative, Set<String> neutral, Set<String> adverbs, Set<String> stopwords, Set<String> adverbWithPositive, Set<String> adverbWithNegative, Set<String> adverbWithNeutral) {
-        this.positive = positive;
-        this.negative = negative;
-        this.neutral = neutral;
-        this.adverbs = adverbs;
-        this.stopwords = stopwords;
-        this.adverbWithPositive = adverbWithPositive;
-        this.adverbWithNegative = adverbWithNegative;
-        this.adverbWithNeutral = adverbWithNeutral;
+    public SentimentAnalyzer() throws IOException {
+        loadDictionaries();
     }
+
+    public Set<String> getStopwords() {
+        return stopwords;
+    }
+
+    // Future reference - Analyzer will be biased towards the words in given dictionary
+    /*
+    public SentimentAnalyzer(Dictionary baisedTowards) throws IOException {
+
+    }*/
 
     public Float generateSentimentScore(TransformedNews transformedNews) {
         String title = removeStopWords(transformedNews.getTitle());
@@ -57,24 +63,36 @@ public class SentimentAnalyzer {
             return 0F;
         }
         // If title/h1 contains question mark/exclamation mark
-        if (line.endsWith("?")) {
+        if (line.contains("?")) {
             Float score = process(line.substring(0, line.indexOf("?")));
             if(score > 0)
-                positiveScore ++;
+                negativeScore++;
+            else if (score < 0) {
+                positiveScore++;
+            }
         }
-        if (line.endsWith("!")) {
+
+        if (line.contains("!")) {
             Float score = process(line.substring(0, line.indexOf("!")));
-            if(score < 0)
-                negativeScore ++;
+            if(score > 0)
+                positiveScore ++;
+            else if (score < 0) {
+                negativeScore++;
+            }
         }
 
         // Extract text between quotes => meaning someone "said this" -> Sentiment Analysis on this sentence
-        String[] valuesInQuotes = StringUtils.substringsBetween(line, "\"", "\"");
+        /* String[] valuesInQuotes = StringUtils.substringsBetween(line, "\"", "\"");
         if (valuesInQuotes != null && valuesInQuotes.length > 0) {
             for (String values : valuesInQuotes) {
-                process(values);
+                Float process = process(values);
+                if(process >= 0){
+                    positiveScore++;
+                } else {
+                    negativeScore++;
+                }
             }
-        }
+        }*/
 
         // Adjective followed by a noun/verb -> = +2
         for (String positiveWord : positive) {
@@ -122,5 +140,40 @@ public class SentimentAnalyzer {
             text = text.replaceAll("[(0-9)*(०-९)*]", " ");
         }
         return text;
+    }
+
+    private void loadDictionaries() throws IOException {
+        positive = PipelineUtils.loadDictionaryFile("positive.txt");
+        negative = PipelineUtils.loadDictionaryFile("negative.txt");
+        neutral = PipelineUtils.loadDictionaryFile("neutral.txt");
+        adverbs = PipelineUtils.loadDictionaryFile("marathi_adverbs.txt");
+        stopwords = PipelineUtils.loadDictionaryFile("stopwords.txt");
+        adverbWithPositive = attachAdverb("positive");
+        adverbWithNegative = attachAdverb("negative");
+        adverbWithNeutral = attachAdverb("neutral");
+    }
+
+    private Set<String> attachAdverb(String wordDictionaryType) {
+        Set<String> words = new TreeSet<String>();
+        if (wordDictionaryType.equals("positive")) {
+            for (String word : positive) {
+                for (String adverb : adverbs) {
+                    words.add(adverb + " " + word);
+                }
+            }
+        } else if (wordDictionaryType.equals("negative")) {
+            for (String word : negative) {
+                for (String adverb : adverbs) {
+                    words.add(adverb + " " + word);
+                }
+            }
+        } else if (wordDictionaryType.equals("neutral")) {
+            for (String word : neutral) {
+                for (String adverb : adverbs) {
+                    words.add(adverb + " " + word);
+                }
+            }
+        }
+        return words;
     }
 }

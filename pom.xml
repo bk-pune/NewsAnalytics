@@ -14,5 +14,6 @@
         <module>model</module>
         <module>crawler</module>
         <module>pipeline</module>
+        <module>container</module>
     </modules>
 </project>
