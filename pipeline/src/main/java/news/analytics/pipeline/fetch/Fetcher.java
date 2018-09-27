@@ -1,14 +1,12 @@
-package news.analytics.crawler.fetch;
+package news.analytics.pipeline.fetch;
 
 import com.google.common.collect.Lists;
-import news.analytics.crawler.constants.FetchStatus;
-import news.analytics.crawler.utils.CrawlerUtils;
-import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.RawNews;
 import news.analytics.model.Seed;
 import news.analytics.model.constants.NewsAgency;
 import news.analytics.model.constants.ProcessStatus;
+import news.analytics.pipeline.utils.PipelineUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,64 +16,44 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
-public class FetchWorker extends Thread {
+public class Fetcher {
     private GenericDao<Seed> seedDao;
     private GenericDao<RawNews> rawNewsDao;
-    private DataSource dataSource;
-    private List<Seed> seedList;
 
-    public FetchWorker(DataSource dataSource, GenericDao seedDao, GenericDao rawNewsDao, List<Seed> seedList) {
-        this.dataSource = dataSource;
-        this.seedDao = seedDao;
-        this.rawNewsDao = rawNewsDao;
-        this.seedList = seedList;
+    public Fetcher() {
+        seedDao = new GenericDao<>(Seed.class);
+        rawNewsDao = new GenericDao<>(RawNews.class);
     }
 
-    @Override
-    public void run() {
+    public RawNews fetch(Seed seed, Connection connection) {
+        RawNews rawNews = null;
+        try {
+            // get
+            String rawHtml = get(seed); // seed gets updated with get status
+            rawNews = getRawNews(rawHtml, seed.getUri());
 
-        // Fetch -> Insert in getRawNews -> Update seed status
-        for(Seed seed : seedList) {
-            String rawHtml = null;
-            Connection connection = null;
+            // insert RawNews only if fetched
+            if(seed.getFetchStatus().equals(FetchStatus.FETCHED)) {
+                insert(rawNews, connection);
+            }
+
+            // update status of the seed to crawlDb
+            update(connection, seed);
+
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
             try {
-                connection = dataSource.getConnection();
-                // fetch
-                rawHtml = fetch(seed); // seed gets updated with fetch status
-
-                // insert RawNews only if fetched
-                if(seed.getFetchStatus().equals(FetchStatus.FETCHED)) {
-                    insert(seed, rawHtml, connection);
-                }
-
-                // update status of the seed to cralDb
-                update(connection, seed);
-
-                connection.commit();
-                connection.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Rolling back.");
-                try {
-                    connection.rollback();
-                    connection.close();
-                } catch (SQLException e1) {
-                    System.out.println("Failed rollback:"+ e1);
-                }
-            } catch (SQLException e) {
-                try {
-                    connection.close();
-                } catch (SQLException e1) {
-                    // log
-                }
-                throw new RuntimeException(e);
+                connection.rollback();
+            } catch (SQLException e1) {
+                System.out.println("Failed rollback:"+ e1);
             }
         }
+        return rawNews;
     }
 
-    private String fetch(Seed seed) throws IOException {
+    private String get(Seed seed) throws IOException {
         StringBuilder sb = new StringBuilder();
         URL uri = new URL(seed.getUri());
         HttpURLConnection connection = (HttpURLConnection)uri.openConnection();
@@ -111,16 +89,14 @@ public class FetchWorker extends Thread {
         return true;
     }
 
-    private boolean insert(Seed seed, String rawHtml, Connection connection) throws SQLException, MalformedURLException {
-        String uri = seed.getUri();
-        RawNews rawNews = getRawNews(rawHtml, uri);
+    private boolean insert(RawNews rawNews, Connection connection) throws SQLException, MalformedURLException {
         rawNewsDao.insert(connection, Lists.newArrayList(rawNews));
         return true;
     }
 
     private RawNews getRawNews(String rawHtml, String uri) throws MalformedURLException {
         RawNews rawNews = new RawNews();
-        rawNews.setId(CrawlerUtils.hashIt(uri));
+        rawNews.setId(PipelineUtils.hashIt(uri));
         rawNews.setUri(uri);
         rawNews.setRawContent(rawHtml);
         rawNews.setNewsAgency(getNewsAgencyFromUri(uri));

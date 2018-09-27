@@ -1,10 +1,7 @@
 package news.analytics.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import news.analytics.model.annotations.ConstraintType;
-import news.analytics.model.annotations.DBColumn;
-import news.analytics.model.annotations.DBConstraint;
-import news.analytics.model.annotations.DBTable;
+import news.analytics.model.annotations.*;
 import news.analytics.model.constants.DataType;
 
 import java.util.Set;
@@ -43,6 +40,7 @@ public class AnalyzedNews extends NewsEntity {
     private String content;
 
     @DBColumn(column = "KEYWORDS", dataType = DataType.VARCHAR)
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
     private Set<String> keywords; // store them as json?
 
     @DBColumn(column = "H1", dataType = DataType.VARCHAR) // size 500
@@ -82,9 +80,11 @@ public class AnalyzedNews extends NewsEntity {
     private Float sentimentScore;
 
     @DBColumn(column = "PRIMARY_TAGS", dataType = DataType.VARCHAR)
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
     private Set<String> primaryTags;
 
     @DBColumn(column = "SECONDARY_TAGS", dataType = DataType.VARCHAR)
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
     private Set<String> secondaryTags;
 
     public String getCity() {

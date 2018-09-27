@@ -1,20 +1,20 @@
 package news.analytics.crawler.test;
 
-import news.analytics.crawler.fetch.Fetcher;
 import news.analytics.crawler.inject.Injector;
+import news.analytics.crawler.pipeline.Pipeline;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 import news.analytics.dao.utils.DAOUtils;
+import news.analytics.model.AnalyzedNews;
 import news.analytics.model.RawNews;
 import news.analytics.model.Seed;
 import news.analytics.model.TransformedNews;
-import news.analytics.model.constants.ProcessStatus;
-import news.analytics.pipeline.transform.Transformer;
-import org.junit.AfterClass;
+import news.analytics.model.lock.Lock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,10 +32,13 @@ public class CrawlerTest {
     private static final String password = "bkpune";
     private static final String driverClass = "org.h2.Driver";
     private static int seedCount = 0;
+    Lock injectorFetcherLock = new Lock();
+    Injector injector;
+    Pipeline pipeline;
     private static String seedFile = CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile();
 
     @BeforeClass
-    public static void setup() throws ClassNotFoundException, SQLException {
+    public static void setup() {
         try {
             initDb();
             initSeeds();
@@ -45,82 +48,68 @@ public class CrawlerTest {
         }
     }
 
+    @Before
+    public void init (){
+        injector = new Injector(dataSource, injectorFetcherLock);
+        System.out.println("Injector initialized.");
+
+        pipeline = new Pipeline(dataSource, 2, injectorFetcherLock);
+        pipeline.start();
+    }
     @Test
     public void test() throws Exception {
         testInject();
         testFetch();
         testTransform();
+        testAnalyze();
     }
 
     public void testInject() throws Exception {
-        GenericDao<Seed> dao = new GenericDao<Seed>(Seed.class);
-        List<Seed> old = dao.select(dataSource.getConnection(), DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED"));
-        Injector injector = new Injector(dataSource);
         int injectedCount = injector.inject(seedFile);
-
         Assert.assertTrue(injectedCount == seedCount); // all seeds should get inserted every time
-
+        GenericDao<Seed> dao = new GenericDao<>(Seed.class);
         List<Seed> latest = dao.select(dataSource.getConnection(), DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED"));
         Assert.assertTrue(latest.size() == seedCount);
     }
 
     public void testFetch() throws Exception {
-        Fetcher fetcher = new Fetcher(dataSource);
-        PredicateClause predicateClause = DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED");
-        fetcher.start(predicateClause, 1);
+        // sleep for 6 secs per url, let the pipeline threads process all the seeds
+        Thread.sleep(seedCount * 6 * 1000);
 
-        // sleep for 5 secs per url, let the fetcher threads fetch data
-        Thread.sleep(20 * 5 * 1000);
-        predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://www.lokmat.com/pune/businessman-kills-family-and-himself/");
-
+        PredicateClause predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://www.lokmat.com/pune/businessman-kills-family-and-himself/");
         Connection connection = dataSource.getConnection();
         GenericDao<RawNews> dao = new GenericDao<RawNews>(RawNews.class);
         List<RawNews> select = dao.select(connection, predicateClause);
         connection.close();
+
         Assert.assertTrue(select.size() == 1);
         Assert.assertTrue(select.get(0).getUri().equals("http://www.lokmat.com/pune/businessman-kills-family-and-himself/"));
-        Assert.assertTrue(select.get(0).getProcessStatus().equals(ProcessStatus.RAW_NEWS_UNPROCESSED));
     }
 
-    private void testTransform() throws SQLException, IOException, InstantiationException, IllegalAccessException, InterruptedException {
-        // TODO
-        Transformer transformer = new Transformer(dataSource);
-        transformer.transform(5);
-        // sleep for 1 secs per RawNews, let the transform worker threads transform data
-        Thread.sleep(20 * 1 * 1000);
+    private void testTransform() throws SQLException, IOException, InstantiationException, IllegalAccessException {
         Connection connection = dataSource.getConnection();
         GenericDao<TransformedNews> dao = new GenericDao(TransformedNews.class);
-        List<TransformedNews> select = dao.select(connection, null);
+        List<TransformedNews> select = dao.select(connection, null); // select all
         connection.close();
-        Assert.assertTrue(select.size() == seedCount); // => saamana throwing 403 !
+        Assert.assertTrue(select.size() == seedCount);
+
         for (TransformedNews transformedNews : select) {
             Assert.assertTrue(transformedNews.getTitle() != null);
             Assert.assertTrue(transformedNews.getPlainText() != null);
         }
     }
 
-    @AfterClass
-    public static void cleanUp() throws SQLException, IllegalAccessException, IOException, InstantiationException {
+    private void testAnalyze() throws SQLException, IOException, InstantiationException, IllegalAccessException {
         Connection connection = dataSource.getConnection();
-
-        GenericDao<Seed> seedDao = new GenericDao<Seed>(Seed.class);
-        List<Seed> seeds = seedDao.select(dataSource.getConnection(), null);
-        if (!seeds.isEmpty())
-            seedDao.delete(connection, seeds);
-        connection.commit();
-
-        GenericDao<RawNews> rawNewsGenericDao = new GenericDao<RawNews>(RawNews.class);
-        List<RawNews> select = rawNewsGenericDao.select(dataSource.getConnection(), null);
-        if (!select.isEmpty())
-            rawNewsGenericDao.delete(connection, select);
-        connection.commit();
-
+        GenericDao<AnalyzedNews> dao = new GenericDao(AnalyzedNews.class);
+        List<AnalyzedNews> select = dao.select(connection, null);
         connection.close();
+        Assert.assertTrue(select.size() == seedCount);
 
-        connection = dataSource.getConnection();
-        Assert.assertTrue(seedDao.select(connection, null).size() == 0);
-        Assert.assertTrue(rawNewsGenericDao.select(connection, null).size() == 0);
-        connection.close();
+        for (AnalyzedNews analyzedNews : select) {
+            Assert.assertTrue(analyzedNews.getSentimentScore() != null);
+            Assert.assertTrue(analyzedNews.getPrimaryTags() != null && analyzedNews.getPrimaryTags().size() > 0);
+        }
     }
 
     private static void initDb() throws SQLException, ClassNotFoundException {
@@ -171,5 +160,4 @@ public class CrawlerTest {
         }
         br.close();
     }
-
 }

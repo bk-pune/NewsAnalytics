@@ -1,12 +1,11 @@
 package news.analytics.crawler.main;
 
-import news.analytics.crawler.fetch.Fetcher;
 import news.analytics.crawler.inject.Injector;
+import news.analytics.crawler.pipeline.Pipeline;
 import news.analytics.crawler.stats.StatsProvider;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
-import news.analytics.pipeline.analyze.Analyzer;
-import news.analytics.pipeline.transform.Transformer;
+import news.analytics.model.lock.Lock;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,33 +22,35 @@ public class Crawler {
     private final DataSource dataSource;
     private Injector injector;
     private StatsProvider statsProvider;
-    private Fetcher fetcher;
-    private Transformer transformer;
-    private Analyzer analyzer;
+    private Pipeline pipeline;
     private Properties properties;
 
     private Crawler(String propertiesFilePath) throws IOException {
         properties = loadProperties(propertiesFilePath); // will be loaded from classpath
+        int processorThreads = Integer.parseInt(properties.getProperty("processorThreads"));
+        System.setProperty("http.agent", properties.getProperty("crawlerName"));
+
         System.out.println("Properties initialized successfully.");
+
         dataSource = H2DataSource.getDataSource(properties.getProperty("driverClass"), properties.getProperty("dbUrl"), properties.getProperty("dbUser"), properties.getProperty("dbPassword"));
         System.out.println("Data source and connection pool initialized successfully.");
 
-        injector = new Injector(dataSource);
+        Lock injectorFetcherLock = new Lock();
+
+        injector = new Injector(dataSource, injectorFetcherLock);
         System.out.println("Injector initialized.");
         statsProvider = new StatsProvider(dataSource);
 
-        fetcher = new Fetcher(dataSource, Integer.parseInt(properties.getProperty("fetcherThreads")));
-        fetcher.start();
-        System.out.println("Fetcher started.");
-
-        transformer = new Transformer(dataSource);
-        analyzer = new Analyzer(dataSource);
+        pipeline = new Pipeline(dataSource, processorThreads, injectorFetcherLock);
+        pipeline.start();
+        System.out.println("Pipeline initialized.");
     }
 
     public static void main(String[] args) throws IOException {
         Crawler crawler = new Crawler("config.properties");
-
+        System.out.println();
         System.out.println("Crawler initialized successfully.");
+
         String input = "";
         Scanner sc = new Scanner(System.in);
         while(! input.equalsIgnoreCase(EXIT) ) {
@@ -60,10 +61,7 @@ public class Crawler {
                     System.out.println("Enter full file path for seed url:");
                     input = sc.nextLine();
                     crawler.inject(input);
-                } else if(input.equalsIgnoreCase("2")) { // fetch
-                    crawler.startTransformer();
-                    crawler.startAnalyzer();
-                } else if(input.equalsIgnoreCase("3")) { // show stats
+                } else if(input.equalsIgnoreCase("2")) { // show stats
                     crawler.showStats();
                 } else if(input.equalsIgnoreCase("0")) {
                     System.out.println("Good bye !");
@@ -82,23 +80,11 @@ public class Crawler {
         System.out.println("\n" + stats);
     }
 
-    // TODO make it threaded so that injector and fetcher can run in parallel
+    // TODO make it threaded so that injector and pipeline can run in parallel
     private int inject(String fileName) throws IOException, SQLException {
         int injectedCount = injector.inject(fileName);
         System.out.println("Total seeds injected in crawlDb: "+injectedCount);
         return injectedCount;
-    }
-
-    private void startTransformer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
-        System.out.println("Starting transformer...");
-        transformer.transform(Integer.parseInt(properties.getProperty("processorThreads")));
-        System.out.println("Transformer started successfully.");
-    }
-
-    private void startAnalyzer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
-        System.out.println("Starting analyzer...");
-        analyzer.analyze(Integer.parseInt(properties.getProperty("processorThreads")));
-        System.out.println("Analyzer started successfully.");
     }
 
     private static void showMenu() {
