@@ -1,6 +1,6 @@
 package news.analytics.modelinfo;
 
-import news.analytics.model.NewsEntity;
+import news.analytics.model.news.NewsEntity;
 
 import java.util.HashMap;
 

@@ -1,6 +1,6 @@
 package news.analytics.pipeline.analyze;
 
-import news.analytics.model.AnalyzedNews;
+import news.analytics.model.news.AnalyzedNews;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.*;

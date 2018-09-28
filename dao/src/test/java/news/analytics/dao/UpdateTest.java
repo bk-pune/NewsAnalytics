@@ -6,7 +6,7 @@ import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
 import news.analytics.dao.query.QueryAndParameters;
 import news.analytics.dao.query.UpdateQueryBuilder;
-import news.analytics.model.RawNews;
+import news.analytics.model.news.RawNews;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 import org.junit.Assert;

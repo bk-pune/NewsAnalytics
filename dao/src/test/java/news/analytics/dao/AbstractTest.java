@@ -2,7 +2,7 @@ package news.analytics.dao;
 
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.utils.DAOUtils;
-import news.analytics.model.RawNews;
+import news.analytics.model.news.RawNews;
 import org.junit.BeforeClass;
 
 public class AbstractTest {

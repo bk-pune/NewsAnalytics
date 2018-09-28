@@ -5,8 +5,8 @@ import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
-import news.analytics.model.Seed;
 import news.analytics.model.lock.Lock;
+import news.analytics.model.news.Seed;
 
 import java.io.IOException;
 import java.sql.Connection;

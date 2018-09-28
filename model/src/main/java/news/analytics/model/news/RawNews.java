@@ -1,4 +1,4 @@
-package news.analytics.model;
+package news.analytics.model.news;
 
 import news.analytics.model.annotations.ConstraintType;
 import news.analytics.model.annotations.DBColumn;

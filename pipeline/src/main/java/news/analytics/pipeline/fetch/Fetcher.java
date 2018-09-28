@@ -2,10 +2,10 @@ package news.analytics.pipeline.fetch;
 
 import com.google.common.collect.Lists;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.model.RawNews;
-import news.analytics.model.Seed;
 import news.analytics.model.constants.NewsAgency;
 import news.analytics.model.constants.ProcessStatus;
+import news.analytics.model.news.RawNews;
+import news.analytics.model.news.Seed;
 import news.analytics.pipeline.utils.PipelineUtils;
 
 import java.io.BufferedReader;

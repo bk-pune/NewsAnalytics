@@ -3,8 +3,8 @@ package news.analytics.crawler.inject;
 import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.model.Seed;
 import news.analytics.model.lock.Lock;
+import news.analytics.model.news.Seed;
 import news.analytics.pipeline.fetch.FetchStatus;
 import news.analytics.pipeline.utils.PipelineUtils;
 

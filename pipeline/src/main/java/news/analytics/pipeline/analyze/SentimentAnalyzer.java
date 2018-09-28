@@ -1,6 +1,6 @@
 package news.analytics.pipeline.analyze;
 
-import news.analytics.model.TransformedNews;
+import news.analytics.model.news.TransformedNews;
 import news.analytics.pipeline.utils.PipelineUtils;
 import org.apache.commons.lang3.StringUtils;
 

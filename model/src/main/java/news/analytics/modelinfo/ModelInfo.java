@@ -1,10 +1,10 @@
 package news.analytics.modelinfo;
 
-import news.analytics.model.NewsEntity;
 import news.analytics.model.annotations.DBColumn;
 import news.analytics.model.annotations.DBTable;
 import news.analytics.model.annotations.DataConverter;
 import news.analytics.model.constants.DataType;
+import news.analytics.model.news.NewsEntity;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

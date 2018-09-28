@@ -1,25 +1,26 @@
-package news.analytics.model;
+package news.analytics.model.news;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import news.analytics.model.annotations.*;
 import news.analytics.model.constants.DataType;
 
 import java.util.Set;
 
 /**
- * Represents a news after first step of transformation is done on RawNews.<br>
- * Contains information extracted only from RawNews.
+ * Represents a news after second step of analysis is done on TransformedNews.<br>
+ * In addition to the original contents of TransformedNews, it contains generated values such as sentiment score, primary tags, secondary tags.<br>
  *
  */
-@DBTable(mappedTable = "TRANSFORMED_NEWS")
-public class TransformedNews extends NewsEntity {
-    private static final long serialVersionUID = 1223217431627688173L;
-    public TransformedNews() {
+@DBTable(mappedTable = "ANALYZED_NEWS")
+public class AnalyzedNews extends NewsEntity {
+    private static final long serialVersionUID = 15272974768832L;
+    public AnalyzedNews() {
     }
 
-    @DBColumn(column = "ID", dataType = DataType.LONG, primaryKey = true, constraints = @DBConstraint(constraintType = ConstraintType.PRIMARY_KEY, constraintName = "ID_PK_TRANSFORMED_NEWS"))
+    @DBColumn(column = "ID", dataType = DataType.LONG, primaryKey = true, constraints = @DBConstraint(constraintType = ConstraintType.PRIMARY_KEY, constraintName = "ID_PK_ANALYZED_NEWS"))
     private Long id;
 
-    @DBColumn(column = "URI", dataType = DataType.VARCHAR, nullable = false, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_TRANSFORMED_NEWS"))
+    @DBColumn(column = "URI", dataType = DataType.VARCHAR, nullable = false, constraints = @DBConstraint(constraintType = ConstraintType.UNIQUE, constraintName = "URI_UNIQUE_ANALYZED_NEWS"))
     private String uri;
 
     @DBColumn(column = "NEWS_AGENCY", dataType = DataType.VARCHAR, nullable = false)
@@ -40,7 +41,7 @@ public class TransformedNews extends NewsEntity {
 
     @DBColumn(column = "KEYWORDS", dataType = DataType.VARCHAR)
     @DataConverter("news.analytics.dao.core.StringToSetConverter")
-    private Set<String> keywords;
+    private Set<String> keywords; // store them as json?
 
     @DBColumn(column = "H1", dataType = DataType.VARCHAR) // size 500
     private String h1;
@@ -75,13 +76,16 @@ public class TransformedNews extends NewsEntity {
     @DBColumn(column = "CITY", dataType = DataType.VARCHAR, nullable = false)
     private String city;
 
-    public String getProcessStatus() {
-        return processStatus;
-    }
+    @DBColumn(column = "SENTIMENT_SCORE", dataType = DataType.FLOAT, nullable = false)
+    private Float sentimentScore;
 
-    public void setProcessStatus(String processStatus) {
-        this.processStatus = processStatus;
-    }
+    @DBColumn(column = "PRIMARY_TAGS", dataType = DataType.VARCHAR)
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
+    private Set<String> primaryTags;
+
+    @DBColumn(column = "SECONDARY_TAGS", dataType = DataType.VARCHAR)
+    @DataConverter("news.analytics.dao.core.StringToSetConverter")
+    private Set<String> secondaryTags;
 
     public String getCity() {
         return city;
@@ -89,15 +93,6 @@ public class TransformedNews extends NewsEntity {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-
-    public String getSection() {
-        return section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
     }
 
     public Long getId() {
@@ -108,12 +103,36 @@ public class TransformedNews extends NewsEntity {
         this.id = id;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getNewsAgency() {
+        return newsAgency;
+    }
+
+    public void setNewsAgency(String newsAgency) {
+        this.newsAgency = newsAgency;
+    }
+
     public String getCharset() {
         return charset;
     }
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     public String getTitle() {
@@ -156,22 +175,6 @@ public class TransformedNews extends NewsEntity {
         this.h2 = h2;
     }
 
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public String getNewsAgency() {
-        return newsAgency;
-    }
-
-    public void setNewsAgency(String newsAgency) {
-        this.newsAgency = newsAgency;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -212,11 +215,44 @@ public class TransformedNews extends NewsEntity {
         this.author = author;
     }
 
+    @JsonIgnore
     public String getPlainText() {
         return plainText;
     }
 
     public void setPlainText(String plainText) {
         this.plainText = plainText;
+    }
+
+    public String getProcessStatus() {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
+    }
+
+    public Float getSentimentScore() {
+        return sentimentScore;
+    }
+
+    public void setSentimentScore(Float sentimentScore) {
+        this.sentimentScore = sentimentScore;
+    }
+
+    public Set<String> getPrimaryTags() {
+        return primaryTags;
+    }
+
+    public void setPrimaryTags(Set<String> primaryTags) {
+        this.primaryTags = primaryTags;
+    }
+
+    public Set<String> getSecondaryTags() {
+        return secondaryTags;
+    }
+
+    public void setSecondaryTags(Set<String> secondaryTags) {
+        this.secondaryTags = secondaryTags;
     }
 }

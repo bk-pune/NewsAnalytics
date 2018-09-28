@@ -1,9 +1,6 @@
 package news.analytics.test;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
+import news.analytics.model.news.AnalyzedNews;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
@@ -13,7 +10,9 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.noggit.JSONUtil;
 
-import news.analytics.model.AnalyzedNews;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 public class SolrClient {
 

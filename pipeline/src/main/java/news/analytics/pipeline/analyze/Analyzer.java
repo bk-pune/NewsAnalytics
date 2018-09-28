@@ -2,9 +2,9 @@ package news.analytics.pipeline.analyze;
 
 import com.google.common.collect.Lists;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.model.AnalyzedNews;
-import news.analytics.model.TransformedNews;
 import news.analytics.model.constants.ProcessStatus;
+import news.analytics.model.news.AnalyzedNews;
+import news.analytics.model.news.TransformedNews;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 

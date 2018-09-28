@@ -2,10 +2,10 @@ package news.analytics.crawler.pipeline;
 
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.model.AnalyzedNews;
-import news.analytics.model.RawNews;
-import news.analytics.model.Seed;
-import news.analytics.model.TransformedNews;
+import news.analytics.model.news.AnalyzedNews;
+import news.analytics.model.news.RawNews;
+import news.analytics.model.news.Seed;
+import news.analytics.model.news.TransformedNews;
 import news.analytics.pipeline.analyze.Analyzer;
 import news.analytics.pipeline.fetch.FetchStatus;
 import news.analytics.pipeline.fetch.Fetcher;

@@ -1,8 +1,8 @@
 package news.analytics.dao.core;
 
 import news.analytics.dao.query.*;
-import news.analytics.model.NewsEntity;
 import news.analytics.model.constants.DataType;
+import news.analytics.model.news.NewsEntity;
 import news.analytics.modelinfo.ModelInfo;
 import news.analytics.modelinfo.ModelInfoProvider;
 

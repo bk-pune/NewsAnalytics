@@ -4,9 +4,9 @@ import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.query.PredicateOperator;
-import news.analytics.model.RawNews;
-import news.analytics.model.Seed;
-import news.analytics.model.TransformedNews;
+import news.analytics.model.news.RawNews;
+import news.analytics.model.news.Seed;
+import news.analytics.model.news.TransformedNews;
 
 import java.io.IOException;
 import java.sql.Connection;

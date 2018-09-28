@@ -1,13 +1,11 @@
 package news.analytics.dao.query;
 
-import news.analytics.model.NewsEntity;
 import news.analytics.modelinfo.ModelInfo;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 import static news.analytics.dao.query.QueryConstants.*;
-import static news.analytics.dao.query.QueryConstants.FROM;
 
 public class InsertQueryBuilder<T> extends AbstractQueryBuilder {
     public InsertQueryBuilder(ModelInfo modelInfo) {
