@@ -1,6 +1,6 @@
 package news.analytics.pipeline.analyze;
 
-import news.analytics.model.news.TransformedNews;
+import news.analytics.model.news.AnalyzedNews;
 import news.analytics.pipeline.utils.PipelineUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,29 +32,35 @@ public class SentimentAnalyzer {
 
     }*/
 
-    public Float generateSentimentScore(TransformedNews transformedNews) {
-        String title = removeStopWords(transformedNews.getTitle());
-        String h1 = removeStopWords(transformedNews.getH1());
+    public Float generateSentimentScore(AnalyzedNews analyzedNews) {
+        String title = removeStopWords(analyzedNews.getTitle());
+        String h1 = removeStopWords(analyzedNews.getH1());
 
         Float titleScore = process(title);
-        titleScore = titleScore /(title.split(" ").length); // * 0.4; // 40%
-        Float h1Score = process(h1);
-        h1Score = h1Score / (h1.split(" ").length); // * 0.3; // 30%
+        titleScore = titleScore /(title.split(" ").length);
+        titleScore = titleScore * 0.50F; // 50% weight for title
 
-        String text = transformedNews.getContent();
+        Float h1Score = process(h1);
+        h1Score = h1Score / (h1.split(" ").length);
+        h1Score = h1Score * 0.3F; // 30% weight for h1
+
+        String text = analyzedNews.getContent();
         String[] sentences = text.split("\\.");
         Float textScore = 0F;
         for(String sentence : sentences ) {
-            sentence = removeStopWords(sentence); // stopwords removal not working fine, it is replacing partial characters
-            textScore += process(sentence.trim())/sentence.split(" ").length;
+            sentence = removeStopWords(sentence);
+            if(!sentence.trim().equalsIgnoreCase("")) {
+                textScore += process(sentence.trim()) / sentence.split(" ").length;
+            }
         }
+        textScore = textScore * 0.2F; // 20% weight for content
 
         Float average = (titleScore + h1Score + textScore);
+
         return average;
     }
 
     private Float process(String line) {
-        // Negative + Exclamation =-> Negative ++ // --> Will be considered later
 
         // Maintain separate counts of Positive and Negative words
         Float positiveScore = 0F;

@@ -85,12 +85,12 @@ public class Analyzer {
         // inherit all the existing properties from transformed news
         AnalyzedNews analyzedNews = inheritExistingProperties(transformedNews);
 
-        // sentiment generation
-        Float sentimentScore = sentimentAnalyzer.generateSentimentScore(transformedNews);
-        analyzedNews.setSentimentScore(sentimentScore);
-
         // custom tag extraction
         tagGenerator.generateTags(analyzedNews);
+
+        // sentiment generation
+        Float sentimentScore = sentimentAnalyzer.generateSentimentScore(analyzedNews);
+        analyzedNews.setSentimentScore(sentimentScore);
 
         return analyzedNews;
     }

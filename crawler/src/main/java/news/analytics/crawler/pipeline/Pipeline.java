@@ -7,9 +7,11 @@ import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.lock.Lock;
 import news.analytics.model.news.Seed;
+import news.analytics.model.news.TransformedNews;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -20,12 +22,14 @@ public class Pipeline extends Thread {
     private int threadLimit;
     private Lock injectorFetcherLock;
     private GenericDao<Seed> seedDao;
+    private GenericDao<TransformedNews> transformedNewsDao;
 
     public Pipeline(DataSource dataSource, int threadLimit, Lock injectorFetcherLock) {
         this.dataSource = dataSource;
         this.threadLimit = threadLimit;
         this.injectorFetcherLock = injectorFetcherLock;
         seedDao = new GenericDao<>(Seed.class);
+        transformedNewsDao = new GenericDao<>(TransformedNews.class);
     }
 
     @Override
@@ -71,6 +75,29 @@ public class Pipeline extends Thread {
         // create threads, assign each partition to each thread
         for (int i = 0; i < partitions.size(); i++) {
             PipelineWorker worker = new PipelineWorker(dataSource, partitions.get(i));
+            worker.start();
+        }
+    }
+
+    public void startAnalyzer() throws SQLException, IllegalAccessException, IOException, InstantiationException {
+        PredicateClause predicateClause = DAOUtils.getPredicateFromString("PROCESS_STATUS = TRANSFORMED_NEWS_NOT_ANALYZED");
+        Connection connection = dataSource.getConnection();
+        List<TransformedNews> select = transformedNewsDao.select(connection, predicateClause);
+        connection.close();
+
+        if(select.size() != 0)
+            startAnalyzerThreads(select);
+    }
+
+    private void startAnalyzerThreads(List<TransformedNews> select) throws IOException {
+        int eachPartitionSize = select.size();
+        if (select.size() > threadLimit) {
+            eachPartitionSize = select.size() / threadLimit;
+        }
+        List<List<TransformedNews>> partitions = Lists.partition(select, eachPartitionSize);
+        // create threads, assign each partition to each thread
+        for (int i = 0; i < partitions.size(); i++) {
+            AnalyzeWorker worker = new AnalyzeWorker(dataSource, partitions.get(i));
             worker.start();
         }
     }

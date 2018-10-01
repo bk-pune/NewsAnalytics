@@ -16,17 +16,18 @@ public class WordClassifier {
     public static void main(String[] args) throws IOException {
 
         // load existing dictionaries
-        Set<String> words = Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
-        words.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt"));
-        words.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt"));
-        words.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt"));
+        Set<String> words = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
+//                Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt"));
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt"));
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt"));
 
-//      words.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt"));
+//      words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt"));
 
-        Set<String> alreadyDone = Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
-        alreadyDone.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt"));
-        alreadyDone.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt"));
-        alreadyDone.addAll(Utils.load("G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt"));
+        Set<String> alreadyDone = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt"));
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt"));
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt"));
 
         Scanner sc = new Scanner(System.in);
         int i = 0;
@@ -36,14 +37,13 @@ public class WordClassifier {
             }
             i++;
             if(i >= 10) {
-                saveData(qualitative, "G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
-                saveData(quantitative, "G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt");
-                saveData(adjectives, "G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt");
-                saveData(adverbs, "G:\\Work\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt");
+                saveData(qualitative, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
+                saveData(quantitative, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt");
+                saveData(adjectives, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt");
+                saveData(adverbs, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt");
 
                 i = 0;
             }
-            String category = null;
             System.out.println(word);
             System.out.println("1)Qualitative\t2)Quantitative\t3)Adjectives\t4)Adverbs\n");
             Integer inputCategory = sc.nextInt();
@@ -70,7 +70,7 @@ public class WordClassifier {
     private static void saveData(Map<String, Integer> words, String filePath) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath, true));
         for (Map.Entry<String, Integer> entry : words.entrySet()) {
-            String tmp = "(" + entry.getKey() + ", "+ entry.getValue() + ")";
+            String tmp = entry.getKey() + "\t"+ entry.getValue();
             bufferedWriter.write(tmp);
             bufferedWriter.newLine();
         }

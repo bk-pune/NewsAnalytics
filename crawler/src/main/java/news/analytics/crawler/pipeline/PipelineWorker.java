@@ -2,7 +2,6 @@ package news.analytics.crawler.pipeline;
 
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
-import news.analytics.model.news.AnalyzedNews;
 import news.analytics.model.news.RawNews;
 import news.analytics.model.news.Seed;
 import news.analytics.model.news.TransformedNews;
@@ -63,9 +62,8 @@ public class PipelineWorker extends Thread {
             TransformedNews transformedNews = transformer.transform(rawNews, connection);
 
             // analyze
-            AnalyzedNews analyze = analyzer.analyze(transformedNews, connection);
-            System.out.println(analyze.getContent());
-            System.out.println(analyze.getSentimentScore());
+            // Will be executed manually
+            // AnalyzedNews analyze = analyzer.analyze(transformedNews, connection);
         }
     }
 }

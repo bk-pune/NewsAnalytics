@@ -12,7 +12,7 @@ public class Utils {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
-            pages.add(line.trim());
+            pages.add(line.trim().split("\t")[0]);
         }
         bufferedReader.close();
         return pages;

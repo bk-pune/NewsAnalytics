@@ -61,7 +61,9 @@ public class Crawler {
                     System.out.println("Enter full file path for seed url:");
                     input = sc.nextLine();
                     crawler.inject(input);
-                } else if(input.equalsIgnoreCase("2")) { // show stats
+                } else if(input.equalsIgnoreCase("2")) { // Analyze
+                     crawler.startAnalyzer();
+                } else if(input.equalsIgnoreCase("3")) { // show stats
                     crawler.showStats();
                 } else if(input.equalsIgnoreCase("0")) {
                     System.out.println("Good bye !");
@@ -72,6 +74,10 @@ public class Crawler {
                 continue;
             }
         }
+    }
+
+    private void startAnalyzer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
+        pipeline.startAnalyzer();
     }
 
     private void showStats() throws Exception {
