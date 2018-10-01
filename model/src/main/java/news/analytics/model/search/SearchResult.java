@@ -12,7 +12,19 @@ public class SearchResult {
     private Long publishDate;
     private Float sentimentScore;
 
-    public String getUri() {
+    public SearchResult(String uri, String newsAgency, String section, String title, String city, Long publishDate,
+			Float sentimentScore) {
+		super();
+		this.uri = uri;
+		this.newsAgency = newsAgency;
+		this.section = section;
+		this.title = title;
+		this.city = city;
+		this.publishDate = publishDate;
+		this.sentimentScore = sentimentScore;
+	}
+
+	public String getUri() {
         return uri;
     }
 
@@ -67,4 +79,12 @@ public class SearchResult {
     public void setSentimentScore(Float sentimentScore) {
         this.sentimentScore = sentimentScore;
     }
+
+	@Override
+	public String toString() {
+		return "SearchResult [uri=" + uri + ", newsAgency=" + newsAgency + ", section=" + section + ", title=" + title
+				+ ", city=" + city + ", publishDate=" + publishDate + ", sentimentScore=" + sentimentScore + "]";
+	}
+    
+    
 }
