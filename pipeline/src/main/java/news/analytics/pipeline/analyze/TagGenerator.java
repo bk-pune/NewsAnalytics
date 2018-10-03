@@ -83,7 +83,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
 
             int i = StringUtils.countMatches(text, nGram);
 
-            if(nGram.contains(" ")) { // nGram or trigram
+            if(nGram.contains(" ")) { // space means more than one word - nGram
                 if(i >= 2) {
                     tags.put(nGram, i);
                 }

@@ -13,6 +13,7 @@ import news.analytics.model.news.AnalyzedNews;
 import news.analytics.model.news.RawNews;
 import news.analytics.model.news.Seed;
 import news.analytics.model.news.TransformedNews;
+import news.analytics.pipeline.analyze.Analyzer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -101,12 +102,13 @@ public class CrawlerTest {
 
     private void testAnalyze() throws SQLException, IOException, InstantiationException, IllegalAccessException {
         Connection connection = dataSource.getConnection();
-        GenericDao<AnalyzedNews> dao = new GenericDao(AnalyzedNews.class);
-        List<AnalyzedNews> select = dao.select(connection, null);
-        connection.close();
+        GenericDao<TransformedNews> dao = new GenericDao(TransformedNews.class);
+        List<TransformedNews> select = dao.select(connection, null); // select all
         Assert.assertTrue(select.size() == seedCount);
 
-        for (AnalyzedNews analyzedNews : select) {
+        Analyzer analyzer = new Analyzer();
+        for (TransformedNews transformedNews : select) {
+            AnalyzedNews analyzedNews = analyzer.analyze(transformedNews, connection);
             Assert.assertTrue(analyzedNews.getSentimentScore() != null);
             Assert.assertTrue(analyzedNews.getPrimaryTags() != null && analyzedNews.getPrimaryTags().size() > 0);
         }

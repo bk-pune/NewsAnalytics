@@ -12,8 +12,7 @@ public class SearchResult {
     private Long publishDate;
     private Float sentimentScore;
 
-    public SearchResult(String uri, String newsAgency, String section, String title, String city, Long publishDate,
-			Float sentimentScore) {
+    public SearchResult(String uri, String newsAgency, String section, String title, String city, Long publishDate, Float sentimentScore) {
 		super();
 		this.uri = uri;
 		this.newsAgency = newsAgency;

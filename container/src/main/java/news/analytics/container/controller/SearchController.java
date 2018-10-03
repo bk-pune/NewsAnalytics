@@ -5,10 +5,6 @@ import news.analytics.model.search.SearchResult;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +17,7 @@ public class SearchController {
     }
 
     @GetMapping()
-    @RequestMapping(value = "/protected", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/protected/search", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SearchResult> search(@RequestBody SearchQuery searchQuery) {
         // TODO
         // build Solr query
@@ -31,25 +27,18 @@ public class SearchController {
         return new ArrayList<SearchResult>();
     }
 
-    @RequestMapping("/public/authenticate")
-    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String loginId = request.getParameter("loginId");
-        String password = request.getParameter("password");
-        if(loginId.equals("bhushan") && password.equals("bkpune")) {
-            Cookie cookie = new Cookie("SPRINGBOOT", "AUTH");
-            cookie.setDomain("*.technologic.com");
-            response.addCookie(cookie);
-
-            // send response as a javascript file, which will redirect to service when loaded on browser
-//            String javascript = "<script>window.location.href =\" "+ request.getParameter("service") + "\"</script>";
-//            response.getWriter().print(javascript);
-        response.sendRedirect(request.getParameter("service"));
-        } else {
-
-        }
+    @GetMapping()
+    @RequestMapping(value = "/protected/trends", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SearchResult> getTrends() {
+        // TODO
+        // build Solr query
+        // invoke SolrJ API to get the result
+        // convert result into List<SearchResult>
+        // return result
+        return new ArrayList<SearchResult>();
     }
 
-    @GetMapping()
+    /*@GetMapping()
     @RequestMapping("/public/login")
     public String showLoginPage(HttpServletRequest request, HttpServletResponse response) {
         return "<html>\n" +
@@ -68,5 +57,5 @@ public class SearchController {
                 "</body>\n" +
                 "\n" +
                 "</html>";
-    }
+    }*/
 }
