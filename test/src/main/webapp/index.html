@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 2 | Dashboard</title>
+    <title>NewsAnalytics | Dashboard</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.5 -->
@@ -36,6 +36,10 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- This added for highchart graphs-->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
@@ -46,7 +50,7 @@
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini"><b>A</b>LT</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg">NewsAnalytics</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -471,18 +475,133 @@
         <section class="content">
           <!-- Small boxes (Stat box) -->
           <div class="row">
-            <div class="col-lg-3 col-xs-6">
+            <div class="col-md-6">
               <!-- small box -->
-              <div class="small-box bg-aqua">
-                <div class="inner">
-                  <h3>150</h3>
-                  <p>New Orders</p>
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title"></h3>
+                  <div class="box-tools pull-right">
+                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                  </div>
                 </div>
-                <div class="icon">
-                  <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
+                <div class="box-body">
+                  <div id="container" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
+				  <script>
+				  Highcharts.chart('container', {
+							chart: {
+								type: 'gauge',
+								plotBackgroundColor: null,
+								plotBackgroundImage: null,
+								plotBorderWidth: 0,
+								plotShadow: false
+							},
+							title: {
+								text: 'Sentiment Score'
+							},
+							pane: {
+								startAngle: -150,
+								endAngle: 150,
+								background: [{
+									backgroundColor: {
+										linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+										stops: [
+											[0, '#FFF'],
+											[1, '#333']
+										]
+									},
+									borderWidth: 0,
+									outerRadius: '109%'
+								}, {
+									backgroundColor: {
+										linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+										stops: [
+											[0, '#333'],
+											[1, '#FFF']
+										]
+									},
+									borderWidth: 1,
+									outerRadius: '107%'
+								}, {
+									// default background
+								}, {
+									backgroundColor: '#DDD',
+									borderWidth: 0,
+									outerRadius: '105%',
+									innerRadius: '103%'
+								}]
+							},
+
+							// the value axis
+							yAxis: {
+								min: -5,
+								max: 5,
+
+								minorTickInterval: 'auto',
+								minorTickWidth: 1,
+								minorTickLength: 10,
+								minorTickPosition: 'inside',
+								minorTickColor: '#666',
+
+								tickPixelInterval: 30,
+								tickWidth: 2,
+								tickPosition: 'inside',
+								tickLength: 10,
+								tickColor: '#666',
+								labels: {
+									step: 2,
+									rotation: 'auto'
+								},
+								title: {
+									text: 'Sentiment Score'
+								},
+								plotBands: [{
+									from: -5,
+									to: -2.5,
+									color: '#a00303' // red
+									
+								}, {
+									from: -2.5,
+									to: 0,
+									color: '#f23232' // faint red
+								}, {
+									from: 0,
+									to: 2.5,
+									color: '#4bea4d' // faint green
+								}, {
+									from: 2.5,
+									to: 5,
+									color: '#014402' // green
+								}]
+							},
+
+							series: [{
+								name: 'sc',
+								data: [-2.5]
+							}]
+
+						},
+						// Add some life
+						function (chart) {
+							if (!chart.renderer.forExport) {
+								setInterval(function () {
+									var point = chart.series[0].points[0],
+										newVal,
+										inc = Math.round((Math.random() - 0.5) * 2);
+
+									newVal = point.y + inc;
+									if (newVal < -5 || newVal > 5) {
+										newVal = point.y - inc;
+									}
+
+									point.update(newVal);
+
+								}, 3000);
+							}
+						});
+				  </script>
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
