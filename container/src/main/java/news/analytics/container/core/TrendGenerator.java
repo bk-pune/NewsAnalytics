@@ -63,7 +63,7 @@ public class TrendGenerator {
             }
         });
 
-        Map<String, Short> sortedMap = new TreeMap<>();
+        Map<String, Short> sortedMap = new LinkedHashMap<>();
         int i = 0;
         for (Map.Entry<String, Short> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
