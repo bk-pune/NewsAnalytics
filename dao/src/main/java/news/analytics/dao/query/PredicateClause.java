@@ -77,4 +77,12 @@ public class PredicateClause {
     public void setGroupByClause(String groupByClause) {
         this.groupByClause = groupByClause;
     }
+
+    public void setPredicateJoinOperator(PredicateJoinOperator predicateJoinOperator) {
+        this.predicateJoinOperator = predicateJoinOperator;
+    }
+
+    public void setNextPredicateClause(PredicateClause nextPredicateClause) {
+        this.nextPredicateClause = nextPredicateClause;
+    }
 }

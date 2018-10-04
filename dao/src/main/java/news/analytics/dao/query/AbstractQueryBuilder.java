@@ -32,13 +32,23 @@ public abstract class AbstractQueryBuilder<T> {
         sb.append(QUESTION_MARK);
 
         Object value = predicateClause.getValue();
-            parameters.add(value);
+        parameters.add(value);
 
-        /*// TODO recursion for next predicate clause
+        // select * from analyzed news where creationDate > ? AND creationDate < ?
         PredicateClause nextPredicateClause = predicateClause.getNextPredicateClause();
         if(nextPredicateClause != null) {
-            sb.append(SPACE).append(predicateClause.getPredicateJoinOperator());
-        }*/
+            do {
+                sb.append(SPACE).append(predicateClause.getPredicateJoinOperator());
+
+                sb.append(SPACE).append(nextPredicateClause.getColumnName());
+                sb.append(SPACE).append(nextPredicateClause.getOperator().getOperatorString());
+                sb.append(SPACE).append(QUESTION_MARK);
+
+                parameters.add(nextPredicateClause.getValue());
+
+                nextPredicateClause = nextPredicateClause.getNextPredicateClause();
+            }while (nextPredicateClause != null);
+        }
 
         if(predicateClause.getLimitClause() != null){
             sb.append(SPACE).append(predicateClause.getLimitClause());

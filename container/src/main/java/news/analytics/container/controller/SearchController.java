@@ -1,15 +1,23 @@
 package news.analytics.container.controller;
 
+import news.analytics.container.core.TrendGenerator;
 import news.analytics.model.search.SearchQuery;
 import news.analytics.model.search.SearchResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class SearchController {
+
+    @Autowired
+    private TrendGenerator trendGenerator;
 
     @RequestMapping("/")
     public String index() {
@@ -29,13 +37,20 @@ public class SearchController {
 
     @GetMapping()
     @RequestMapping(value = "/protected/trends", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<SearchResult> getTrends() {
-        // TODO
-        // build Solr query
-        // invoke SolrJ API to get the result
-        // convert result into List<SearchResult>
-        // return result
-        return new ArrayList<SearchResult>();
+    public Map<String, Integer> getTrends() {
+        Map<String, Integer> stringIntegerMap = null;
+        try {
+            stringIntegerMap = trendGenerator.generateTrend(0, System.currentTimeMillis());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        return stringIntegerMap;
     }
 
     /*@GetMapping()
