@@ -37,8 +37,8 @@ public class SearchController {
 
     @GetMapping()
     @RequestMapping(value = "/protected/trends", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Integer> getTrends() {
-        Map<String, Integer> stringIntegerMap = null;
+    public Map<String, Short> getTrends() {
+        Map<String, Short> stringIntegerMap = null;
         try {
             stringIntegerMap = trendGenerator.generateTrend(0, System.currentTimeMillis());
         } catch (SQLException e) {

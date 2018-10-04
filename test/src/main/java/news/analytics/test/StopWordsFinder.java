@@ -49,7 +49,7 @@ public class StopWordsFinder {
         return stringBuilder.toString();
     }
     private static void loadExistingStopwords(Set<String> stopWords) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt"));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt"));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
             stopWords.add(line);

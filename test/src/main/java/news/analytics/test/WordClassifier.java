@@ -16,18 +16,18 @@ public class WordClassifier {
     public static void main(String[] args) throws IOException {
 
         // load existing dictionaries
-        Set<String> words = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt");
-//                Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\positive.txt");
-//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\negative.txt"));
-//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\neutral.txt"));
-//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\marathi_adverbs.txt"));
+        Set<String> words = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\marathi_adverbs.txt");
+//                Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\positive.txt");
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\negative.txt"));
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\neutral.txt"));
+//        words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\marathi_adverbs.txt"));
 
-//      words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\stopwords.txt"));
+//      words.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt"));
 
-        Set<String> alreadyDone = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
-        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt"));
-        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt"));
-        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt"));
+        Set<String> alreadyDone = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\qualitative.txt");
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\quantitative.txt"));
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\adjectives.txt"));
+        alreadyDone.addAll(Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\adverbs.txt"));
 
         Scanner sc = new Scanner(System.in);
         int i = 0;
@@ -37,10 +37,10 @@ public class WordClassifier {
             }
             i++;
             if(i >= 10) {
-                saveData(qualitative, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\qualitative.txt");
-                saveData(quantitative, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\quantitative.txt");
-                saveData(adjectives, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adjectives.txt");
-                saveData(adverbs, "D:\\Bhushan\\personal\\NewsAnalytics\\test\\src\\main\\resources\\dictionaries\\revised\\adverbs.txt");
+                saveData(qualitative, "D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\qualitative.txt");
+                saveData(quantitative, "D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\quantitative.txt");
+                saveData(adjectives, "D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\adjectives.txt");
+                saveData(adverbs, "D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\revised\\adverbs.txt");
 
                 i = 0;
             }

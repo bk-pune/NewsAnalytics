@@ -10,10 +10,7 @@ import news.analytics.model.news.AnalyzedNews;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class TrendGenerator {
     GenericDao<AnalyzedNews> analyzedNewsDao;
@@ -24,13 +21,13 @@ public class TrendGenerator {
         this.dataSource = dataSource;
     }
 
-    public Map<String, Integer> generateTrend(long fromDate, long toDate) throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        Map<String, Integer> trend = new TreeMap<>();
+    public Map<String, Short> generateTrend(long fromDate, long toDate) throws SQLException, IllegalAccessException, IOException, InstantiationException {
+        Map<String, Short> trend = new TreeMap<>();
 
         Connection connection = dataSource.getConnection();
         // select in the given date range
-        PredicateClause fromDateClause = new PredicateClause("PUBLISH_DATE", PredicateOperator.GREATER_THAN, fromDate);
-        PredicateClause toDateClause = new PredicateClause("PUBLISH_DATE", PredicateOperator.LESS_THAN, toDate);
+        PredicateClause fromDateClause = new PredicateClause("PUBLISH_DATE", PredicateOperator.GREATER_THAN_EQUAL_TO, fromDate);
+        PredicateClause toDateClause = new PredicateClause("PUBLISH_DATE", PredicateOperator.LESS_THAN_EQUAL_TO, toDate);
         fromDateClause.setPredicateJoinOperator(PredicateJoinOperator.AND);
         fromDateClause.setNextPredicateClause(toDateClause);
 
@@ -41,18 +38,39 @@ public class TrendGenerator {
             updateTrend(trend, analyzedNews.getPrimaryTags());
         }
 
+        trend = sortAndReturnTopN(trend, 25);
         return trend;
     }
 
-    private void updateTrend(Map<String, Integer> trend, Set<String> primaryTags) {
+    private void updateTrend(Map<String, Short> trend, Set<String> primaryTags) {
         for(String tag : primaryTags) {
-            Integer wordFrequency = trend.get(tag);
+            Short wordFrequency = trend.get(tag);
             if(wordFrequency != null) {
                 wordFrequency++;
                 trend.put(tag, wordFrequency);
             } else {
-                trend.put(tag, 1);
+                trend.put(tag, (short) 1);
             }
         }
+    }
+    
+    private Map<String, Short> sortAndReturnTopN(Map<String, Short> unsortMap, int topN)  {
+        Set<Map.Entry<String, Short>> set = unsortMap.entrySet();
+        List<Map.Entry<String, Short>> list = new ArrayList<Map.Entry<String, Short>>(set);
+        Collections.sort(list, new Comparator<Map.Entry<String, Short>>() {
+            public int compare(Map.Entry<String, Short> o1, Map.Entry<String, Short> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+
+        Map<String, Short> sortedMap = new TreeMap<>();
+        int i = 0;
+        for (Map.Entry<String, Short> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+            if(++i >= topN) {
+                break;
+            }
+        }
+        return sortedMap;
     }
 }
