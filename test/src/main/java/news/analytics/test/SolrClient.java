@@ -51,7 +51,7 @@ public class SolrClient {
 					String.valueOf(document.get("newsAgency")), String.valueOf(document.get("section")),
 					String.valueOf(document.get("title")), String.valueOf(document.get("city")),
 					Long.valueOf(String.valueOf(document.get("publishDate"))),
-					Float.parseFloat(String.valueOf(document.get("sentimentScore"))));
+					Float.valueOf(String.valueOf(document.get("sentimentScore"))));
 
 			results.add(news);
 
