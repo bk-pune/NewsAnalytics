@@ -260,7 +260,7 @@
        agentId
     -->
   <!-- <jmx agentId="myAgent" /> -->
-  <!-- If you want to run a new MBeanServer, specify the serviceUrl -->
+  <!-- If you want to start a new MBeanServer, specify the serviceUrl -->
   <!-- <jmx serviceUrl="service:jmx:rmi:///jndi/rmi://localhost:9999/solr"/>
     -->
 
@@ -689,7 +689,7 @@
      <lst name="defaults">
        <str name="echoParams">explicit</str>
        <int name="rows">10</int>
-       <str name="df">allData</str>
+       <str name="df">text1</str>
        <!-- Change from JSON to XML format (the default prior to Solr 7.0)
           <str name="wt">xml</str> 
          -->
@@ -754,7 +754,7 @@
        <str name="echoParams">explicit</str>
        <str name="wt">json</str>
        <str name="indent">true</str>
-       <str name="df">text</str>
+       <str name="df">text1</str>
      </lst>
   </requestHandler>
 
@@ -790,7 +790,7 @@
 
   <initParams path="/update/**,/query,/select,/tvrh,/elevate,/spell,/browse">
     <lst name="defaults">
-      <str name="df">text</str>
+      <str name="df">text1</str>
     </lst>
   </initParams>
 
@@ -873,7 +873,7 @@
     <!-- a spellchecker built from a field of the main index -->
     <lst name="spellchecker">
       <str name="name">default</str>
-      <str name="field">text</str>
+      <str name="field">text1</str>
       <str name="classname">solr.DirectSolrSpellChecker</str>
       <!-- the spellcheck distance measure used, the default is the internal levenshtein -->
       <str name="distanceMeasure">internal</str>
@@ -958,7 +958,7 @@
     -->
   <requestHandler name="/spell" class="solr.SearchHandler" startup="lazy">
     <lst name="defaults">
-      <str name="df">text</str>
+      <str name="df">text1</str>
       <!-- Solr will use suggestions from both the 'default' spellchecker
            and from the 'wordbreak' spellchecker and combine them.
            collations (re-written queries) can include a combination of
@@ -1015,7 +1015,7 @@
     -->
   <requestHandler name="/tvrh" class="solr.SearchHandler" startup="lazy">
     <lst name="defaults">
-      <str name="df">text</str>
+      <str name="df">text1</str>
       <bool name="tv">true</bool>
     </lst>
     <arr name="last-components">
@@ -1062,7 +1062,7 @@
   <requestHandler name="/elevate" class="solr.SearchHandler" startup="lazy">
     <lst name="defaults">
       <str name="echoParams">explicit</str>
-      <str name="df">text</str>
+      <str name="df">text1</str>
     </lst>
     <arr name="last-components">
       <str>elevator</str>
