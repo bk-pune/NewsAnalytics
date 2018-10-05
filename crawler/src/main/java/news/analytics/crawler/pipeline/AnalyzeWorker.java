@@ -36,10 +36,13 @@ public class AnalyzeWorker extends Thread {
             return;
         }
 
-        // Fetch -> Insert in getRawNews -> Update seed status
         for(TransformedNews transformedNews : transformedNewsList) {
-            // analyze
-            analyzer.analyze(transformedNews, connection);
+            try {
+                // analyze
+                analyzer.analyze(transformedNews, connection);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
