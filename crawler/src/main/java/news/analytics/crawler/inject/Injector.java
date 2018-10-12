@@ -37,6 +37,10 @@ public class Injector {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String nextLine;
             while ((nextLine = br.readLine()) != null){
+                // ignore comments and blank lines
+                if(nextLine.startsWith("#") || nextLine.trim().isEmpty()) {
+                    continue;
+                }
                 try {
                     genericDao.insert(connection, Lists.newArrayList(getFreshSeed(nextLine)));
                     connection.commit();
