@@ -2,7 +2,10 @@ package news.analytics.dao.query;
 
 import news.analytics.modelinfo.ModelInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static news.analytics.dao.query.QueryConstants.*;
 
@@ -17,10 +20,10 @@ public class SelectQueryBuilder<T> extends AbstractQueryBuilder {
      * @param predicateClause Select predicate
      * @return Query String and the map of parameters for predicate clause in the query
      */
-    public QueryAndParameters getQueryStringAndParameters(PredicateClause predicateClause) {
+    public QueryAndParameters getQueryStringAndParameters(PredicateClause predicateClause, List<String> selectFieldNames) {
         List<Object> valueList = new ArrayList<Object>();
         StringBuilder sb = new StringBuilder();
-        sb.append(getQueryString());
+        sb.append(getQueryString(selectFieldNames));
 
         if (predicateClause != null) {
             sb.append(SPACE).append(WHERE).append(SPACE);
@@ -36,10 +39,17 @@ public class SelectQueryBuilder<T> extends AbstractQueryBuilder {
         return queryAndParameters;
     }
 
-    private String getQueryString() {
-        LinkedList<String> columnNames = modelInfo.getColumnNames();
+    private String getQueryString(List<String> selectFieldNames) {
+        LinkedList<String> columnNames = new LinkedList<>();
         StringBuilder sb = new StringBuilder();
         sb.append(SELECT).append(SPACE);
+        if(selectFieldNames != null && !selectFieldNames.isEmpty()) {
+            for(String fieldName : selectFieldNames) {
+                columnNames.add(modelInfo.getColumnName(fieldName));
+            }
+        } else {
+            columnNames = modelInfo.getColumnNames();
+        }
         for (int i = 0; i < columnNames.size(); i++) {
             // --> column1, column2, column3
             sb.append(columnNames.get(i));

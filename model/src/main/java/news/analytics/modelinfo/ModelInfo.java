@@ -16,12 +16,13 @@ public class ModelInfo<T> {
     private Set<Field> fields = new HashSet<Field>();
     private LinkedList<String> columnNames = new LinkedList<String>();
     private Map<String, Field> fieldMap = new LinkedHashMap<String, Field>();
+    private Map<String, Field> columnToFieldMap = new LinkedHashMap<String, Field>();
     private Map<String, DBColumn> fieldDBTableAnnotationMap = new HashMap<String, DBColumn>();
     private Field primaryKeyField;
     private String mappedTable;
     private Class newsEntityClass;
 
-    public ModelInfo(Class newsEntityClass){
+    public ModelInfo(Class newsEntityClass) {
         this.newsEntityClass = newsEntityClass;
         mappedTable = getMappedTable(newsEntityClass);
         populateFieldSet(newsEntityClass);
@@ -43,6 +44,7 @@ public class ModelInfo<T> {
                 }
                 fieldMap.put(field.getName(), field);
                 columnNames.add(annotation.column());
+                columnToFieldMap.put(annotation.column(), field);
                 fieldDBTableAnnotationMap.put(field.getName(), annotation);
             }
         }
@@ -133,5 +135,15 @@ public class ModelInfo<T> {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public String getColumnName(String fieldName) {
+        Field fieldFromFieldName = getFieldFromFieldName(fieldName);
+        DBColumn annotation = fieldFromFieldName.getAnnotation(DBColumn.class);
+        return annotation.column();
+    }
+
+    public Field getFieldFromColumnName(String columnName) {
+        return columnToFieldMap.get(columnName);
     }
 }

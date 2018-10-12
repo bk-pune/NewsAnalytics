@@ -11,9 +11,11 @@ import news.analytics.model.news.TransformedNews;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Provides counts from crawl db based on the given predicate.
+ * Provides crawl statistics from crawl db based on the given predicate.
  */
 public class StatsProvider {
 
@@ -36,16 +38,19 @@ public class StatsProvider {
         StringBuilder sb = new StringBuilder("Seed").append("\n********************************\n");
         GenericDao<Seed> genericDao = new GenericDao<>(Seed.class);
         PredicateClause predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "FETCHED");
-        int fetched = genericDao.select(connection, predicateClause).size();
+        List<String> selectFieldNames = new ArrayList<>(1);
+        selectFieldNames.add("id");
+
+        int fetched = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "UNFETCHED");
-        int unFetched = genericDao.select(connection, predicateClause).size();
+        int unFetched = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "SERVER_ERROR");
-        int serverError = genericDao.select(connection, predicateClause).size();
+        int serverError = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "CLIENT_ERROR");
-        int clientError = genericDao.select(connection, predicateClause).size();
+        int clientError = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         sb.append("UNFETCHED:").append(unFetched).append("\n");
         sb.append("FETCHED:").append(fetched).append("\n");
@@ -58,10 +63,13 @@ public class StatsProvider {
         StringBuilder sb = new StringBuilder("RawNews").append("\n********************************\n");
         GenericDao<RawNews> genericDao = new GenericDao<>(RawNews.class);
         PredicateClause predicateClause = new PredicateClause("PROCESS_STATUS", PredicateOperator.EQUALS, "RAW_NEWS_PROCESSED");
-        int processed = genericDao.select(connection, predicateClause).size();
+        List<String> selectFieldNames = new ArrayList<>(1);
+        selectFieldNames.add("id");
+
+        int processed = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         predicateClause = new PredicateClause("PROCESS_STATUS", PredicateOperator.EQUALS, "RAW_NEWS_UNPROCESSED");
-        int unProcessed = genericDao.select(connection, predicateClause).size();
+        int unProcessed = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
         sb.append("RAW_NEWS_PROCESSED:").append(processed).append("\n");
         sb.append("RAW_NEWS_UNPROCESSED:").append(unProcessed).append("\n");
         return sb.append("\n").toString();
@@ -71,10 +79,13 @@ public class StatsProvider {
         StringBuilder sb = new StringBuilder("TransformedNews").append("\n********************************\n");
         GenericDao<TransformedNews> genericDao = new GenericDao<>(TransformedNews.class);
         PredicateClause predicateClause = new PredicateClause("PROCESS_STATUS", PredicateOperator.EQUALS, "TRANSFORMED_NEWS_NOT_ANALYZED");
-        int processed = genericDao.select(connection, predicateClause).size();
+        List<String> selectFieldNames = new ArrayList<>(1);
+        selectFieldNames.add("id");
+
+        int processed = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         predicateClause = new PredicateClause("PROCESS_STATUS", PredicateOperator.EQUALS, "TRANSFORMED_NEWS_ANALYZED");
-        int unProcessed = genericDao.select(connection, predicateClause).size();
+        int unProcessed = genericDao.selectGivenFields(connection, predicateClause, selectFieldNames).size();
 
         sb.append("TRANSFORMED_NEWS_NOT_ANALYZED:").append(processed).append("\n");
         sb.append("TRANSFORMED_NEWS_ANALYZED:").append(unProcessed).append("\n");

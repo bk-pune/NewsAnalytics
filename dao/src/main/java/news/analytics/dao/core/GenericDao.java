@@ -11,7 +11,6 @@ import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     private ModelInfo modelInfo;
@@ -49,31 +48,44 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
         return objects;
     }
 
-    public List<T> select(Connection connection, PredicateClause predicateClause) throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
-        String sqlQuery = "";
+    public List<T> select(Connection connection, PredicateClause predicateClause) throws SQLException, IllegalAccessException, InstantiationException {
+        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause, new ArrayList(0));
+        String sqlQuery = queryStringAndParameters.getQueryString();
         List<Object> parameters = null;
-        sqlQuery = queryStringAndParameters.getQueryString();
+
         parameters = (List<Object>) queryStringAndParameters.getParameters();
         ResultSet resultSet = executeSelect(connection, sqlQuery, parameters);
         List<T> objects = fromResultSetToObjects(resultSet);
         return objects;
     }
 
-    private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException, IOException, IllegalAccessException, InstantiationException {
+    public List<T> selectGivenFields(Connection connection, PredicateClause predicateClause, List<String> fieldsToSelect) throws SQLException, IllegalAccessException, IOException, InstantiationException {
+        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause, fieldsToSelect);
+        String sqlQuery = queryStringAndParameters.getQueryString();
+        List<Object> parameters = null;
+        parameters = (List<Object>) queryStringAndParameters.getParameters();
+        ResultSet resultSet = executeSelect(connection, sqlQuery, parameters);
+        List<T> objects = fromResultSetToObjects(resultSet);
+        return objects;
+    }
+
+    private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException, IllegalAccessException, InstantiationException {
         List<T> fetched = new ArrayList<T>();
-        Map<String, Field> fieldMap = modelInfo.getFieldMap();
         try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
+                // one result set record = one new object
                 T instance = (T) modelInfo.getNewsEntityClass().newInstance();
-                int columnIndex = 1;
-                for (Map.Entry<String, Field> fieldMapEntry : fieldMap.entrySet()) {
-                    Field field = fieldMapEntry.getValue();
+
+                for(int i = 1; i <= metaData.getColumnCount(); i++) {
+                // per column in result set row = field in the instance
+                    String columnName = metaData.getColumnName(i);
+                    Field field = modelInfo.getFieldFromColumnName(columnName);
                     DataType sqlDatatypeForField = modelInfo.getSQLDatatypeForField(field.getName());
-                    Object value = getValue(resultSet, columnIndex, sqlDatatypeForField);
+                    Object value = getValue(resultSet, i, sqlDatatypeForField);
                     modelInfo.setValueToObject(instance, value, field, true);
-                    columnIndex++;
                 }
+
                 fetched.add(instance);
             }
         } finally {
@@ -81,7 +93,6 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
         }
         return fetched;
     }
-
 
     /**
      * Returns the value from result set as an object.

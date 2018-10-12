@@ -39,18 +39,18 @@ public class SelectTest extends AbstractTest {
         ModelInfo modelInfo = ModelInfoProvider.getModelInfo(RawNews.class);
 
         SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder(modelInfo);
-        QueryAndParameters queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(null);
+        QueryAndParameters queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(null, new ArrayList<String>(1));
 
         Assert.assertTrue(queryAndParameters.getQueryString().equals(SIMPLE_SELECT_QUERY_EXPECTED));
 
         PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, 1L);
-        queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
+        queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause, new ArrayList<String>(1));
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_SELECT_QUERY_EXPECTED));
         List<Object> objects = (List<Object>) queryAndParameters.getParameters();
         Assert.assertTrue(objects.get(0).equals(1L));
 
         predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://news.analytics.test.com");
-        queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause);
+        queryAndParameters = selectQueryBuilder.getQueryStringAndParameters(predicateClause, new ArrayList<String>(1));
         Assert.assertTrue(queryAndParameters.getQueryString().equals(PREDICATE_SELECT_QUERY_WITH_QUOTES_EXPECTED));
         objects = (List<Object>) queryAndParameters.getParameters();
         Assert.assertTrue(objects.get(0).equals("http://news.analytics.test.com")); // with quotes here
@@ -60,7 +60,7 @@ public class SelectTest extends AbstractTest {
     public void selectTest() throws SQLException, IllegalAccessException, IOException, InstantiationException {
         ModelInfo modelInfo = ModelInfoProvider.getModelInfo(RawNews.class);
         SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder(modelInfo);
-        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(null);
+        QueryAndParameters queryStringAndParameters = selectQueryBuilder.getQueryStringAndParameters(null, new ArrayList<String>(1));
 
         String queryString = queryStringAndParameters.getQueryString();
         Assert.assertTrue(queryString.equals(SIMPLE_SELECT_QUERY_EXPECTED));

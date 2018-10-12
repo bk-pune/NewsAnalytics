@@ -35,6 +35,7 @@ public class SentimentAnalyzer {
     public Float generateSentimentScore(AnalyzedNews analyzedNews) {
         String title = removeStopWords(analyzedNews.getTitle());
         String h1 = removeStopWords(analyzedNews.getH1());
+        String text = removeStopWords(analyzedNews.getContent());
 
         Float titleScore = process(title);
         titleScore = titleScore /(title.split(" ").length);
@@ -44,11 +45,9 @@ public class SentimentAnalyzer {
         h1Score = h1Score / (h1.split(" ").length);
         h1Score = h1Score * 0.3F; // 30% weight for h1
 
-        String text = analyzedNews.getContent();
         String[] sentences = text.split("\\.");
         Float textScore = 0F;
         for(String sentence : sentences ) {
-            sentence = removeStopWords(sentence);
             if(!sentence.trim().equalsIgnoreCase("")) {
                 textScore += process(sentence.trim()) / sentence.split(" ").length;
             }
@@ -86,19 +85,6 @@ public class SentimentAnalyzer {
                 negativeScore++;
             }
         }
-
-        // Extract text between quotes => meaning someone "said this" -> Sentiment Analysis on this sentence
-        /* String[] valuesInQuotes = StringUtils.substringsBetween(line, "\"", "\"");
-        if (valuesInQuotes != null && valuesInQuotes.length > 0) {
-            for (String values : valuesInQuotes) {
-                Float process = process(values);
-                if(process >= 0){
-                    positiveScore++;
-                } else {
-                    negativeScore++;
-                }
-            }
-        }*/
 
         // Adjective followed by a noun/verb -> = +2
         for (String positiveWord : positive) {
@@ -143,6 +129,7 @@ public class SentimentAnalyzer {
     private String removeStopWords(String text) {
         for(String stopWord : stopwords){
             text = text.replaceAll(" " + stopWord + " ", " ");
+            text = text.replaceAll(" " + stopWord + ".", " "); // for stopword + full stop
             text = text.replaceAll("[(0-9)*(०-९)*]", " ");
         }
         return text;
