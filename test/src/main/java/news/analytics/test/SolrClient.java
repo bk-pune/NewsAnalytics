@@ -19,7 +19,7 @@ public class SolrClient {
 
 	private static HttpSolrClient client;
 
-	private static String searchQuery = "primaryTags:%s* and secondaryTags:%s* and title:%s*";
+	private static String searchQuery = "primaryTags:%s* or title:%s* or h1:%s* or secondaryTags:%s* or content:%s* ";
 
 	public SolrClient() {
 
@@ -47,7 +47,18 @@ public class SolrClient {
 		if (searchTerm != null) {
 
 			if (searchTerm.contains(",")) {
+				String[] searchTerms = searchTerm.split(",");
 				// Loop through each term
+				for (int i = 0; i < searchTerms.length; i++) {
+					if (finalResults.size() < noOfDocuments) {
+						results = new ArrayList<SearchResult>();
+						results = search(searchTerms[i]);
+						if (results != null && !results.isEmpty()) {
+							finalResults.addAll(results);
+						}
+					}
+				}
+
 			} else {
 				// search()
 				if (finalResults.size() < noOfDocuments) {
@@ -68,8 +79,9 @@ public class SolrClient {
 	private List<SearchResult> search(String searchTerm) throws SolrServerException, IOException {
 
 		// SolrQuery query = new SolrQuery("*:*");
-		System.out.println(String.format(searchQuery, searchTerm, searchTerm, searchTerm));
-		SolrQuery query = new SolrQuery(String.format(searchQuery, searchTerm, searchTerm, searchTerm));
+		System.out.println(String.format(searchQuery, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm));
+		SolrQuery query = new SolrQuery(
+				String.format(searchQuery, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm));
 
 		query.setRows(new Integer(100));
 
@@ -105,9 +117,9 @@ public class SolrClient {
 
 		SolrClient solrClient = new SolrClient();
 		SearchQuery query = new SearchQuery();
-		query.setSearchTerm("तांबाळवाडी");
-		
-		solrClient.getSolrDocuments(query, 100);
+		query.setSearchTerm("तांबाळवाडी,मुख्यमंत्री");
+
+		System.out.println("final results: " + solrClient.getSolrDocuments(query, 100));
 	}
 
 }
