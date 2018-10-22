@@ -1,5 +1,6 @@
 package news.analytics.container.config;
 
+import news.analytics.container.core.SolrClient;
 import news.analytics.container.core.TrendGenerator;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
@@ -13,16 +14,22 @@ import java.util.Properties;
 
 @Configuration
 public class AppConfiguration {
-    DataSource dataSource;
+    private DataSource dataSource;
+    private Properties properties;
 
     public AppConfiguration() throws IOException {
-        Properties properties = loadProperties("dataSource.properties");
+        properties = loadProperties("dataSource.properties");
         dataSource = H2DataSource.getDataSource(properties.getProperty("driverClass"), properties.getProperty("dbUrl"), properties.getProperty("dbUser"), properties.getProperty("dbPassword"));
     }
 
     @Bean
     public TrendGenerator trendGenerator() {
         return new TrendGenerator(dataSource);
+    }
+
+    @Bean
+    public SolrClient solrClient(){
+        return new SolrClient(properties.getProperty(""));
     }
 
     // TODO Add authentication on requests

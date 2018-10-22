@@ -13,15 +13,29 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class TrendGenerator {
-    GenericDao<AnalyzedNews> analyzedNewsDao;
-    DataSource dataSource;
+    private GenericDao<AnalyzedNews> analyzedNewsDao;
+    private DataSource dataSource;
+    private List<String> selectFieldNames;
 
     public TrendGenerator(DataSource dataSource) {
         analyzedNewsDao = new GenericDao<>(AnalyzedNews.class);
         this.dataSource = dataSource;
+        selectFieldNames = new ArrayList<>(3);
+        selectFieldNames.add("keywords");
+        selectFieldNames.add("primaryTags");
+        selectFieldNames.add("secondaryTags");
     }
 
-    public Map<String, Short> generateTrend(long fromDate, long toDate) throws SQLException, IllegalAccessException, IOException, InstantiationException {
+    /**
+     * Generates the word-count map which represents the trending subjects within the given time span.
+     * @param fromDate
+     * @param toDate
+     * @return Top 'n' buzzwords according to their frequencies
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public Map<String, Short> generateTrend(long fromDate, long toDate) throws SQLException, IllegalAccessException, InstantiationException, IOException {
         Map<String, Short> trend = new TreeMap<>();
 
         Connection connection = dataSource.getConnection();
@@ -31,11 +45,13 @@ public class TrendGenerator {
         fromDateClause.setPredicateJoinOperator(PredicateJoinOperator.AND);
         fromDateClause.setNextPredicateClause(toDateClause);
 
-        List<AnalyzedNews> analyzedNewsList = analyzedNewsDao.select(connection, fromDateClause);
+        List<AnalyzedNews> analyzedNewsList = analyzedNewsDao.selectGivenFields(connection, fromDateClause, selectFieldNames);
 
         // word frequency count of all the primary tags from all the records selected
         for(AnalyzedNews analyzedNews : analyzedNewsList) {
             updateTrend(trend, analyzedNews.getPrimaryTags());
+            updateTrend(trend, analyzedNews.getSecondaryTags());
+            updateTrend(trend, analyzedNews.getKeywords());
         }
 
         trend = sortAndReturnTopN(trend, 25);

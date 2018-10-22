@@ -17,7 +17,6 @@ public class ExtractSeeds {
 //        https://www.loksatta.com/pune/page/102/
         String host = "https://www.loksatta.com/";
         Map<String, Integer> categoryWisePageCounterMap = new TreeMap();
-//
         categoryWisePageCounterMap.put("arthasatta/page/", 25);
         categoryWisePageCounterMap.put("sampadkiya-category/anvyartha/page/", 10);
 
@@ -35,25 +34,8 @@ public class ExtractSeeds {
         }
         bufferedReader.close();
 
-//        for (Map.Entry<String, Integer> entry : categoryWisePageCounterMap.entrySet()) {
-//            for (int i = 1; i <= entry.getValue(); i++) {
-//                String url = host + entry.getKey() + i;
-//                pages.add(url);
-//            }
-//        }
 
-//        for (String url : pages) {
-//            System.out.println("# Page: " + url);
         Document document = Jsoup.parse(sb.toString());;
-//            try {
-//                // for each url, connect, parse, get a[href]
-//                document = Jsoup.connect(url).get();
-//            } catch (Exception e) {
-//                System.out.println(e);
-//                System.out.println("# Failed Page: " + url);
-//                failures.add(url);
-//                continue;
-//            }
 
         Elements h2 = document.getElementsByTag("h2");
         for (Element e : h2) {
@@ -80,7 +62,6 @@ public class ExtractSeeds {
             }
         }
         System.out.println(seeds);
-//        }
 
     }
 
