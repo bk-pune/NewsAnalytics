@@ -19,6 +19,8 @@ public class SolrClient {
 
 	private static HttpSolrClient client;
 
+	private static String searchQuery = "primaryTags:%s* and secondaryTags:%s* and title:%s*";
+
 	public SolrClient() {
 
 		if (client == null) {
@@ -28,10 +30,47 @@ public class SolrClient {
 
 	}
 
-	public List<SearchResult> getSolrDocuments(SearchQuery request) throws SolrServerException, IOException {
+	public List<SearchResult> getSolrDocuments(SearchQuery request, int noOfDocuments)
+			throws SolrServerException, IOException {
+
+		if (request == null) {
+			System.out.println("No request found !!");
+			return null;
+		}
 
 		// TODO add query filters from searchQuery
-		SolrQuery query = new SolrQuery("*:*");
+		List<SearchResult> finalResults = new ArrayList<SearchResult>();
+		List<SearchResult> results;
+
+		String searchTerm = request.getSearchTerm();
+
+		if (searchTerm != null) {
+
+			if (searchTerm.contains(",")) {
+				// Loop through each term
+			} else {
+				// search()
+				if (finalResults.size() < noOfDocuments) {
+					results = new ArrayList<SearchResult>();
+					results = search(request.getSearchTerm());
+					if (results != null && !results.isEmpty()) {
+						finalResults.addAll(results);
+					}
+				}
+
+			}
+
+		}
+
+		return finalResults;
+	}
+
+	private List<SearchResult> search(String searchTerm) throws SolrServerException, IOException {
+
+		// SolrQuery query = new SolrQuery("*:*");
+		System.out.println(String.format(searchQuery, searchTerm, searchTerm, searchTerm));
+		SolrQuery query = new SolrQuery(String.format(searchQuery, searchTerm, searchTerm, searchTerm));
+
 		query.setRows(new Integer(100));
 
 		QueryResponse response = client.query("news_analytics1", query);
@@ -65,7 +104,10 @@ public class SolrClient {
 	public static void main(String[] args) throws SolrServerException, IOException {
 
 		SolrClient solrClient = new SolrClient();
-		solrClient.getSolrDocuments(new SearchQuery());
+		SearchQuery query = new SearchQuery();
+		query.setSearchTerm("तांबाळवाडी");
+		
+		solrClient.getSolrDocuments(query, 100);
 	}
 
 }
