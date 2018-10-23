@@ -38,7 +38,6 @@ public class PipelineWorker extends Thread {
 
     @Override
     public void run() {
-        int counter = 0;
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
@@ -49,8 +48,6 @@ public class PipelineWorker extends Thread {
 
         // Fetch -> Insert in getRawNews -> Update seed status
         for(Seed seed : seedList) {
-            counter ++;
-
             // Fetch
             RawNews rawNews = fetcher.fetch(seed, connection);
 

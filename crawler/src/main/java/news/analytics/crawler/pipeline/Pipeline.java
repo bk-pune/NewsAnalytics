@@ -12,6 +12,7 @@ import news.analytics.model.news.TransformedNews;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,7 +83,10 @@ public class Pipeline extends Thread {
     public void startAnalyzer() throws SQLException, IllegalAccessException, IOException, InstantiationException {
         PredicateClause predicateClause = DAOUtils.getPredicateFromString("PROCESS_STATUS = TRANSFORMED_NEWS_NOT_ANALYZED");
         Connection connection = dataSource.getConnection();
-        List<TransformedNews> select = transformedNewsDao.select(connection, predicateClause);
+        List<String> selectFieldNames = new ArrayList<>(1);
+        selectFieldNames.add("id");
+
+        List<TransformedNews> select = transformedNewsDao.selectGivenFields(connection, predicateClause, selectFieldNames);
         connection.close();
 
         if(select.size() != 0)
