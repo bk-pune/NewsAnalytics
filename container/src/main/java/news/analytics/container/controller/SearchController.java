@@ -20,7 +20,7 @@ public class SearchController {
     @Autowired
     private TrendGenerator trendGenerator;
 
-    @Autowired
+    //    @Autowired
     private SolrClient solrClient;
 
     @RequestMapping("/")
@@ -36,7 +36,7 @@ public class SearchController {
     }
 
     @GetMapping()
-    @RequestMapping(value = "/protected/trends", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/protected/trends", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Short> getTrends(@RequestBody SearchQuery searchQuery) throws IllegalAccessException, SQLException, InstantiationException, IOException {
         Map<String, Short> stringIntegerMap = null;

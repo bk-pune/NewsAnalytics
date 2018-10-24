@@ -54,7 +54,7 @@ public class TrendGenerator {
             updateTrend(trend, analyzedNews.getKeywords());
         }
 
-        trend = sortAndReturnTopN(trend, 25);
+        trend = sortAndReturnTopN(trend, 150);
         return trend;
     }
 

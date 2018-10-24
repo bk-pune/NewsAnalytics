@@ -5,63 +5,83 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class ExtractSeeds {
     public static void main(String[] args) throws IOException, InterruptedException {
-        saamana();
+        loksatta();
     }
 
     private static void loksatta() throws IOException {
-//        https://www.loksatta.com/pune/page/102/
         String host = "https://www.loksatta.com/";
         Map<String, Integer> categoryWisePageCounterMap = new TreeMap();
-        categoryWisePageCounterMap.put("arthasatta/page/", 25);
-        categoryWisePageCounterMap.put("sampadkiya-category/anvyartha/page/", 10);
 
+        categoryWisePageCounterMap.putIfAbsent("sampadkiya/lal-killa/page/", 10);
+        categoryWisePageCounterMap.putIfAbsent("sampadkiya-category/lokmanas/page/", 75);
+        categoryWisePageCounterMap.put("sampadkiya-category/ulata-chashma/page/", 29);
+        categoryWisePageCounterMap.put("sampadkiya-category/anvyartha/page/", 95);
+        categoryWisePageCounterMap.put("sampadkiya-category/virodh-vikas-vaad/page/", 2);
+        categoryWisePageCounterMap.put("sampadkiya-category/sahyadriche-vare/page/", 13);
+        categoryWisePageCounterMap.put("sampadkiya-category/anyatha/page/", 6);
+        categoryWisePageCounterMap.put("sampadkiya-category/samorchyabakavrun/page/", 8);
 
-        Set<String> seeds = new TreeSet();
+        Set<String> seeds = new HashSet<>();
+        seeds.add("https://www.loksatta.com/sampadkiya-category/vikasache-rajkaran/");
+
         Set<String> failures = new TreeSet();
         Set<String> pages = new TreeSet();
 
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("D:\\Bhushan\\personal\\NewsAnalytics\\test\\loksatta_tmp.html"));
-        String line = null;
-        StringBuilder sb = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
-            sb.append(line+"\n");
+
+        for (Map.Entry<String, Integer> entry : categoryWisePageCounterMap.entrySet()) {
+            for (int i = 1; i <= entry.getValue(); i++) {
+                String url = host + entry.getKey() + i;
+                pages.add(url);
+            }
         }
-        bufferedReader.close();
+        Document document;
+        for (String url : pages) {
+            System.out.println("# Page: " + url);
+            try {
+                // for each url, connect, parse, get a[href]
+                document = Jsoup.connect(url).get();
+            } catch (Exception e) {
+                System.out.println(e);
+                System.out.println("# Failed Page: " + url);
+                failures.add(url);
+                continue;
+            }
 
-
-        Document document = Jsoup.parse(sb.toString());;
-
-        Elements h2 = document.getElementsByTag("h2");
-        for (Element e : h2) {
-            Elements anchors = e.getElementsByTag("a");
-            for (Element a : anchors) {
-                String href = a.attr("href");
-                if (href.startsWith("http") || href.startsWith("https")) {
-                    seeds.add(href);
-                } else {
+            Elements h2 = document.getElementsByTag("h2");
+            for (Element e : h2) {
+                Elements anchors = e.getElementsByTag("a");
+                for (Element a : anchors) {
+                    String href = a.attr("href");
+                    if (href.startsWith("http") || href.startsWith("https")) {
+                        seeds.add(href);
+                    } else {
 //                        seeds.add(host + href);
+                    }
+                }
+            }
+            Elements h1 = document.getElementsByTag("h1");
+            for (Element e : h1) {
+                Elements anchors = e.getElementsByTag("a");
+                for (Element a : anchors) {
+                    String href = a.attr("href");
+                    if (href.startsWith("http") || href.startsWith("https")) {
+                        seeds.add(href);
+                    } else {
+//                        seeds.add(host + href);
+                    }
                 }
             }
         }
-        Elements h1 = document.getElementsByTag("h2");
-        for (Element e : h1) {
-            Elements anchors = e.getElementsByTag("a");
-            for (Element a : anchors) {
-                String href = a.attr("href");
-                if (href.startsWith("http") || href.startsWith("https")) {
-                    seeds.add(href);
-                } else {
-//                        seeds.add(host + href);
-                }
-            }
-        }
-        System.out.println(seeds);
+        writeToFile("G:\\Work\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\loksatta\\loksatta_all_sampadkiya.txt", seeds);
+
 
     }
 
@@ -283,5 +303,14 @@ public class ExtractSeeds {
             System.out.println("\n\n");
             Thread.sleep(1000);
         }
+    }
+
+    private static void writeToFile(String filePath, Set<String> lines) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath));
+        for (String url : lines) {
+            bufferedWriter.write(url);
+            bufferedWriter.newLine();
+        }
+        bufferedWriter.close();
     }
 }

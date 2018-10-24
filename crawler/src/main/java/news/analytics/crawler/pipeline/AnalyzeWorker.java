@@ -33,23 +33,9 @@ public class AnalyzeWorker extends Thread {
         List<TransformedNews> transformedNewsList = null;
         try {
             connection = dataSource.getConnection();
-            Long id = transformedNewsShallow.get(0).getId();
-            PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, id);
 
-            PredicateClause nextPredicateClause = predicateClause;
-
-            if(transformedNewsShallow.size() > 1) {
-                // fetch TransformedNews matching given IDs
-                for(int i = 1; i < transformedNewsShallow.size(); i++) {
-                    PredicateClause tmp = new PredicateClause("ID", PredicateOperator.EQUALS, transformedNewsShallow.get(i).getId());
-
-                    nextPredicateClause.setPredicateJoinOperator(PredicateJoinOperator.OR);
-                    nextPredicateClause.setNextPredicateClause(tmp);
-
-                    nextPredicateClause = nextPredicateClause.getNextPredicateClause();
-                }
-            }
-            transformedNewsList = transformedNewsDao.select(connection, predicateClause);
+            PredicateClause predicateClauseForORClause = getPredicateClauseForORClause();
+            transformedNewsList = transformedNewsDao.select(connection, predicateClauseForORClause);
         } catch (Exception e) {
             System.out.println(e);
             return;
@@ -62,5 +48,20 @@ public class AnalyzeWorker extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    private PredicateClause getPredicateClauseForORClause() {
+        PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, transformedNewsShallow.get(0).getId());
+        PredicateClause nextPredicateClause = predicateClause;
+        if(transformedNewsShallow.size() > 1) {
+            // fetch TransformedNews matching given IDs
+            for(int i = 1; i < transformedNewsShallow.size(); i++) {
+                PredicateClause tmp = new PredicateClause("ID", PredicateOperator.EQUALS, transformedNewsShallow.get(i).getId());
+                nextPredicateClause.setPredicateJoinOperator(PredicateJoinOperator.OR);
+                nextPredicateClause.setNextPredicateClause(tmp);
+                nextPredicateClause = nextPredicateClause.getNextPredicateClause();
+            }
+        }
+        return predicateClause;
     }
 }

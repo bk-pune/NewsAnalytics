@@ -124,14 +124,15 @@ public class Transformer {
     public void extractCity(TransformedNews transformedNews) {
         String city = null;
         String section = transformedNews.getSection();
-        for(String tmp : cities) {
-            if(section.contains(tmp)) {
-                city = tmp;
-                transformedNews.setCity(city);
-                return;
+        if(section != null) {
+            for (String tmp : cities) {
+                if (section.contains(tmp)) {
+                    city = tmp;
+                    transformedNews.setCity(city);
+                    return;
+                }
             }
         }
-
         // look inside first line
         String content = transformedNews.getContent();
         String firstLine = content.substring(0, content.indexOf("."));

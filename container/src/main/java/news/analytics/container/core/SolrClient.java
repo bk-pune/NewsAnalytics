@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SolrClient {
     private HttpSolrClient client;
-    private static String searchQuery = "primaryTags:%s* and title:%s and h1:%s and secondaryTags:%s* and content:%s*";
+    private String searchQuery = "primaryTags:%s* and title:%s and h1:%s and secondaryTags:%s* and content:%s*";
 
     public SolrClient(String solrServerUrl) {
         client = new HttpSolrClient.Builder(solrServerUrl)

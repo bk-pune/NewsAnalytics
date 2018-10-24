@@ -29,7 +29,7 @@ public class AppConfiguration {
 
     @Bean
     public SolrClient solrClient(){
-        return new SolrClient(properties.getProperty(""));
+        return new SolrClient(properties.getProperty("solrServerUrl"));
     }
 
     // TODO Add authentication on requests
