@@ -129,8 +129,9 @@ public class SentimentAnalyzer {
     private String removeStopWords(String text) {
         for(String stopWord : stopwords){
             text = text.replaceAll(" " + stopWord + " ", " ");
-            text = text.replaceAll(" " + stopWord + ".", " "); // for stopword + full stop
-            text = text.replaceAll("[(0-9)*(०-९)*]", " ");
+            text = text.replaceAll(" " + stopWord + "\\.", " "); // for stopword + full stop
+            text = text.replaceAll(" " + stopWord + ",", " ");
+            text = text.replaceAll("[(0-9)*(०-९)*]", "");
         }
         return text;
     }

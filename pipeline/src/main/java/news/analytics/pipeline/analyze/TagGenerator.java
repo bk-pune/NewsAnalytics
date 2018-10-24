@@ -18,14 +18,14 @@ import java.util.*;
 
 public class TagGenerator extends StopwordAnalyzerBase {
 
-    Set<String> stopWords;
+    Set<String> tagStopWords;
     private CharArraySet charArraySet;
     private static final int DEFAULT_MAX_TOKEN_LENGTH = 255;
 
-    public TagGenerator(Set<String> stopWords) {
-        this.stopWords = stopWords;
+    public TagGenerator(Set<String> tagStopWords) {
+        this.tagStopWords = tagStopWords;
         charArraySet = new CharArraySet(350, true);
-        for(String stopWord : stopWords) {
+        for(String stopWord : tagStopWords) {
             charArraySet.add(stopWord);
         }
     }
@@ -58,7 +58,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
         String textWithoutStopWords = removeStopWords(text);
         // TODO replace all the marathi numbers
 
-        StringReader reader = new StringReader(text);
+        StringReader reader = new StringReader(textWithoutStopWords);
         TokenStream tokenStream = tokenStream("content", reader);
         ShingleFilter theFilter = new ShingleFilter(tokenStream); // Construct a ShingleFilter with default shingle size: 2
         theFilter.setOutputUnigrams(true);
@@ -99,12 +99,13 @@ public class TagGenerator extends StopwordAnalyzerBase {
     }
 
     private String removeStopWords(String text) {
-        String textWithoutStopWords = null;
-        for(String stopWord : stopWords) {
-            textWithoutStopWords = text.replaceAll(" " + stopWord + " ", "").replaceAll(" " + stopWord + ".", "");
+        for(String stopWord : tagStopWords){
+            text = text.replaceAll(" " + stopWord + " ", " ");
+            text = text.replaceAll(" " + stopWord + "\\.", " "); // for stopword + full stop
+            text = text.replaceAll(" " + stopWord + ",", " ");
+            text = text.replaceAll("[(0-9)*(०-९)*]", "");
         }
-
-        return textWithoutStopWords;
+        return text;
     }
 
     private Set<String> getTopFive(Map<String, Integer> tags) {
