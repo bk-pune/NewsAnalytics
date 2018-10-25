@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Second stage of pipeline where raw news data will be transformed to more useful format.<br>
+ * Second stage of fetchtransform where raw news data will be transformed to more useful format.<br>
  * Attributes such as title, text content, h1, h2, keywords, tags will be extracted from RawNews.
  */
 public class Transformer {

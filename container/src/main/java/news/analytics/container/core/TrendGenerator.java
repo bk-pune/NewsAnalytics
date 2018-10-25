@@ -51,7 +51,7 @@ public class TrendGenerator {
         for(AnalyzedNews analyzedNews : analyzedNewsList) {
             updateTrend(trend, analyzedNews.getPrimaryTags());
             updateTrend(trend, analyzedNews.getSecondaryTags());
-            updateTrend(trend, analyzedNews.getKeywords());
+//            updateTrend(trend, analyzedNews.getKeywords());
         }
 
         trend = sortAndReturnTopN(trend, 150);

@@ -56,8 +56,6 @@ public class TagGenerator extends StopwordAnalyzerBase {
         Map<String, Integer> tags = new TreeMap();
         Set<String> nGrams = new TreeSet<String>();
         String textWithoutStopWords = removeStopWords(text);
-        // TODO replace all the marathi numbers
-
         StringReader reader = new StringReader(textWithoutStopWords);
         TokenStream tokenStream = tokenStream("content", reader);
         ShingleFilter theFilter = new ShingleFilter(tokenStream); // Construct a ShingleFilter with default shingle size: 2
@@ -71,7 +69,7 @@ public class TagGenerator extends StopwordAnalyzerBase {
             String bigram = charTermAttribute.toString();
             // dont add tokens with _ char or having length 1
             if(!bigram.startsWith("_") && !bigram.endsWith("_") && bigram.length() != 1)
-                nGrams.add(bigram);
+                nGrams.add(bigram.trim());
         }
         theFilter.end();
         theFilter.close();
@@ -120,7 +118,8 @@ public class TagGenerator extends StopwordAnalyzerBase {
     }
 
     public void generateTags(AnalyzedNews analyzedNews) throws IOException {
-        Set<String> secondaryTags = generateTags(analyzedNews.getContent());
+        String contentForTagGeneration = getContentForTagGeneration(analyzedNews);
+        Set<String> secondaryTags = generateTags(contentForTagGeneration);
         analyzedNews.setSecondaryTags(secondaryTags);
 
         // generated tags are from keywords from the source, then such tags are considered as the primary tags
@@ -148,6 +147,15 @@ public class TagGenerator extends StopwordAnalyzerBase {
         }
     }
 
+    private String getContentForTagGeneration(AnalyzedNews analyzedNews) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(analyzedNews.getH1()).append(" ").append(analyzedNews.getTitle());
+        if(analyzedNews.getH2() != null) {
+            sb.append(analyzedNews.getH2());
+        }
+        return sb.toString();
+    }
+
 
     public <K, V extends Comparable<? super V>> Map<K, V> sortDescByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
@@ -166,14 +174,6 @@ public class TagGenerator extends StopwordAnalyzerBase {
         String tagStr = tags.toString();
         Set<String> tagsToRemove = new TreeSet<>();
         for(String tag : tags.keySet()) {
-
-            /*Doesnt work for marathi numbers
-            if (NumberUtils.isNumber(tag)) {
-            if(tag.matches("[१-९]+")){
-                tagsItr.remove();
-                continue;
-            }*/
-
             // Remove tags which are covered in other tags
             if (StringUtils.countMatches(tagStr, tag) > 1) {
                 tagsToRemove.add(tag);

@@ -1,4 +1,4 @@
-package news.analytics.crawler.pipeline;
+package news.analytics.crawler.fetchtransform;
 
 import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
@@ -11,21 +11,19 @@ import news.analytics.model.news.TransformedNews;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Spawns threads for the pipeline : Fetch -> Transform -> Analyze
+ * Spawns threads for the fetchtransform : Fetch -> Transform -> Save state to db <br/>
  */
-public class Pipeline extends Thread {
+public class FetcherTransformerManager extends Thread {
     private DataSource dataSource;
     private int threadLimit;
     private Lock injectorFetcherLock;
     private GenericDao<Seed> seedDao;
     private GenericDao<TransformedNews> transformedNewsDao;
 
-    public Pipeline(DataSource dataSource, int threadLimit, Lock injectorFetcherLock) {
+    public FetcherTransformerManager(DataSource dataSource, int threadLimit, Lock injectorFetcherLock) {
         this.dataSource = dataSource;
         this.threadLimit = threadLimit;
         this.injectorFetcherLock = injectorFetcherLock;
@@ -56,7 +54,7 @@ public class Pipeline extends Thread {
                 select = seedDao.select(connection, predicateClause);
                 connection.close();
 
-                startPipelineThreads(select);
+                startFetcherTransformerThreads(select);
                 synchronized (injectorFetcherLock) {
                     // wait indefinitely till injector notifies this fetcher
                     injectorFetcherLock.wait();
@@ -67,7 +65,7 @@ public class Pipeline extends Thread {
         }
     }
 
-    private void startPipelineThreads(List<Seed> select) throws IOException {
+    private void startFetcherTransformerThreads(List<Seed> select) throws IOException {
         int eachPartitionSize = select.size();
         if (select.size() > threadLimit) {
             eachPartitionSize = select.size() / threadLimit;
@@ -75,33 +73,7 @@ public class Pipeline extends Thread {
         List<List<Seed>> partitions = Lists.partition(select, eachPartitionSize);
         // create threads, assign each partition to each thread
         for (int i = 0; i < partitions.size(); i++) {
-            PipelineWorker worker = new PipelineWorker(dataSource, partitions.get(i));
-            worker.start();
-        }
-    }
-
-    public void startAnalyzer() throws SQLException, IllegalAccessException, IOException, InstantiationException {
-        PredicateClause predicateClause = DAOUtils.getPredicateFromString("PROCESS_STATUS = TRANSFORMED_NEWS_NOT_ANALYZED");
-        Connection connection = dataSource.getConnection();
-        List<String> selectFieldNames = new ArrayList<>(1);
-        selectFieldNames.add("id");
-
-        List<TransformedNews> select = transformedNewsDao.selectGivenFields(connection, predicateClause, selectFieldNames);
-        connection.close();
-
-        if(select.size() != 0)
-            startAnalyzerThreads(select);
-    }
-
-    private void startAnalyzerThreads(List<TransformedNews> select) throws IOException {
-        int eachPartitionSize = select.size();
-        if (select.size() > threadLimit) {
-            eachPartitionSize = select.size() / threadLimit;
-        }
-        List<List<TransformedNews>> partitions = Lists.partition(select, eachPartitionSize);
-        // create threads, assign each partition to each thread
-        for (int i = 0; i < partitions.size(); i++) {
-            AnalyzeWorker worker = new AnalyzeWorker(dataSource, partitions.get(i));
+            FetchTransformWorker worker = new FetchTransformWorker(dataSource, partitions.get(i));
             worker.start();
         }
     }

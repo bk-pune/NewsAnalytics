@@ -1,4 +1,4 @@
-package news.analytics.crawler.pipeline;
+package news.analytics.crawler.fetchtransform;
 
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class PipelineWorker extends Thread {
+public class FetchTransformWorker extends Thread {
     private GenericDao<Seed> seedDao;
     private GenericDao<RawNews> rawNewsDao;
     private DataSource dataSource;
@@ -25,7 +25,7 @@ public class PipelineWorker extends Thread {
     private Transformer transformer;
     private Analyzer analyzer;
 
-    public PipelineWorker(DataSource dataSource, List<Seed> seedList) throws IOException {
+    public FetchTransformWorker(DataSource dataSource, List<Seed> seedList) throws IOException {
         this.dataSource = dataSource;
         this.seedDao = new GenericDao<>(Seed.class);
         this.rawNewsDao = new GenericDao<>(RawNews.class);
@@ -46,7 +46,6 @@ public class PipelineWorker extends Thread {
             return;
         }
 
-        // Fetch -> Insert in getRawNews -> Update seed status
         for(Seed seed : seedList) {
             // Fetch
             RawNews rawNews = fetcher.fetch(seed, connection);
@@ -57,10 +56,6 @@ public class PipelineWorker extends Thread {
 
             // transform
             TransformedNews transformedNews = transformer.transform(rawNews, connection);
-
-            // analyze
-            // Will be executed manually
-            // AnalyzedNews analyze = analyzer.analyze(transformedNews, connection);
         }
     }
 }

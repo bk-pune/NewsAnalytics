@@ -180,11 +180,11 @@ public class SentimentScoreGenerator {
     }
 
     private static void loadDictionaries() throws IOException {
-        positive = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\positive.txt");
-        negative = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\negative.txt");
-        neutral = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\neutral.txt");
-        adverbs = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\marathi_adverbs.txt");
-        stopwords = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt");
+        positive = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\positive.txt");
+        negative = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\negative.txt");
+        neutral = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\neutral.txt");
+        adverbs = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\marathi_adverbs.txt");
+        stopwords = Utils.load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\stopwords.txt");
         adverbWithPositive = attachAdverb("positive");
         adverbWithNegative = attachAdverb("negative");
         adverbWithNeutral = attachAdverb("neutral");

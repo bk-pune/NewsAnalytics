@@ -1,7 +1,7 @@
 package news.analytics.crawler.test;
 
+import news.analytics.crawler.fetchtransform.FetcherTransformerManager;
 import news.analytics.crawler.inject.Injector;
-import news.analytics.crawler.pipeline.Pipeline;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import news.analytics.dao.core.GenericDao;
@@ -35,7 +35,7 @@ public class CrawlerTest {
     private static int seedCount = 0;
     Lock injectorFetcherLock = new Lock();
     Injector injector;
-    Pipeline pipeline;
+    FetcherTransformerManager fetcherTransformerManager;
     private static String seedFile = CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile();
 
     @BeforeClass
@@ -54,8 +54,8 @@ public class CrawlerTest {
         injector = new Injector(dataSource, injectorFetcherLock);
         System.out.println("Injector initialized.");
 
-        pipeline = new Pipeline(dataSource, 2, injectorFetcherLock);
-        pipeline.start();
+        fetcherTransformerManager = new FetcherTransformerManager(dataSource, 2, injectorFetcherLock);
+        fetcherTransformerManager.start();
     }
     @Test
     public void test() throws Exception {
@@ -74,7 +74,7 @@ public class CrawlerTest {
     }
 
     public void testFetch() throws Exception {
-        // sleep for 6 secs per url, let the pipeline threads process all the seeds
+        // sleep for 6 secs per url, let the fetcherTransformerManager threads process all the seeds
         Thread.sleep(seedCount * 6 * 1000);
 
         PredicateClause predicateClause = new PredicateClause("URI", PredicateOperator.EQUALS, "http://www.lokmat.com/pune/businessman-kills-family-and-himself/");

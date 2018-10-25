@@ -129,7 +129,7 @@ public class TagGenerator {
         private static Set<String> stopWordSet = new TreeSet<>();
 
         public MarathiAnalyzer() throws IOException {
-            load("D:\\Bhushan\\personal\\NewsAnalytics\\pipeline\\src\\main\\resources\\dictionary\\stopwords.txt");
+            load("D:\\Bhushan\\personal\\NewsAnalytics\\fetchtransform\\src\\main\\resources\\dictionary\\stopwords.txt");
         }
 
         private void load(String fileName) throws IOException {

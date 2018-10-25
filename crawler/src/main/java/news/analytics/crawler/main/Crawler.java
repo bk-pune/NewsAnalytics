@@ -1,7 +1,8 @@
 package news.analytics.crawler.main;
 
+import news.analytics.crawler.AnalyzerManager;
+import news.analytics.crawler.fetchtransform.FetcherTransformerManager;
 import news.analytics.crawler.inject.Injector;
-import news.analytics.crawler.pipeline.Pipeline;
 import news.analytics.crawler.stats.StatsProvider;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
@@ -22,12 +23,16 @@ public class Crawler {
     private final DataSource dataSource;
     private Injector injector;
     private StatsProvider statsProvider;
-    private Pipeline pipeline;
+    private FetcherTransformerManager fetcherTransformerManager;
+    private AnalyzerManager analyzerManager;
     private Properties properties;
+    private int analyzerThreads;
 
     private Crawler(String propertiesFilePath) throws IOException {
         properties = loadProperties(propertiesFilePath); // will be loaded from classpath
-        int processorThreads = Integer.parseInt(properties.getProperty("processorThreads"));
+        int fetcherTransformerThreads = Integer.parseInt(properties.getProperty("fetcherTransformerThreads"));
+        analyzerThreads = Integer.parseInt(properties.getProperty("analyzerThreads"));
+
         System.setProperty("http.agent", properties.getProperty("crawlerName"));
 
         System.out.println("Properties initialized successfully.");
@@ -41,9 +46,10 @@ public class Crawler {
         System.out.println("Injector initialized.");
         statsProvider = new StatsProvider(dataSource);
 
-        pipeline = new Pipeline(dataSource, processorThreads, injectorFetcherLock);
-        pipeline.start();
-        System.out.println("Pipeline initialized.");
+        fetcherTransformerManager = new FetcherTransformerManager(dataSource, fetcherTransformerThreads, injectorFetcherLock);
+        fetcherTransformerManager.start();
+
+        System.out.println("FetcherTransformerManager initialized.");
     }
 
     public static void main(String[] args) throws IOException {
@@ -76,8 +82,10 @@ public class Crawler {
         }
     }
 
-    private void startAnalyzer() throws SQLException, IOException, InstantiationException, IllegalAccessException {
-        pipeline.startAnalyzer();
+    private void startAnalyzer() {
+        analyzerManager = new AnalyzerManager(dataSource, analyzerThreads);
+        analyzerManager.start();
+        System.out.println("Analyzer Started.");
     }
 
     private void showStats() throws Exception {
@@ -86,7 +94,7 @@ public class Crawler {
         System.out.println("\n" + stats);
     }
 
-    // TODO make it threaded so that injector and pipeline can run in parallel
+    // TODO make it threaded so that injector and fetcherTransformerManager can run in parallel
     private int inject(String fileName) throws IOException, SQLException {
         int injectedCount = injector.inject(fileName);
         System.out.println("Total seeds injected in crawlDb: "+injectedCount);

@@ -44,7 +44,7 @@ public class InsertTest extends AbstractTest {
         genericDao.insert(connection, objects);
         connection.commit();
 
-        // now pipeline the record and check if they are equal
+        // now fetchtransform the record and check if they are equal
         PredicateClause predicateClause = new PredicateClause("ID", PredicateOperator.EQUALS, testObject.getId());
         List<RawNews> select = genericDao.select(connection, predicateClause);
         Assert.assertTrue(select.size() == 1 && select.get(0).getId().equals(testObject.getId()));
