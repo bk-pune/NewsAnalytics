@@ -5,6 +5,7 @@ import news.analytics.container.core.TrendGenerator;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
+@ComponentScan(basePackages = "news.analytics.container")
 public class AppConfiguration {
     private DataSource dataSource;
     private Properties properties;
@@ -28,7 +30,7 @@ public class AppConfiguration {
     }
 
     @Bean
-    public SolrClient solrClient(){
+    public SolrClient solrClient() {
         return new SolrClient(properties.getProperty("solrServerUrl"));
     }
 

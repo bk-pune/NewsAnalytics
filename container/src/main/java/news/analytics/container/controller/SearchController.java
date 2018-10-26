@@ -20,7 +20,7 @@ public class SearchController {
     @Autowired
     private TrendGenerator trendGenerator;
 
-    //    @Autowired
+    @Autowired
     private SolrClient solrClient;
 
     @RequestMapping("/")
