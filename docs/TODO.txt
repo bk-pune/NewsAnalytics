@@ -1,15 +1,15 @@
-- create test data - 2018 articles for MaTa, Sakal, Lokmat, Loksatta
-	- generate seeds - Done
-	- inject
-	- fetch
-	- transform
-
 Bhushan
+Categorization of search terms -
+synonyms, antonyms dictionaries
+
 Improve sentiment score generation logic
 Score assignment to l
+Trends of
+    - loan interest rates
+    - petrol/diesel prices
+    - real estate prices
 
 Remove words with single letter from keywords and tags
-*Find out news trends*
 *Calculate news reliability index*
 
 Shruti
