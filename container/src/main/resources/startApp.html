@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>eQ Security Application 1</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="-1"/>
+    <script src="$contextPath$/sso/caf/uiresource/spa/libraries/require.js"></script>
+    $feviconURL$
+</head>
+<body>
+<div id="app-container" class="eq-app-main loginContainer">
+</div>
+</body>
+<script>
+
+    var requireConfig = function (constantObject) {
+        require.config({
+            baseUrl: constantObject.contextPath + '/sso/caf/uiresource/spa',
+            waitSeconds: 200,
+            paths: {
+                i18n: 'libraries/i18n'
+            },
+            config: {
+                //Set the config for the i18n module ID
+                i18n: {
+                    locale: constantObject.locale.split("_")[0]
+                }
+            }
+        });
+        require(["SharedUIModel", "main"], function (SharedUIModel, main) {
+            SharedUIModel.setSharedModel(constantObject);
+        });
+
+        requireConfig = null;
+    };
+
+    var start = function () {
+        var SharedModelObject = $responseObject$;
+        document.title = SharedModelObject.title;
+        var contextPath = SharedModelObject.contextPath;
+
+        document.write("<link rel='stylesheet' type='text/css' href=" + contextPath + "/sso/caf/uiresource/spa/css/application.css>");
+        document.write("<link rel='stylesheet' type='text/css' href=" + contextPath + "/sso/caf/uiresource/Lib/UILayer/theme/common.css>");
+        document.write("<link rel='stylesheet' type='text/css' href=" + contextPath + "/sso/caf/uiresource/Themes/eQube/common.css>");
+
+        requireConfig(SharedModelObject);
+        start = null;
+    };
+    start();
+</script>
+$customcssUrl$
+</html>

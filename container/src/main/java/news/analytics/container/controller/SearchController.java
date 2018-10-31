@@ -20,23 +20,23 @@ public class SearchController {
     @Autowired
     private TrendGenerator trendGenerator;
 
-    @Autowired
+    //@Autowired
     private SolrClient solrClient;
 
-    @RequestMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "static/index.html";
     }
 
     @GetMapping()
     @RequestMapping(value = "/protected/search", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<SearchResult> search(@RequestBody SearchQuery searchQuery, Integer limit) throws IOException, SolrServerException {
-        return solrClient.search(searchQuery, limit);
+        return solrClient.search(searchQuery, 20);
     }
 
     @GetMapping()
-    @RequestMapping(value = "/protected/trends", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/protected/trends", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Short> getTrends(@RequestBody SearchQuery searchQuery) throws IllegalAccessException, SQLException, InstantiationException, IOException {
         Map<String, Short> stringIntegerMap = null;

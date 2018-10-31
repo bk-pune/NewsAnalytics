@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = "news.analytics.container")
 public class AppConfiguration {
     private DataSource dataSource;
     private Properties properties;
