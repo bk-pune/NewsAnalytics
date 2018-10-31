@@ -26,6 +26,25 @@ public class QueryExecutor<T> {
 
         return resultSet;
     }
+
+    protected ResultSet executeCount(Connection connection,  String sqlQuery, List<Object> queryParameters) throws SQLException {
+        Long returnValue = null;
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        if (sqlQuery.indexOf("?") != -1 && queryParameters.size() == 0)
+            throw new RuntimeException("Query needs parameters which are missing in parameters list !");
+
+        if (queryParameters != null && queryParameters.size() > 0) {
+            setParametersOnPreparedStatement(preparedStatement, queryParameters);
+        }
+        ResultSet resultSet = null;
+        try {
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e){
+            throw e;
+        }
+        return resultSet;
+    }
+
     // TODO add support for auto generated pk
     protected void executeInsert(Connection connection, String sqlQuery, List<List<Object>> queryParameters) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
