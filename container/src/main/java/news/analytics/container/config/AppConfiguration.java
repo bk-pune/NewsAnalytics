@@ -5,7 +5,6 @@ import news.analytics.container.core.TrendGenerator;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.FileNotFoundException;

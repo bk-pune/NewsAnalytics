@@ -19,16 +19,17 @@ public class AnalyzeWorker implements Runnable {
     /** Contains only IDs */
     private final List<TransformedNews> transformedNewsList;
 
-    public AnalyzeWorker(DataSource dataSource, List<TransformedNews> transformedNews) throws IOException {
+    public AnalyzeWorker(DataSource dataSource, List<TransformedNews> transformedNews, Analyzer analyzer) throws IOException {
         this.dataSource = dataSource;
         this.transformedNewsDao = new GenericDao<>(TransformedNews.class);
-        analyzer = new Analyzer();
+        this.analyzer = analyzer;
         this.transformedNewsList = transformedNews;
     }
 
     public void run() {
         Connection connection = null;
         for(TransformedNews transformedNews : transformedNewsList) {
+
             try {
                 connection = dataSource.getConnection();
                 analyzer.analyze(transformedNews, connection);

@@ -14,6 +14,7 @@ public class SentimentAnalyzer {
     private Set<String> neutral;
     private Set<String> adverbs;
     private Set<String> stopwords;
+    private Set<String> stopKeywords;
     private Set<String> adverbWithPositive;
     private Set<String> adverbWithNegative;
     private Set<String> adverbWithNeutral;
@@ -142,6 +143,7 @@ public class SentimentAnalyzer {
         neutral = PipelineUtils.loadDictionaryFile("neutral.txt");
         adverbs = PipelineUtils.loadDictionaryFile("marathi_adverbs.txt");
         stopwords = PipelineUtils.loadDictionaryFile("stopwords.txt");
+        stopKeywords = PipelineUtils.loadDictionaryFile("stop_keywords.txt");
         adverbWithPositive = attachAdverb("positive");
         adverbWithNegative = attachAdverb("negative");
         adverbWithNeutral = attachAdverb("neutral");
@@ -169,5 +171,9 @@ public class SentimentAnalyzer {
             }
         }
         return words;
+    }
+
+    public Set<String> getStopKeywords() {
+        return stopKeywords;
     }
 }

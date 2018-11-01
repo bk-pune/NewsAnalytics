@@ -18,6 +18,7 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     private UpdateQueryBuilder updateQueryBuilder;
     private DeleteQueryBuilder deleteQueryBuilder;
     private InsertQueryBuilder insertQueryBuilder;
+    private CountQueryBuilder countQueryBuilder;
 
     public GenericDao(Class<T> clazz) {
         modelInfo = ModelInfoProvider.getModelInfo(clazz);
@@ -25,6 +26,7 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
         updateQueryBuilder = new UpdateQueryBuilder(modelInfo);
         deleteQueryBuilder = new DeleteQueryBuilder(modelInfo);
         insertQueryBuilder = new InsertQueryBuilder(modelInfo);
+        countQueryBuilder = new CountQueryBuilder(modelInfo);
     }
 
     public List<T> insert(Connection connection, List<T> objects) throws SQLException {
@@ -67,6 +69,28 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
         ResultSet resultSet = executeSelect(connection, sqlQuery, parameters);
         List<T> objects = fromResultSetToObjects(resultSet);
         return objects;
+    }
+
+    /**
+     * Returns count of this table, based on the given predicate clause
+     * @param connection
+     * @param predicateClause
+     * @return Count of records in this table based on the predicate clause
+     * @throws SQLException
+     */
+    public Long count(Connection connection, PredicateClause predicateClause) throws SQLException {
+        QueryAndParameters queryStringAndParameters = countQueryBuilder.getQueryStringAndParameters(predicateClause);
+        String sqlQuery = queryStringAndParameters.getQueryString();
+        List<Object> parameters = (List<Object>) queryStringAndParameters.getParameters();
+        ResultSet resultSet = executeCount(connection, sqlQuery, parameters);
+        Long count = null;
+
+        if(resultSet.next()) {
+            count = resultSet.getLong(1);
+        }
+        resultSet.close();
+
+        return count;
     }
 
     private List<T> fromResultSetToObjects(ResultSet resultSet) throws SQLException, IllegalAccessException, InstantiationException {

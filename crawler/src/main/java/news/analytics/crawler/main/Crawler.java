@@ -82,7 +82,7 @@ public class Crawler {
         }
     }
 
-    private void startAnalyzer() {
+    private void startAnalyzer() throws IOException {
         analyzerManager = new AnalyzerManager(dataSource, analyzerThreads);
         analyzerManager.start();
         System.out.println("Analyzer Started.");

@@ -28,6 +28,8 @@ public class Analyzer {
     private ModelInfo analyzedNewsModelInfo;
 
     private Set<String> stopwords;
+    /** Sometimes keyword contains news sections, english stopwords. We need to remove them. */
+    private Set<String> stop_keyword;
 
     public Analyzer() throws IOException {
         transformedNewsDao = new GenericDao<>(TransformedNews.class);
@@ -35,7 +37,8 @@ public class Analyzer {
         failedRecords = new ArrayList<>();
         sentimentAnalyzer = new SentimentAnalyzer();
         stopwords = sentimentAnalyzer.getStopwords();
-        tagGenerator = new TagGenerator(stopwords);
+        stop_keyword = sentimentAnalyzer.getStopKeywords();
+        tagGenerator = new TagGenerator(stopwords, stop_keyword);
         transformedNewsModelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
         analyzedNewsModelInfo = ModelInfoProvider.getModelInfo(AnalyzedNews.class);
     }
