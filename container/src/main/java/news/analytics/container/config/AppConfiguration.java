@@ -4,6 +4,7 @@ import news.analytics.container.core.SolrSearchClient;
 import news.analytics.container.core.TrendGenerator;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
+import news.analytics.model.search.SearchResultComparator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,11 @@ public class AppConfiguration {
     @Bean
     public SolrSearchClient solrSearchClient() {
         return new SolrSearchClient(properties.getProperty("solrServerUrl"));
+    }
+
+    @Bean
+    public SearchResultComparator searchResultComparator() {
+        return new SearchResultComparator();
     }
 
     // TODO Add authentication on requests

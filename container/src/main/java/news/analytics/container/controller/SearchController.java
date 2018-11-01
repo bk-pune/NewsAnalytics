@@ -32,7 +32,8 @@ public class SearchController {
     @RequestMapping(value = "/protected/search", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<SearchResult> search(@RequestBody SearchQuery searchQuery, Integer limit) throws IOException, SolrServerException {
-        return solrSearchClient.search(searchQuery, 20);
+        List<SearchResult> search = solrSearchClient.search(searchQuery, 250);
+        return search;
     }
 
     @GetMapping()

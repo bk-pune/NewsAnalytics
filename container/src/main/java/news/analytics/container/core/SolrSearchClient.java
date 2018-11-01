@@ -2,24 +2,31 @@ package news.analytics.container.core;
 
 import news.analytics.model.search.SearchQuery;
 import news.analytics.model.search.SearchResult;
+import news.analytics.model.search.SearchResultComparator;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Solr Client that queries the Solr server and returns the documents.
  */
-public class SolrSearchClient {
+public class SolrSearchClient
+{
     private HttpSolrClient client;
     private String searchQuery = "primaryTags:%s* and title:%s and h1:%s and secondaryTags:%s* and content:%s*";
+
+    @Autowired
+    private SearchResultComparator searchResultComparator;
 
     public SolrSearchClient(String solrServerUrl) {
         client = new HttpSolrClient.Builder(solrServerUrl)
@@ -52,8 +59,15 @@ public class SolrSearchClient {
             Float sentimentScore = (Float) document.get("sentimentScore");
 
             SearchResult news = new SearchResult(url, newsAgency, section, title, city, publishDate, sentimentScore);
-            searchResult.add(news);
+
+            // Currently we don't know how to search on range
+            // so we check the date range manually
+            if(news.getPublishDate() > dateFrom && news.getPublishDate() < dateTo) {
+                searchResult.add(news);
+            }
         }
+
+        Collections.sort(searchResult, searchResultComparator);
 
         return searchResult;
     }
