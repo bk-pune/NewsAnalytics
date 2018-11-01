@@ -14,16 +14,16 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.*;
 
-
-
 public class TagGenerator extends StopwordAnalyzerBase {
 
-    Set<String> tagStopWords;
+    private Set<String> tagStopWords;
+    private Set<String> stopKeywords;
     private CharArraySet charArraySet;
     private static final int DEFAULT_MAX_TOKEN_LENGTH = 255;
 
-    public TagGenerator(Set<String> tagStopWords) {
+    public TagGenerator(Set<String> tagStopWords, Set<String> stopKeywords) {
         this.tagStopWords = tagStopWords;
+        this.stopKeywords = stopKeywords;
         charArraySet = new CharArraySet(350, true);
         for(String stopWord : tagStopWords) {
             charArraySet.add(stopWord);
@@ -125,6 +125,8 @@ public class TagGenerator extends StopwordAnalyzerBase {
         // generated tags are from keywords from the source, then such tags are considered as the primary tags
         Set<String> primaryTags = new TreeSet<>();
         Set<String> keywords = analyzedNews.getKeywords();
+        keywords.removeAll(stopKeywords);
+        keywords.remove("");
         if(keywords != null) {
             for(String tag : secondaryTags) {
                 if(keywords.contains(tag)) {
@@ -156,7 +158,6 @@ public class TagGenerator extends StopwordAnalyzerBase {
         return sb.toString();
     }
 
-
     public <K, V extends Comparable<? super V>> Map<K, V> sortDescByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
         list.sort(Map.Entry.comparingByValue());
@@ -165,7 +166,6 @@ public class TagGenerator extends StopwordAnalyzerBase {
         for (Map.Entry<K, V> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
-
         return result;
     }
 
@@ -182,8 +182,6 @@ public class TagGenerator extends StopwordAnalyzerBase {
         for(String keyToRemove : tagsToRemove) {
             tags.remove(keyToRemove);
         }
-
         return tags;
     }
-
 }

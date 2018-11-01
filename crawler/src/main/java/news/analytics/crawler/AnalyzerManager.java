@@ -7,6 +7,7 @@ import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.query.PredicateClause;
 import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.news.TransformedNews;
+import news.analytics.pipeline.analyze.Analyzer;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -21,12 +22,13 @@ public class AnalyzerManager extends Thread {
     private DataSource dataSource;
     private int threadLimit;
     private GenericDao<TransformedNews> transformedNewsDao;
+    private Analyzer analyzer;
 
-    public AnalyzerManager(DataSource dataSource, int threadLimit) {
+    public AnalyzerManager(DataSource dataSource, int threadLimit) throws IOException {
         this.dataSource = dataSource;
         this.threadLimit = threadLimit;
         transformedNewsDao = new GenericDao<>(TransformedNews.class);
-        es = Executors.newCachedThreadPool();
+        analyzer = new Analyzer();
     }
 
     public void run() {
@@ -41,7 +43,7 @@ public class AnalyzerManager extends Thread {
         List<TransformedNews> select = null;
         do {
             PredicateClause predicateClause = DAOUtils.getPredicateFromString("PROCESS_STATUS = TRANSFORMED_NEWS_NOT_ANALYZED");
-            predicateClause.setLimitClause("LIMIT 200");
+            predicateClause.setLimitClause("LIMIT 50");
             Connection connection = dataSource.getConnection();
             select = transformedNewsDao.select(connection, predicateClause);
             connection.close();
@@ -50,7 +52,7 @@ public class AnalyzerManager extends Thread {
                 startAnalyzerThreads(select);
             }
 
-        } while (select == null || select.size() == 0);
+        } while (select != null || select.size() != 0);
     }
 
     /**
@@ -66,12 +68,13 @@ public class AnalyzerManager extends Thread {
             eachPartitionSize = select.size() / threadLimit;
         }
         List<List<TransformedNews>> partitions = Lists.partition(select, eachPartitionSize);
-
+        es = Executors.newCachedThreadPool();
         for (int i = 0; i < partitions.size(); i++) {
             // create threads, assign each partition to each thread
-            AnalyzeWorker worker = new AnalyzeWorker(dataSource, partitions.get(i));
+            AnalyzeWorker worker = new AnalyzeWorker(dataSource, partitions.get(i), analyzer);
             es.execute(worker);
         }
+        es.shutdown();
         es.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS); // wait till all the threads are done
     }
 }

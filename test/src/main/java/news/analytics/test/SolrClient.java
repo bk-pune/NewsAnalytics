@@ -1,10 +1,7 @@
 package news.analytics.test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import news.analytics.model.search.SearchQuery;
+import news.analytics.model.search.SearchResult;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -12,8 +9,10 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import news.analytics.model.search.SearchQuery;
-import news.analytics.model.search.SearchResult;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SolrClient {
 
@@ -85,7 +84,7 @@ public class SolrClient {
 
 		query.setRows(new Integer(100));
 
-		QueryResponse response = client.query("news_analytics1", query);
+		QueryResponse response = client.query("NewsData", query);
 
 		SolrDocumentList documents = response.getResults();
 		System.out.println("Total " + documents.getNumFound() + " documents found !!");
