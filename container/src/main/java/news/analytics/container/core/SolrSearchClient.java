@@ -17,11 +17,11 @@ import java.util.List;
 /**
  * Solr Client that queries the Solr server and returns the documents.
  */
-public class SolrClient {
+public class SolrSearchClient {
     private HttpSolrClient client;
     private String searchQuery = "primaryTags:%s* and title:%s and h1:%s and secondaryTags:%s* and content:%s*";
 
-    public SolrClient(String solrServerUrl) {
+    public SolrSearchClient(String solrServerUrl) {
         client = new HttpSolrClient.Builder(solrServerUrl)
                 .withConnectionTimeout(10000)
                 .withSocketTimeout(60000).build();

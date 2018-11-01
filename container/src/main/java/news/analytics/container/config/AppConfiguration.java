@@ -1,6 +1,6 @@
 package news.analytics.container.config;
 
-import news.analytics.container.core.SolrClient;
+import news.analytics.container.core.SolrSearchClient;
 import news.analytics.container.core.TrendGenerator;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
@@ -28,8 +28,8 @@ public class AppConfiguration {
     }
 
     @Bean
-    public SolrClient solrClient() {
-        return new SolrClient(properties.getProperty("solrServerUrl"));
+    public SolrSearchClient solrSearchClient() {
+        return new SolrSearchClient(properties.getProperty("solrServerUrl"));
     }
 
     // TODO Add authentication on requests
