@@ -1,9 +1,9 @@
 Bhushan
-Categorization of search terms -
-synonyms, antonyms dictionaries
+Categorization of search terms - synonyms, antonyms dictionaries
 
-Improve sentiment score generation logic
-Score assignment to l
+Improve sentiment score generation logic-
+    Grouping of scores between -1 - 0 - +1
+
 Trends of
     - loan interest rates
     - petrol/diesel prices
@@ -13,10 +13,10 @@ Remove words with single letter from keywords and tags
 *Calculate news reliability index*
 
 Shruti
-Search in full text
-Search priority order- h1 -> primary tags -> keywords -> Secondary tags -> Content
+Incorporate synonym dictionary in Solr
 
 Manoj
 Theme, page layout
 Chart/Diagram analysis
 Scatter plot samples
+Word cloud

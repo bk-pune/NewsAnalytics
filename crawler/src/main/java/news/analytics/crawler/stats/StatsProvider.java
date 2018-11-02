@@ -7,6 +7,7 @@ import news.analytics.dao.query.PredicateOperator;
 import news.analytics.model.news.RawNews;
 import news.analytics.model.news.Seed;
 import news.analytics.model.news.TransformedNews;
+import news.analytics.pipeline.fetch.FetchStatus;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -35,20 +36,24 @@ public class StatsProvider {
     private String getStatsForSeedTable(Connection connection) throws SQLException, IOException, InstantiationException, IllegalAccessException {
         StringBuilder sb = new StringBuilder("Seed").append("\n********************************\n");
         GenericDao<Seed> genericDao = new GenericDao<>(Seed.class);
-        PredicateClause predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "FETCHED");
+        PredicateClause predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, FetchStatus.FETCHED);
         Long fetched = genericDao.count(connection, predicateClause);
 
-        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "UNFETCHED");
+        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, FetchStatus.UNFETCHED);
         Long unFetched = genericDao.count(connection, predicateClause);
 
-        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "SERVER_ERROR");
+        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, FetchStatus.SERVER_ERROR);
         Long serverError = genericDao.count(connection, predicateClause);
 
-        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, "CLIENT_ERROR");
+        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, FetchStatus.CLIENT_ERROR);
         Long clientError = genericDao.count(connection, predicateClause);
+
+        predicateClause = new PredicateClause("FETCH_STATUS", PredicateOperator.EQUALS, FetchStatus.REDIRECT);
+        Long redirect = genericDao.count(connection, predicateClause);
 
         sb.append("UNFETCHED:").append(unFetched).append("\n");
         sb.append("FETCHED:").append(fetched).append("\n");
+        sb.append("REDIRECT:").append(redirect).append("\n");
         sb.append("SERVER_ERROR:").append(serverError).append("\n");
         sb.append("CLIENT_ERROR:").append(clientError).append("\n");
         return sb.append("\n").toString();

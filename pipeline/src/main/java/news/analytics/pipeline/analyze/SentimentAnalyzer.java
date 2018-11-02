@@ -33,18 +33,18 @@ public class SentimentAnalyzer {
 
     }*/
 
-    public Float generateSentimentScore(AnalyzedNews analyzedNews) {
+    public float generateSentimentScore(AnalyzedNews analyzedNews) {
         String title = removeStopWords(analyzedNews.getTitle());
         String h1 = removeStopWords(analyzedNews.getH1());
         String text = removeStopWords(analyzedNews.getContent());
+        String h2 = "";
+        if(analyzedNews.getH2() != null) {
+            h2 = removeStopWords(analyzedNews.getH2());
+        }
 
         Float titleScore = process(title);
-        titleScore = titleScore /(title.split(" ").length);
-        titleScore = titleScore * 0.50F; // 50% weight for title
-
         Float h1Score = process(h1);
-        h1Score = h1Score / (h1.split(" ").length);
-        h1Score = h1Score * 0.3F; // 30% weight for h1
+        Float h2Score = process(h2);
 
         String[] sentences = text.split("\\.");
         Float textScore = 0F;
@@ -53,11 +53,11 @@ public class SentimentAnalyzer {
                 textScore += process(sentence.trim()) / sentence.split(" ").length;
             }
         }
-        textScore = textScore * 0.2F; // 20% weight for content
 
-        Float average = (titleScore + h1Score + textScore);
+        Float sum = (titleScore + h1Score + textScore+ h2Score);
 
-        return average;
+        // normalize using VADER normalization formula -> ( x / sqrt (x^2 + 15) )
+        return (float) (sum / Math.sqrt(sum * sum + 15));
     }
 
     private Float process(String line) {
