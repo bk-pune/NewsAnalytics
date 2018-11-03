@@ -60,6 +60,7 @@ public class TrendGenerator {
 
     private void updateTrend(Map<String, Short> trend, Set<String> primaryTags) {
         for(String tag : primaryTags) {
+            tag = tag.toLowerCase();
             Short wordFrequency = trend.get(tag);
             if(wordFrequency != null) {
                 wordFrequency++;

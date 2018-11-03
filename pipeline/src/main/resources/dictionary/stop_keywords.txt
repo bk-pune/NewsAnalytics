@@ -8,6 +8,11 @@ news online
 newspaper
 latest news in marathi
 news paper
+at
+loksatta readers response
+on
+loksatta readers reaction
+loksatta readers
 loksatta news
 bollywood news
 current news in marathi
@@ -76,6 +81,7 @@ power
 readers opinion
 at
 maharashtra
+loksatta readers
 अन्वयार्थ
 Maharashtra
 loksatta readers letters
