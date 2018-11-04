@@ -175,22 +175,7 @@
         <section class="content">
           <!-- Small boxes (Stat box) -->
           <div class="row">
-            <div class="col-md-6">
-              <!-- small box -->
-              <div class="box box-primary">
-                <div class="box-header with-border">
-                  <h3 class="box-title"></h3>
-                  <div class="box-tools pull-right">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                  </div>
-                </div>
-                <div class="box-body">
-                  <div id="gauge-container" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
-                </div><!-- /.box-body -->
-              </div><!-- /.box -->
-            </div><!-- ./col -->
-            <div class="col-md-6">
+            <div class="col-md-12">
               <!-- small box -->
               <div class="box box-primary">
                 <div class="box-header with-border">
@@ -840,10 +825,9 @@
     <script src="dist/js/demo.js"></script>
     <script>
     $( document ).ready(function() {
-
             loadScatterChart();
-            loadSentimentScoreChart();
-            loadWorldCloudChart();
+            //loadSentimentScoreChart();
+            //loadWorldCloudChart();
     });
     function loadWorldCloudChart(){
             $.ajax({
@@ -859,26 +843,47 @@
                 }
             });
     }
-    function loadScatterChart(){
-          /*$.ajax({
+    function loadChartData()
+    {
+    var result = [];
+      $.ajax({
               url: 'http://localhost:8080/protected/search',
               type: 'POST',
+              async:false,
               contentType: "application/json; charset=utf-8",
               data: JSON.stringify({"searchTerm":null,"dateFrom":0,"dateTo":1540791718333,"city":null,"newsAgency":null}),
               success: function( data, textStatus, jQxhr ){
                   console.log(data);
+                  result = data;
               },
               error: function( jqXhr, textStatus, errorThrown ){
                   console.log(jqXhr);
               }
-          });*/
+          });
+          return result;
+    }
+    function loadScatterChart(){
+          var searchResult = loadChartData();
+          if(searchResult.length > 0){
+          var chartData = new Array();
+          for(var i=0; i < searchResult.length; i++) {
+                var data = {name:searchResult[i].newsAgency, data:[searchResult[i].sentimentScore,searchResult[i].publishDate], url: searchResult[i].uri};
+                var data = {name:searchResult[i].newsAgency, data:[searchResult[i].sentimentScore,searchResult[i].publishDate], url: searchResult[i].uri};
+                if(searchResult[i].newsAgency == 'loksatta'){
+                    data.color = 'rgba(223, 83, 83, .5)';
+                } else if (searchResult[i].newsAgency == 'lokmat') {
+                    data.color = 'rgba(119, 152, 191, .5)';
+                }
+                chartData.push(data);
+              }
+        }
       Highcharts.chart('scatter-container', {
           chart: {
               type: 'scatter',
               zoomType: 'xy'
           },
           title: {
-              text: 'Height Versus Weight of 507 Individuals by Gender'
+              text: 'Yearly sentiment score wise news'
           },
           subtitle: {
               text: 'Source: Heinz  2003'
@@ -886,7 +891,7 @@
           xAxis: {
               title: {
                   enabled: true,
-                  text: 'Height (cm)'
+                  text: 'published year'
               },
               startOnTick: true,
               endOnTick: true,
@@ -894,7 +899,7 @@
           },
           yAxis: {
               title: {
-                  text: 'Weight (kg)'
+                  text: 'Sentiment Score'
               }
           },
           legend: {
@@ -913,31 +918,16 @@
               point: {
                 events: {
                   click: function() {
-                    window.open(this.options.ownURL)
+                    window.open(this.series.userOptions.url);
                   }
                 }
               }
 
             }
           },
-          series: [{
-              name: 'ONE',
-              color: 'rgba(223, 83, 83, .5)',
-              data: [[181.2, 40], [147.5, 50], [180.5, 60], [157.0, 70], [155.8, 55]],
-              url: 'http://bing.com/search?q=foo'
-          }, {
-              name: 'TWO',
-              color: 'rgba(119, 152, 191, .5)',
-              data: [[174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6], [187.2, 78.8]],
-              url: 'http://bing.com/search?q=foo'
-          }, {
-              name: 'THREE',
-              color: 'rgba(111, 40, 40, .5)',
-              data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]],
-              url: 'http://bing.com/search?q=foo'
-          }]
+          series:chartData
       });
-        }
+     }
 
         function loadSentimentScoreChart(){
           Highcharts.chart('gauge-container', {
