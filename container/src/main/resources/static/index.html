@@ -186,7 +186,7 @@
                   </div>
                 </div>
                 <div class="box-body">
-                  <div id="scatter-container" style="min-width: 310px; max-width: 400px; height: 300px; margin: 0 auto"></div>
+                  <div id="scatter-container"></div>
                 </div><!-- /.box-body -->
               </div><!-- /.box -->
             </div><!-- ./col -->
@@ -866,68 +866,107 @@
           var searchResult = loadChartData();
           if(searchResult.length > 0){
           var chartData = new Array();
+          var sakal = {name:'Sakal',data:[]};
+          var loksatta = {name:'Loksatta',data:[]};
+          var samana = {name:'Samana',data:[]};
+          var lokmat = {name:'Lokmat',data:[]};
           for(var i=0; i < searchResult.length; i++) {
-                var data = {name:searchResult[i].newsAgency, data:[searchResult[i].sentimentScore,searchResult[i].publishDate], url: searchResult[i].uri};
-                var data = {name:searchResult[i].newsAgency, data:[searchResult[i].sentimentScore,searchResult[i].publishDate], url: searchResult[i].uri};
-                if(searchResult[i].newsAgency == 'loksatta'){
-                    data.color = 'rgba(223, 83, 83, .5)';
-                } else if (searchResult[i].newsAgency == 'lokmat') {
-                    data.color = 'rgba(119, 152, 191, .5)';
+                var agency = searchResult[i].newsAgency;
+                var d = new Date(searchResult[i].publishDate);
+                if(agency == 'Sakal'){
+                  sakal.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                } else if(agency == 'Loksatta'){
+                  loksatta.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                } else if(agency == 'Samana'){
+                  samana.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                } else if(agency == 'Lokmat'){
+                  lokmat.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
                 }
-                chartData.push(data);
               }
+              chartData.push(sakal);
+              chartData.push(lokmat);
+              chartData.push(samana);
+              chartData.push(loksatta);
+              console.log(chartData);
         }
-      Highcharts.chart('scatter-container', {
-          chart: {
-              type: 'scatter',
-              zoomType: 'xy'
-          },
-          title: {
-              text: 'Yearly sentiment score wise news'
-          },
-          subtitle: {
-              text: 'Source: Heinz  2003'
-          },
-          xAxis: {
-              title: {
-                  enabled: true,
-                  text: 'published year'
-              },
-              startOnTick: true,
-              endOnTick: true,
-              showLastLabel: true
-          },
-          yAxis: {
-              title: {
-                  text: 'Sentiment Score'
-              }
-          },
-          legend: {
-              layout: 'horizontal',
-              align: 'left',
-              verticalAlign: 'top',
-              x: 100,
-              y: 70,
-              floating: true,
-              backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-              borderWidth: 1
-          },
-          plotOptions: {
-            series: {
+        Highcharts.chart('scatter-container', {
+    chart: {
+        type: 'scatter',
+        zoomType: 'xy'
+    },
+    title: {
+        text: 'Yearly Sentiment score'
+    },
+    subtitle: {
+        text: 'Year vs Sentiment score'
+    },
+    xAxis: {
+        allowDecimals: false,
+        title: {
+            enabled: true,
+            text: 'Date'
+        },
+        startOnTick: true,
+        endOnTick: true,
+        showLastLabel: true
+    },
+    yAxis: {
+        title: {
+            text: 'Sentiment Score'
+        },
+        startOnTick: true,
+        endOnTick: true,
+        showLastLabel: true
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'top',
+        x: 100,
+        y: 70,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+        borderWidth: 1
+    },
+    plotOptions: {
+    series: {
               cursor: 'pointer',
               point: {
                 events: {
                   click: function() {
-                    window.open(this.series.userOptions.url);
+                    window.open(this.series.userOptions.data[this.index][2]);
                   }
                 }
               }
 
+            },
+        scatter: {
+            marker: {
+                radius: 5,
+                states: {
+                    hover: {
+                        enabled: true,
+                        lineColor: 'rgb(100,100,100)'
+                    }
+                }
+            },
+            states: {
+                hover: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            tooltip: {
+                headerFormat: '<b>{series.name}</b><br>',
+                pointFormat: '{point.x} Published date, {point.y} Sentiment score'
             }
-          },
-          series:chartData
-      });
-     }
+        }
+    },
+    series: chartData
+
+});
+}
 
         function loadSentimentScoreChart(){
           Highcharts.chart('gauge-container', {
