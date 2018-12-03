@@ -11,6 +11,7 @@ import java.util.TreeSet;
 public class SentimentAnalyzer {
     private Set<String> positive;
     private Set<String> negative;
+    private Set<String> connectiveWords;
     private Set<String> neutral;
     private Set<String> adverbs;
     private Set<String> stopwords;
@@ -50,10 +51,14 @@ public class SentimentAnalyzer {
         Float textScore = 0F;
         for(String sentence : sentences ) {
             if(!sentence.trim().equalsIgnoreCase("")) {
-                textScore += process(sentence.trim()) / sentence.split(" ").length;
+                textScore += process(sentence.trim());
             }
         }
-
+        if(titleScore < 0 && h1Score < 0 && textScore > 0) {
+            // revert the polarity of content, if title and h1 are negative
+            // smell of sarcasm
+            textScore *= -1;
+        }
         Float sum = (titleScore + h1Score + textScore+ h2Score);
 
         // normalize using VADER normalization formula -> ( x / sqrt (x^2 + 15) )
@@ -61,7 +66,6 @@ public class SentimentAnalyzer {
     }
 
     private Float process(String line) {
-
         // Maintain separate counts of Positive and Negative words
         Float positiveScore = 0F;
         Float negativeScore = 0F;
@@ -123,8 +127,16 @@ public class SentimentAnalyzer {
             }
         }
 
+
+        // if statement contains connective word, then reduce the polarity by 2
+        for(String connectiveWord : connectiveWords) {
+            if(line.contains(connectiveWord)) {
+                negativeScore += 2;
+            }
+        }
         // Avg Score = (Positive - Negative)
-        return (positiveScore - negativeScore);
+        float polarity = positiveScore - negativeScore;
+        return polarity;
     }
 
     private String removeStopWords(String text) {
@@ -140,6 +152,7 @@ public class SentimentAnalyzer {
     private void loadDictionaries() throws IOException {
         positive = PipelineUtils.loadDictionaryFile("positive.txt");
         negative = PipelineUtils.loadDictionaryFile("negative.txt");
+        connectiveWords = PipelineUtils.loadDictionaryFile("connecting_words.txt");
         neutral = PipelineUtils.loadDictionaryFile("neutral.txt");
         adverbs = PipelineUtils.loadDictionaryFile("marathi_adverbs.txt");
         stopwords = PipelineUtils.loadDictionaryFile("stopwords.txt");
