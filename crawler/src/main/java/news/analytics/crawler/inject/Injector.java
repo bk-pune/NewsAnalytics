@@ -45,12 +45,15 @@ public class Injector {
                     genericDao.insert(connection, Lists.newArrayList(getFreshSeed(nextLine)));
                     connection.commit();
                     injectedCount++;
-                } catch (Exception e){
-                    System.out.println(e);
+                } catch (SQLException e) {
+//                    System.out.println(e);
                     rejetedCount++;
-                };
+                }
             }
             br.close();
+            System.out.println("\n\nSeeds Injected: "+ injectedCount);
+            System.out.println("\nSeeds Rejected: "+ rejetedCount);
+            System.out.println("--------------------------------------");
         } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
