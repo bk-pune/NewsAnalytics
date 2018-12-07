@@ -831,7 +831,7 @@
     });
     function loadWorldCloudChart(){
             $.ajax({
-                url: 'http://localhost:8080/protected/trends',
+                url: 'http://localhost:9090/protected/trends',
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({"searchTerm":null,"dateFrom":0,"dateTo":1540791718333,"city":null,"newsAgency":null}),
@@ -847,7 +847,7 @@
     {
     var result = [];
       $.ajax({
-              url: 'http://localhost:8080/protected/search',
+              url: 'http://localhost:9090/protected/search',
               type: 'POST',
               async:false,
               contentType: "application/json; charset=utf-8",
@@ -874,13 +874,13 @@
                 var agency = searchResult[i].newsAgency;
                 var d = new Date(searchResult[i].publishDate);
                 if(agency == 'Sakal'){
-                  sakal.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                  sakal.data.push([searchResult[i].publishDate, searchResult[i].sentimentScore, searchResult[i].uri]);
                 } else if(agency == 'Loksatta'){
-                  loksatta.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                  loksatta.data.push([searchResult[i].publishDate, searchResult[i].sentimentScore, searchResult[i].uri]);
                 } else if(agency == 'Samana'){
-                  samana.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                  samana.data.push([searchResult[i].publishDate, searchResult[i].sentimentScore, searchResult[i].uri]);
                 } else if(agency == 'Lokmat'){
-                  lokmat.data.push([d.getFullYear(), searchResult[i].sentimentScore, searchResult[i].uri]);
+                  lokmat.data.push([searchResult[i].publishDate, searchResult[i].sentimentScore, searchResult[i].uri]);
                 }
               }
               chartData.push(sakal);
@@ -902,6 +902,12 @@
     },
     xAxis: {
         allowDecimals: false,
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          day: "%e. %b",
+          month: "%b '%y",
+          year: "%Y"
+        },
         title: {
             enabled: true,
             text: 'Date'
@@ -958,8 +964,10 @@
                 }
             },
             tooltip: {
+                enabled: false,
                 headerFormat: '<b>{series.name}</b><br>',
-                pointFormat: '{point.x} Published date, {point.y} Sentiment score'
+                pointFormat:  '{point.y} Sentiment score'
+                /*Highcharts.dateFormat('%e - %b - %Y', new Date('{point.x}'))+' Published date,*/
             }
         }
     },
