@@ -41,6 +41,9 @@
   <field name="title" type="text" multiValued="false" indexed="true" stored="true"/>
   <field name="uri" type="text" multiValued="true" indexed="false" stored="true"/>
   
+  <field name="text1" type="text" multiValued="true" indexed="true" stored="true"/>
+  <copyField source="*" dest="text1"/>
+  
   </fields> 
 
 </schema>
