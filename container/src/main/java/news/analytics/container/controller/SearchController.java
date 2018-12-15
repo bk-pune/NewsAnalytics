@@ -34,6 +34,7 @@ public class SearchController {
     @ResponseBody
     public List<SearchResult> search(@RequestBody SearchQuery searchQuery, Integer limit) throws IOException, SolrServerException {
         //List<SearchResult> search = solrSearchClient.search(searchQuery, 250);
+        System.out.println(searchQuery.getDateFrom()+" "+searchQuery.getDateTo()+" "+searchQuery.getSearchTerm());
         List<SearchResult> searchResults = new ArrayList<SearchResult>(){{
             add(new SearchResult("http://www.lokmat.com/mumbai/even-after-getting-oc-management-mhada-administration/", "Lokmat", null, "even-after-getting-oc-management-mhada-administration", "mumbai", 1497769200000L, -0.5f));
             add(new SearchResult("https://www.loksatta.com/aurangabad-news/1144-crores-for-irrigation-projects-in-marathwada-1609068/", "Loksatta", null, "1144-crores-for-irrigation-projects-in-marathwada", "latur", 1537686000000L, 0.7f));
