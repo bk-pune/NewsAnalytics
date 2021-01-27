@@ -1,6 +1,5 @@
 package news.analytics.test;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -10,12 +9,12 @@ import java.sql.PreparedStatement;
 public class H2DBTest {
     public static void main(String[] a) throws Exception {
         // first delete existing db
-        File oldTestDB = new File("C:\\NewsAnalytics\\newsDbForTest.mv.db");
-        oldTestDB.delete();
+       // File oldTestDB = new File("D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\TOI\\JAN_1_15_2021");
+       // oldTestDB.delete();
 
         // create fresh one
         Class.forName("org.h2.Driver");
-        String jdbcUrl = "jdbc:h2:C:\\NewsAnalytics\\newsDbForTest";
+        String jdbcUrl = "jdbc:h2:D:\\Bhushan\\personal\\NewsAnalytics\\crawler\\src\\main\\resources\\seeds\\TOI\\JAN_1_15_2021";
         Connection connection = DriverManager.getConnection(jdbcUrl, "admin", "bkpune");
 
         String fileName = "metaConfigs/MetadataScript.sql";

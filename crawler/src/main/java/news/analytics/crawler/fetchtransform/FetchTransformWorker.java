@@ -4,7 +4,6 @@ import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.news.RawNews;
 import news.analytics.model.news.Seed;
-import news.analytics.model.news.TransformedNews;
 import news.analytics.pipeline.analyze.Analyzer;
 import news.analytics.pipeline.fetch.FetchStatus;
 import news.analytics.pipeline.fetch.Fetcher;
@@ -46,6 +45,7 @@ public class FetchTransformWorker extends Thread {
             return;
         }
 
+        // TODO replace this logic with java 8 stream
         for(Seed seed : seedList) {
             // Fetch
             RawNews rawNews = fetcher.fetch(seed, connection);
@@ -53,9 +53,14 @@ public class FetchTransformWorker extends Thread {
             if( !seed.getFetchStatus().equalsIgnoreCase(FetchStatus.FETCHED)) {
                 continue;
             }
-
+            try {
+             Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // TODO skip transformation for now
             // transform
-            TransformedNews transformedNews = transformer.transform(rawNews, connection);
+            // TransformedNews transformedNews = transformer.transform(rawNews, connection);
         }
     }
 }

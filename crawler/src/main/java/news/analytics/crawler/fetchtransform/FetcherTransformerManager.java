@@ -1,6 +1,5 @@
 package news.analytics.crawler.fetchtransform;
 
-import com.google.common.collect.Lists;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.dao.query.PredicateClause;
@@ -8,6 +7,7 @@ import news.analytics.dao.utils.DAOUtils;
 import news.analytics.model.lock.Lock;
 import news.analytics.model.news.Seed;
 import news.analytics.model.news.TransformedNews;
+import org.apache.commons.collections4.ListUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -70,7 +70,8 @@ public class FetcherTransformerManager extends Thread {
         if (select.size() > threadLimit) {
             eachPartitionSize = select.size() / threadLimit;
         }
-        List<List<Seed>> partitions = Lists.partition(select, eachPartitionSize);
+
+        List<List<Seed>> partitions = ListUtils.partition(select, eachPartitionSize);
         // create threads, assign each partition to each thread
         for (int i = 0; i < partitions.size(); i++) {
             FetchTransformWorker worker = new FetchTransformWorker(dataSource, partitions.get(i));

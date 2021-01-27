@@ -37,6 +37,7 @@ public class CrawlerTest {
     Injector injector;
     FetcherTransformerManager fetcherTransformerManager;
     private static String seedFile = CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile();
+    private static String skipSeedFile = CrawlerTest.class.getClassLoader().getResource("test_skip_seeds.txt").getFile();
 
     @BeforeClass
     public static void setup() {
@@ -66,7 +67,7 @@ public class CrawlerTest {
     }
 
     public void testInject() throws Exception {
-        int injectedCount = injector.inject(seedFile);
+        int injectedCount = injector.inject(seedFile, skipSeedFile);
         Assert.assertTrue(injectedCount == seedCount); // all seeds should get inserted every time
         GenericDao<Seed> dao = new GenericDao<>(Seed.class);
         List<Seed> latest = dao.select(dataSource.getConnection(), DAOUtils.getPredicateFromString("FETCH_STATUS = UNFETCHED"));

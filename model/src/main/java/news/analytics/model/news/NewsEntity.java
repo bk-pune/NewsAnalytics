@@ -1,4 +1,6 @@
 package news.analytics.model.news;
 
-public abstract class NewsEntity {
+import java.io.Serializable;
+
+public abstract class NewsEntity implements Serializable {
 }

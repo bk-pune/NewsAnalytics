@@ -1,6 +1,5 @@
 package news.analytics.pipeline.fetch;
 
-import com.google.common.collect.Lists;
 import news.analytics.dao.core.GenericDao;
 import news.analytics.model.constants.NewsAgency;
 import news.analytics.model.constants.ProcessStatus;
@@ -16,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class Fetcher {
     private GenericDao<Seed> seedDao;
@@ -31,7 +31,7 @@ public class Fetcher {
         try {
             // get
             String rawHtml = get(seed); // seed gets updated with get status
-            rawNews = getRawNews(rawHtml, seed.getUri());
+            rawNews = prepareRawNewsInstance(rawHtml, seed.getUri());
 
             // insert RawNews only if fetched
             if(seed.getFetchStatus().equals(FetchStatus.FETCHED)) {
@@ -85,16 +85,16 @@ public class Fetcher {
     }
 
     private boolean update(Connection connection, Seed seed) throws SQLException {
-        seedDao.update(connection, Lists.newArrayList(seed));
+        seedDao.update(connection, Arrays.asList(seed));
         return true;
     }
 
     private boolean insert(RawNews rawNews, Connection connection) throws SQLException, MalformedURLException {
-        rawNewsDao.insert(connection, Lists.newArrayList(rawNews));
+        rawNewsDao.insert(connection, Arrays.asList(rawNews));
         return true;
     }
 
-    private RawNews getRawNews(String rawHtml, String uri) throws MalformedURLException {
+    private RawNews prepareRawNewsInstance(String rawHtml, String uri) throws MalformedURLException {
         RawNews rawNews = new RawNews();
         rawNews.setId(PipelineUtils.hashIt(uri));
         rawNews.setUri(uri);

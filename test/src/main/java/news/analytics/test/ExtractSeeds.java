@@ -12,7 +12,8 @@ import java.util.*;
 
 public class ExtractSeeds {
     public static void main(String[] args) throws IOException, InterruptedException {
-        maharashtraTimes();
+        System.setProperty("http.agent", "Bhushan's polite crawler");
+        sakal();
     }
 
     private static void loksatta() throws IOException {
@@ -204,7 +205,7 @@ public class ExtractSeeds {
 
 
             for (int i = 0; i <= pageCounter; i++) {
-                Thread.sleep(1500);
+                Thread.sleep(5000);
                 // http://www.esakal.com/saptarang?page=110
                 String url = host + category + "?page=" + i;
 

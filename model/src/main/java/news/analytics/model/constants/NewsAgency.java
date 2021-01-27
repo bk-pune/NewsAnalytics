@@ -10,7 +10,8 @@ public enum NewsAgency {
     LOKMAT("Lokmat", Arrays.asList("www.lokmat.com")),
     SAKAL("Sakal", Arrays.asList("www.esakal.com")),
     SAAMANA("Saamana", Arrays.asList("www.saamana.com")),
-    LOKSATTA("Loksatta", Arrays.asList("www.loksatta.com"));
+    LOKSATTA("Loksatta", Arrays.asList("www.loksatta.com")),
+    TOI("Times of India", Arrays.asList("timesofindia.indiatimes.com"));
 
 
     private final String newsAgency;
@@ -45,7 +46,8 @@ public enum NewsAgency {
                 return SAKAL;
             case "www.loksatta.com":
                 return LOKSATTA;
-
+            case "timesofindia.indiatimes.com":
+                return TOI;
             default:
                 return null;
         }

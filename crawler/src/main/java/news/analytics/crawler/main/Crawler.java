@@ -66,7 +66,9 @@ public class Crawler {
                 if(input.equalsIgnoreCase("1")) { // inject
                     System.out.println("Enter full file path for seed url:");
                     input = sc.nextLine();
-                    crawler.inject(input);
+                    System.out.println("Enter full file path for skip seeds url file:");
+                    String skipFile = sc.nextLine();
+                    crawler.inject(input, skipFile);
                 } else if(input.equalsIgnoreCase("2")) { // Analyze
                      crawler.startAnalyzer();
                 } else if(input.equalsIgnoreCase("3")) { // show stats
@@ -95,8 +97,8 @@ public class Crawler {
     }
 
     // TODO make it threaded so that injector and fetcherTransformerManager can run in parallel
-    private int inject(String fileName) throws IOException, SQLException {
-        int injectedCount = injector.inject(fileName);
+    private int inject(String fileName, String skipSeedsFileName) throws IOException, SQLException {
+        int injectedCount = injector.inject(fileName, skipSeedsFileName);
         System.out.println("Total seeds injected in crawlDb: "+injectedCount);
         return injectedCount;
     }
