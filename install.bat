@@ -1,0 +1,2 @@
+java -cp ./ThirdPartyJars/h2-1.4.199.jar org.h2.tools.RunScript -url jdbc:h2:~/newsDbForTest -script ./metadata-script/h2_metadata_creation.sql
+java -cp ./ThirdPartyJars/h2-1.4.199.jar org.h2.tools.RunScript -url jdbc:h2:~/newsDbForTest -script ./metadata-script/h2_database_creation.sql
