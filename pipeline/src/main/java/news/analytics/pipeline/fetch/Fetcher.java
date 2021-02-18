@@ -29,18 +29,16 @@ public class Fetcher {
     public RawNews fetch(Seed seed, Connection connection) {
         RawNews rawNews = null;
         try {
-            // get
-            String rawHtml = get(seed); // seed gets updated with get status
+            // httpGet
+            String rawHtml = httpGet(seed); // seed gets updated with httpGet status
             rawNews = prepareRawNewsInstance(rawHtml, seed.getUri());
 
             // insert RawNews only if fetched
             if(seed.getFetchStatus().equals(FetchStatus.FETCHED)) {
                 insert(rawNews, connection);
+                // update status of the seed to crawlDb
+                update(connection, seed);
             }
-
-            // update status of the seed to crawlDb
-            update(connection, seed);
-
             connection.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,7 +51,7 @@ public class Fetcher {
         return rawNews;
     }
 
-    private String get(Seed seed) throws IOException {
+    private String httpGet(Seed seed) throws IOException {
         StringBuilder sb = new StringBuilder();
         URL uri = new URL(seed.getUri());
         HttpURLConnection connection = (HttpURLConnection)uri.openConnection();

@@ -1,6 +1,5 @@
 package news.analytics.crawler.test;
 
-import news.analytics.crawler.fetchtransform.FetcherTransformerManager;
 import news.analytics.crawler.inject.Injector;
 import news.analytics.dao.connection.DataSource;
 import news.analytics.dao.connection.H2DataSource;
@@ -35,7 +34,6 @@ public class CrawlerTest {
     private static int seedCount = 0;
     Lock injectorFetcherLock = new Lock();
     Injector injector;
-    FetcherTransformerManager fetcherTransformerManager;
     private static String seedFile = CrawlerTest.class.getClassLoader().getResource("testSeeds.txt").getFile();
     private static String skipSeedFile = CrawlerTest.class.getClassLoader().getResource("test_skip_seeds.txt").getFile();
 
@@ -54,9 +52,6 @@ public class CrawlerTest {
     public void init (){
         injector = new Injector(dataSource, injectorFetcherLock);
         System.out.println("Injector initialized.");
-
-        fetcherTransformerManager = new FetcherTransformerManager(dataSource, 2, injectorFetcherLock);
-        fetcherTransformerManager.start();
     }
     @Test
     public void test() throws Exception {

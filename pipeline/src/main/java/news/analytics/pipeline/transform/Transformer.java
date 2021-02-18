@@ -36,8 +36,8 @@ public class Transformer {
     private ModelInfo modelInfo;
 
     public Transformer() throws IOException {
-        rawNewsDao = new GenericDao<RawNews>(RawNews.class);
-        transformedNewsDao = new GenericDao<TransformedNews>(TransformedNews.class);
+        rawNewsDao = new GenericDao<>(RawNews.class);
+        transformedNewsDao = new GenericDao<>(TransformedNews.class);
         failedRecords = new ArrayList<>();
         modelInfo = ModelInfoProvider.getModelInfo(TransformedNews.class);
         cities = PipelineUtils.loadDictionaryFile("cities.txt");
@@ -91,10 +91,7 @@ public class Transformer {
      * @throws Exception If transformation fails
      */
     private TransformedNews transform(RawNews rawNews) throws Exception {
-        TransformedNews transformedNews = new TransformedNews();
-        transformedNews.setId(rawNews.getId());
-        transformedNews.setNewsAgency(rawNews.getNewsAgency());
-        transformedNews.setUri(rawNews.getUri());
+        TransformedNews transformedNews = getTransformedNews(rawNews);
 
         Document document = Jsoup.parse(rawNews.getRawContent());
         NewsMetaConfig newsMetaConfig = NewsMetaConfigProvider.getNewsMetaConfig(rawNews.getNewsAgency());
@@ -121,6 +118,15 @@ public class Transformer {
         return transformedNews;
     }
 
+
+    private TransformedNews getTransformedNews(RawNews rawNews) {
+        TransformedNews transformedNews = new TransformedNews();
+        transformedNews.setId(rawNews.getId());
+        transformedNews.setNewsAgency(rawNews.getNewsAgency());
+        transformedNews.setUri(rawNews.getUri());
+        return transformedNews;
+    }
+
     public void extractCity(TransformedNews transformedNews) {
         String city = null;
         String section = transformedNews.getSection();
@@ -135,7 +141,16 @@ public class Transformer {
         }
         // look inside first line
         String content = transformedNews.getContent();
-        String firstLine = content.substring(0, content.indexOf("."));
+        if(content == null) {
+            return;
+        }
+
+        String firstLine = "";
+        try{
+            firstLine = content.substring(0, content.indexOf("."));
+        } catch (Exception e) {
+            // suppress
+        }
 
         for(String tmp : cities) {
             if(firstLine.contains(tmp)) {

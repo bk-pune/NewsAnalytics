@@ -13,7 +13,7 @@ public abstract class AbstractSeedExtractor implements SeedExtractor {
         this.archiveLinksFileName = archiveLinksFileName;
     }
 
-    protected List<String> readArchiveLinkFile() throws IOException {
+    public List<String> readArchiveLinkFile() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(archiveLinksFileName));
         String line;
         List<String> entries = new ArrayList<>();

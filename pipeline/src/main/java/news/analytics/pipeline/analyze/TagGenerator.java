@@ -125,9 +125,9 @@ public class TagGenerator extends StopwordAnalyzerBase {
         // generated tags are from keywords from the source, then such tags are considered as the primary tags
         Set<String> primaryTags = new TreeSet<>();
         Set<String> keywords = analyzedNews.getKeywords();
-        keywords.removeAll(stopKeywords);
-        keywords.remove("");
         if(keywords != null) {
+            keywords.removeAll(stopKeywords);
+            keywords.remove("");
             for(String tag : secondaryTags) {
                 if(keywords.contains(tag)) {
                     primaryTags.add(tag);

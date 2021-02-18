@@ -8,4 +8,5 @@ import java.util.List;
  */
 public interface SeedExtractor {
     List<String> extract(String rawHtml) throws IOException;
+    List<String> readArchiveLinkFile() throws IOException;
 }

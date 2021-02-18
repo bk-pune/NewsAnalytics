@@ -12,7 +12,7 @@ import java.util.Map;
  * Field represent the key inside json config file.
  */
 public class NodeConfigHolder {
-    private Map<String, List<JsonNode>> nodeConfigMap = new HashMap<String, List<JsonNode>>();
+    private Map<String, List<JsonNode>> nodeConfigMap = new HashMap<>();
 
     public NodeConfigHolder() {
     }
@@ -21,7 +21,7 @@ public class NodeConfigHolder {
         List<JsonNode> existingNodes = nodeConfigMap.get(key);
 
         if(existingNodes == null){
-            existingNodes = new LinkedList<JsonNode>();
+            existingNodes = new LinkedList<>();
             existingNodes.add(value);
         } else {
             existingNodes.add(value);

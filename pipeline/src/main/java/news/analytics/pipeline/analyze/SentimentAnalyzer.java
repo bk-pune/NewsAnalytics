@@ -46,14 +46,17 @@ public class SentimentAnalyzer {
         Float titleScore = process(title);
         Float h1Score = process(h1);
         Float h2Score = process(h2);
-
-        String[] sentences = text.split("\\.");
         Float textScore = 0F;
-        for(String sentence : sentences ) {
-            if(!sentence.trim().equalsIgnoreCase("")) {
-                textScore += process(sentence.trim());
+
+        if(text != null && !text.isEmpty()) {
+            String[] sentences = text.split("\\.");
+            for(String sentence : sentences ) {
+                if(!sentence.trim().equalsIgnoreCase("")) {
+                    textScore += process(sentence.trim());
+                }
             }
         }
+
         if(titleScore < 0 && h1Score < 0 && textScore > 0) {
             // revert the polarity of content, if title and h1 are negative
             // smell of sarcasm
@@ -140,7 +143,11 @@ public class SentimentAnalyzer {
     }
 
     private String removeStopWords(String text) {
-        for(String stopWord : stopwords){
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        for(String stopWord : stopwords) {
             text = text.replaceAll(" " + stopWord + " ", " ");
             text = text.replaceAll(" " + stopWord + "\\.", " "); // for stopword + full stop
             text = text.replaceAll(" " + stopWord + ",", " ");

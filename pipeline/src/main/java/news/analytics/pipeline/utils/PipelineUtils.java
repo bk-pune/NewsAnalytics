@@ -63,6 +63,7 @@ public class PipelineUtils {
         return pages;
     }
 
+    // TODO - refactor properly
     public static Long getLongDate(String inputDate) {
         Long returnValue = 0L;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -71,17 +72,28 @@ public class PipelineUtils {
         } catch (ParseException e) {
 //            System.out.println("Date parsing exception " + e);
         }
-        if (returnValue != 0L) {
-            return returnValue;
+
+        if(returnValue == 0L) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                returnValue = dateFormat.parse(inputDate).getTime();
+            } catch (ParseException e) {
+//            System.out.println("Date parsing exception " + e);
+            }
         }
 
-        try {
-            // शुक्रवार, 16 मार्च 2018
+        if(returnValue == 0L) {
             dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-            String[] split = inputDate.substring(inputDate.indexOf(",") + 1).trim().split(" ");
-            returnValue = dateFormat.parse(split[0] + "-" + localeSpecificMonthMap.get(split[1]) + "-" + split[2]).getTime();
-        } catch (ParseException e) {
-            System.out.println("Can not parse the given date - " + inputDate + " by any available formats " + e);
+            try {
+                String[] split = inputDate.substring(inputDate.indexOf(",") + 1).trim().split(" ");
+                returnValue = dateFormat.parse(split[0] + "-" + localeSpecificMonthMap.get(split[1]) + "-" + split[2]).getTime();
+            } catch (Exception e) {
+                System.out.println("Can not parse the given date - " + inputDate + " by any available formats " + e);
+            }
+        }
+
+        if (returnValue != 0L) {
+            return returnValue;
         }
 
         return returnValue;

@@ -171,6 +171,9 @@ public class GenericDao<T extends NewsEntity> extends QueryExecutor<T> {
     }
 
     private String getObjectFromClob(Clob clob) throws SQLException {
+        if(clob == null) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         try {
             Reader reader = clob.getCharacterStream();

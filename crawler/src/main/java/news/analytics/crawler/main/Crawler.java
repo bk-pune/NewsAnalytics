@@ -1,7 +1,8 @@
 package news.analytics.crawler.main;
 
 import news.analytics.crawler.AnalyzerManager;
-import news.analytics.crawler.fetchtransform.FetcherTransformerManager;
+import news.analytics.crawler.fetchtransform.FetcherWorker;
+import news.analytics.crawler.fetchtransform.TransformerWorker;
 import news.analytics.crawler.inject.Injector;
 import news.analytics.crawler.stats.StatsProvider;
 import news.analytics.dao.connection.DataSource;
@@ -23,7 +24,8 @@ public class Crawler {
     private final DataSource dataSource;
     private Injector injector;
     private StatsProvider statsProvider;
-    private FetcherTransformerManager fetcherTransformerManager;
+    private FetcherWorker fetcherWorker;
+    private TransformerWorker transformerWorker;
     private AnalyzerManager analyzerManager;
     private Properties properties;
     private int analyzerThreads;
@@ -44,12 +46,15 @@ public class Crawler {
 
         injector = new Injector(dataSource, injectorFetcherLock);
         System.out.println("Injector initialized.");
+
         statsProvider = new StatsProvider(dataSource);
+        System.out.println("Stats provider initialized.");
 
-        fetcherTransformerManager = new FetcherTransformerManager(dataSource, fetcherTransformerThreads, injectorFetcherLock);
-        fetcherTransformerManager.start();
+        fetcherWorker = new FetcherWorker(dataSource);
+        System.out.println("Fetcher initialized.");
 
-        System.out.println("FetcherTransformerManager initialized.");
+        transformerWorker = new TransformerWorker(dataSource);
+        System.out.println("Transformers initialized.");
     }
 
     public static void main(String[] args) throws IOException {
@@ -70,8 +75,12 @@ public class Crawler {
                     String skipFile = sc.nextLine();
                     crawler.inject(input, skipFile);
                 } else if(input.equalsIgnoreCase("2")) { // Analyze
+                   crawler.startFetcher();
+                } else if(input.equalsIgnoreCase("3")) { // Analyze
+                    crawler.startTransformer();
+                } else if(input.equalsIgnoreCase("4")) { // Analyze
                      crawler.startAnalyzer();
-                } else if(input.equalsIgnoreCase("3")) { // show stats
+                } else if(input.equalsIgnoreCase("5")) { // show stats
                     crawler.showStats();
                 } else if(input.equalsIgnoreCase("0")) {
                     System.out.println("Good bye !");
@@ -88,6 +97,16 @@ public class Crawler {
         analyzerManager = new AnalyzerManager(dataSource, analyzerThreads);
         analyzerManager.start();
         System.out.println("Analyzer Started.");
+    }
+
+    private void startTransformer() {
+        transformerWorker.start();
+        System.out.println("Transformer Started.");
+    }
+
+    private void startFetcher() {
+        fetcherWorker.start();
+        System.out.println("Fetcher Started.");
     }
 
     private void showStats() throws Exception {

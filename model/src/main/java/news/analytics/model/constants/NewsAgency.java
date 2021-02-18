@@ -11,6 +11,7 @@ public enum NewsAgency {
     SAKAL("Sakal", Arrays.asList("www.esakal.com")),
     SAAMANA("Saamana", Arrays.asList("www.saamana.com")),
     LOKSATTA("Loksatta", Arrays.asList("www.loksatta.com")),
+    LIVELAW("Livelaw", Arrays.asList("www.livelaw.in")),
     TOI("Times of India", Arrays.asList("timesofindia.indiatimes.com"));
 
 
@@ -48,6 +49,8 @@ public enum NewsAgency {
                 return LOKSATTA;
             case "timesofindia.indiatimes.com":
                 return TOI;
+            case "www.livelaw.in":
+                return LIVELAW;
             default:
                 return null;
         }
